@@ -1,0 +1,3 @@
+-e git+https://github.com/dcramer/django-devserver.git#egg=django-devserver #devel-only
+-e git+https://github.com/oxys-net/django-resetdb#egg=django-resetdb
+-e git+https://github.com/django-debug-toolbar/django-debug-toolbar.git@944bfd872a1ce5c3eb3b8fb20d08928b702102d9#egg=django_debug_toolbar-dev
