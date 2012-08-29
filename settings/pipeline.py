@@ -9,11 +9,25 @@ PIPELINE_STORAGE = 'pipeline.storage.PipelineFinderStorage'
 PIPELINE_CSS = {
     'base': {
         'source_filenames': (
+            'css/bootstrap.css',
             'css/style.css',
+            'css/gallery.styl'
         ),
         'output_filename': 'c/base.r?.css',
     },
 }
+
+PIPELINE_JS = {
+    'lazy': {
+        'source_filenames': (
+            #'js/Placeholders.min.js',
+            'js/bootstrap.js',
+            
+        ),
+        'output_filename': 'c/lazy.r?.js',
+    },
+}
+
 PIPELINE_COMPILERS = (
     'pipeline.compilers.stylus.StylusCompiler',
 )

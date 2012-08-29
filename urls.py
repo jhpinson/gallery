@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from structure.views import CategoryView
 admin.autodiscover()
 
 urlpatterns = patterns('')
@@ -15,7 +16,10 @@ except ImportError:
 
 
 urlpatterns += patterns('',
-    (r'^$', TemplateView.as_view(template_name="home.html"), {}, "home_view"),
+    (r'^$', CategoryView.as_view(), {}, "home_view"),
+    url(r'', include('structure.urls')),
+    url(r'', include('medias.urls')),
+    
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

@@ -4,3 +4,8 @@ MySQL-python==1.2.3
 -e git+https://github.com/cyberdelia/django-pipeline.git@9eb97bc70c488f49dbcefcb41bf3d69b1c686053#egg=django_pipeline-dev
 django-grappelli==2.3.5
 raven
+-e git+https://github.com/carljm/django-model-utils.git#egg=django-model-utils
+-e git+https://github.com/sorl/sorl-thumbnail.git#egg=django-sorl
+django-bootstrap-toolkit==2.5.4
+django-mptt
+PIL

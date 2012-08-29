@@ -115,6 +115,12 @@ INSTALLED_APPS = (
     'apps',
     'pipeline',
     'uwsgi_admin',
+    'bootstrap',
+    'bootstrap_toolkit',
+    'structure',
+    'medias',
+    'sorl.thumbnail',
+    'helpers',
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'
@@ -175,3 +181,5 @@ LOGGING = {
         },
     },
 }
+
+THUMBNAIL_SIZES = {'small' : {'width' : 150}, 'medium' : {'width' : 300}, 'large' : {'width' : 600},}

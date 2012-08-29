@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load gallery_tags %}
+{% block "content" %}
+  
+  <section>
+     <h2>{{album.name}}</h2> 
+     <header>
+       <ul class="breadcrumb">
+         {% for crumb in breadcrumbs %}
+         {% if forloop.last %}
+          <li class="active">{{crumb.name}}</li>
+         {% else %}
+          <li><a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a> <span class="divider">/</span></li>
+         {% endif %}
+        {% endfor %}
+        
+      </ul>
+     </header>
+     {% for cat in album.get_children %}
+      <a href="{{cat.get_absolute_uri}}">{{cat.name}}</a>
+    {% endfor %}
+    
+    {% for media in object_list %}
+      <a href="#">
+       {% image_thumbnail media "small" %}
+      </a>
+    {% endfor %}
+    
+    {% if is_paginated %}
+    <div class="pagination pagination-right">
+      <ul>
+        {% if page_obj.has_previous %}
+        <li><a href="?page=1">&larr;</a></li>
+        <li><a href="?page={{page_obj.previous_page_number}}">{{page_obj.previous_page_number}}</a></li>
+        {% endif %}
+        <li class="active"><a href="#">{{page_obj.number}}</a></li>
+        {% if page_obj.has_next %}
+        <li><a href="?page={{page_obj.next_page_number}}">{{page_obj.next_page_number}}</a></li>
+        <li><a href="?page={{paginator.num_pages}}">&rarr;</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+  
+ 
+  
+{% endblock %}
