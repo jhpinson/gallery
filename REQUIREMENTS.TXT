@@ -9,3 +9,6 @@ raven
 django-bootstrap-toolkit==2.5.4
 django-mptt
 PIL
+-e git+git@github.com:oxys-net/django-dajaxice.git#egg=django-dajaxicedjango-dajaxice==0.2
+django-dajax==0.8.4
+git+https://github.com/dabapps/django-email-as-username.git#egg=emailusernames

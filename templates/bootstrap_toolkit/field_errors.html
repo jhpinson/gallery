@@ -1,0 +1,16 @@
+<div id="error_{{field.html_name}}" style="display:none">
+{% if field.errors %}
+      {% for error in field.errors %}
+          {% if inline %}
+              <span class="help-inline error">{{ error }}</span>
+          {% else %}
+              <p id="error_{{field.html_name}}" class="help-block error">{{ error }}</p>
+          {% endif %}
+      {% endfor%}
+{% endif %}
+  {% if inline %}
+      <span class="help-inline error-tpl"></span>
+  {% else %}
+      <p class="help-block error-tpl"></p>
+  {% endif %}    
+</div>

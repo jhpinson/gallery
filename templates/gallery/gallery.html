@@ -1,0 +1,7 @@
+<div class="camera_wrap" id="gallery-wrap">
+    {% for media in medias %}
+      <div data-thumb="{{media.lazythumb_small.url}}" data-src="{{media.lazythumb_large.url}}" >
+    </div>
+    
+    {% endfor %}
+</div>

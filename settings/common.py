@@ -64,6 +64,7 @@ STATICFILES_DIRS = ()
 
 STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
+    'dajaxice.finder.DajaxiceFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
@@ -92,6 +93,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'middleware.request.ThreadRequestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
@@ -115,12 +117,16 @@ INSTALLED_APPS = (
     'apps',
     'pipeline',
     'uwsgi_admin',
+    'dajaxice',
+    'dajax',
     'bootstrap',
     'bootstrap_toolkit',
-    'structure',
+    'structures',
     'medias',
     'sorl.thumbnail',
     'helpers',
+    'emailusernames',
+    'auth'
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'
@@ -182,4 +188,13 @@ LOGGING = {
     },
 }
 
-THUMBNAIL_SIZES = {'small' : {'width' : 150}, 'medium' : {'width' : 300}, 'large' : {'width' : 600},}
+THUMBNAIL_SIZES = {'small' : {'width' : 150, 'height':120}, 'medium' : {'width' : 300}, 'large' : {'width' : 800, 'height':600},}
+
+DAJAXICE_MEDIA_PREFIX = "dajaxice"
+DAJAXICE_XMLHTTPREQUEST_JS_IMPORT = False
+DAJAXICE_JSON2_JS_IMPORT = False
+
+AUTHENTICATION_BACKENDS = (
+    'emailusernames.backends.EmailAuthBackend',
+)
+LOGIN_URL = '/login/'

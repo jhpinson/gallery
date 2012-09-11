@@ -3,10 +3,10 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from model_utils.managers import PassThroughManager, InheritanceQuerySet
 from django.core.urlresolvers import  reverse
-from sorl.thumbnail.shortcuts import get_thumbnail
 from model_utils import Choices
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from helpers.mixins import ChangeTrackMixin
 
 class MediaQuerySet(InheritanceQuerySet):
             
@@ -16,14 +16,14 @@ class MediaQuerySet(InheritanceQuerySet):
     def get_subclass(self, *args, **kwargs):
         return self.select_subclasses().get(*args, **kwargs)
 
-class Media(models.Model):
+class Media(ChangeTrackMixin, models.Model):
 
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    category = models.ForeignKey('structure.Category')
+    album = models.ForeignKey('structures.Album')
     
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
@@ -43,7 +43,7 @@ class Media(models.Model):
     
     def __getattr__(self, name):
         
-        if name[:10] == 'thumbnail_':
+        if name[:10] == 'thumbnail_' or name[:10] == 'lazythumb_':
             
             if self._cache.get(name, None) is None:
             
@@ -57,9 +57,12 @@ class Media(models.Model):
                     data['exists'] = True
                     self._cache[name] = data
                 except ObjectDoesNotExist:
-                    data['url'] = reverse('generate_thumbnail_view', kwargs={'pk' : self.pk, 'size' : size})
+                    if name[:10] == 'lazythumb_':
+                        data['url'] = reverse('lazy_thumbnail_view', kwargs={'pk' : self.pk, 'size' : size})
+                    else:
+                        data['url'] = reverse('generate_thumbnail_view', kwargs={'pk' : self.pk, 'size' : size})
                     data['width'] = settings.THUMBNAIL_SIZES[size]['width']
-                    data['height'] = None
+                    data['height'] = settings.THUMBNAIL_SIZES[size]['height']
                     data['exists'] = False
                     self._cache[name] = data
             
@@ -67,7 +70,6 @@ class Media(models.Model):
             
         else:
             return super(Media, self).__getattr__(self, name)
-    
     
     def cast(self):
         return self.real_type.get_object_for_this_type(pk=self.pk)
@@ -80,7 +82,7 @@ class Media(models.Model):
     
     class Meta:
         app_label = 'medias'
-        unique_together=('hash', 'category')
+        unique_together=('hash', 'album')
         
         
 class Thumbnail(models.Model):
@@ -97,3 +99,4 @@ class Thumbnail(models.Model):
     
     class Meta:
         app_label = 'medias'
+        unique_together=('media','size')

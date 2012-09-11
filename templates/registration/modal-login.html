@@ -1,0 +1,22 @@
+
+{% load i18n bootstrap_toolkit %}
+
+<form method='POST'  data-dajax-method='auth.login'>
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">
+      ×
+    </button>
+    <h3>{% trans "Authenticate" %}</h3>
+  </div>
+  <div class="modal-body">
+    {{ form|as_bootstrap }}
+    {% csrf_token %}
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <button type="submit" data-loading-text="{% trans "please wait..." %}" class="btn btn-primary" >{% trans "OK" %}</button>
+  </div>
+  
+  
+</form>
+

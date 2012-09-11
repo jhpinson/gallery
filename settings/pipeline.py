@@ -10,8 +10,11 @@ PIPELINE_CSS = {
     'base': {
         'source_filenames': (
             'css/bootstrap.css',
-            'css/style.css',
-            'css/gallery.styl'
+            'css/jquery.jgrowl.css',
+            #'css/style.css',
+            'css/camera.css',
+            'css/gallery.styl',
+        
         ),
         'output_filename': 'c/base.r?.css',
     },
@@ -20,8 +23,23 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'lazy': {
         'source_filenames': (
-            #'js/Placeholders.min.js',
+            'js/libs/jquery.ba-serializeobject.js',
+            'js/libs/jquery.dajax.core.js',
+            'dajaxice/dajaxice.core.js',
+            'js/libs/jquery.easing.1.3.js',
+            'js/libs/camera.js',
+            'js/libs/jquery.ui.widget.js',
+            'js/libs/fileupload/jquery.iframe-transport.js',
+            'js/libs/fileupload/jquery.fileupload.js',
+            'js/libs/jquery.jgrowl.js',
             'js/bootstrap.js',
+            'js/thumbnails.js',
+            'js/slides.js',
+            'js/html-id.js',
+            'js/dajaxice.forms-helpers.js',
+            'js/lazy-modal.js',
+            'js/lazy-fileupload.js',
+            'js/messages.js',
             
         ),
         'output_filename': 'c/lazy.r?.js',

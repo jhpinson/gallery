@@ -1,0 +1,6 @@
+{% load gallery_tags %}
+{% for media in object_list %}
+<li class= "span2">
+  <a href="#" class="thumbnail"> {% image_thumbnail media "small" %} </a>
+</li>
+{% endfor %}

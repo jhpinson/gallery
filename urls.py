@@ -3,10 +3,13 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from structure.views import CategoryView
+from structures.views import AlbumView
 admin.autodiscover()
 
 urlpatterns = patterns('')
+
+from dajaxice.core import dajaxice_autodiscover
+dajaxice_autodiscover()
 
 try:
     import uwsgi
@@ -15,9 +18,16 @@ except ImportError:
     pass
 
 
+
 urlpatterns += patterns('',
-    (r'^$', CategoryView.as_view(), {}, "home_view"),
-    url(r'', include('structure.urls')),
+    url(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
+                        
+    (r'^$', AlbumView.as_view(), {}, "home_view"),
+    # custom auth
+    url(r'', include('auth.urls')),
+    # albums
+    url(r'', include('structures.urls')),
+    # medias
     url(r'', include('medias.urls')),
     
     url(r'^grappelli/', include('grappelli.urls')),

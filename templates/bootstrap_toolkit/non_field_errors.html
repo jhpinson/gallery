@@ -1,0 +1,5 @@
+<div class="alert alert-block alert-error" {% if not form.non_field_errors %}style="display:none"{%endif%}>
+    {% for error in form.non_field_errors %}
+        {% include "bootstrap_toolkit/non_field_error.html" %}
+    {% endfor %}
+</div>

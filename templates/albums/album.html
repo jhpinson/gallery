@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load url from future %}
+
+{% block "body-class" %}fileupload{% endblock %}
+
+{% block "content" %}
+  
+  <section>
+      {% if album.is_root %}
+     <h2>Bienvenue</h2>
+     {% else %}
+     {% if album.is_user_root %}
+     <h2>Album de {{album.owner.get_full_name}}</h2>
+     {% else %}
+     <h2>{{album}}</h2>
+     {% endif %}
+     {% endif %} 
+     <header>
+       {% if breadcrumbs %}
+       <ul class="breadcrumb">
+         {% for crumb in breadcrumbs %}
+         {% if forloop.last %}
+          <li class="active">{{crumb.display_name}}</li>
+         {% else %}
+          <li><a href="{{crumb.get_absolute_uri}}">{{crumb.display_name}}</a> <span class="divider">/</span></li>
+         {% endif %}
+        {% endfor %}
+        
+        
+        <li class="pull-right">
+          <a href="" class="start-slides" data-url="{% url 'gallery_view' pk=album.pk %}" >diaporama</a>   
+          <a href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  >Nouvel album</a>   
+          <a href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  >Editer cet album</a>
+          <input id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple >   
+        </li>
+      </ul>
+      
+      {% endif %}
+      
+     </header>
+     
+     <div id="upload-manager" class="well" style="display:none">
+       <h4>Téléversement de <span></span></h4>
+       <div id="progressall" class=" progress progress-striped active">
+          <div  class="bar" style="width: 0;"></div>
+        </div>
+        <ul class="" id="upload-details">
+        </ul>
+      </div>
+      
+     {% for cat in album.get_children %}
+      {% if forloop.first %}
+      <div class="well well-small">
+        <h4>{% if album.parent %}Sous albums{% else %}Albums{% endif %}</h4>
+        <ul class="unstyled">
+      {%endif%}
+      <li><a href="{{cat.get_absolute_uri}}"><i class=" icon-folder-close"></i> {{cat.display_name}}</a></li>
+      {% if forloop.last %}
+      </ul>
+      </div>
+      {%endif%}
+     {% endfor %}  
+    
+    <div id="thumbnails" >
+      {% include "albums/_inc/thumbnails.html" %}
+    </div>
+  </section>
+  
+  
+{% endblock %}

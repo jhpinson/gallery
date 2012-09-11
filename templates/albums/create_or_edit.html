@@ -1,0 +1,16 @@
+
+{% load  bootstrap_toolkit %}
+
+<form method='POST'  data-dajax-method='structures.save_album' {% if object %}data-pk="{{object.pk}}"{%endif%}>
+  
+  <div class="modal-body">
+    {{ form|as_bootstrap }}
+    {% csrf_token %}
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Fermer</a>
+    <button type="submit" data-loading-text="Veuillez patienter..." class="btn btn-primary" >Enregistrer</button>
+  </div>
+  
+</form>
+
