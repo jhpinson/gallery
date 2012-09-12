@@ -7,6 +7,7 @@ from model_utils import Choices
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from helpers.mixins import ChangeTrackMixin
+from filehashfield.fields import FileHashField
 
 class MediaQuerySet(InheritanceQuerySet):
             
@@ -17,9 +18,14 @@ class MediaQuerySet(InheritanceQuerySet):
         return self.select_subclasses().get(*args, **kwargs)
 
 class Media(ChangeTrackMixin, models.Model):
-
+    
+    def upload_path(self, filename):
+        return '%s/%s' % ('/'.join([c.name for c in self.album.get_ancestors()] + [self.album.name]), filename)
+    
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
+    
+    file = FileHashField(upload_to=upload_path, hash_field='hash', max_length=1024)
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
@@ -36,11 +42,16 @@ class Media(ChangeTrackMixin, models.Model):
     
     def save(self, *args, **kwargs):
         
+        created = False
         if self._state.adding:
             self.real_type = self._get_real_type()
-            
+            created = True
+
         super(Media, self).save(*args, **kwargs)
-    
+        
+        if created:
+            self.album.consolidate_count()
+        
     def __getattr__(self, name):
         
         if name[:10] == 'thumbnail_' or name[:10] == 'lazythumb_':

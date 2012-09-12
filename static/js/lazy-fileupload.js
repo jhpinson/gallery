@@ -45,6 +45,7 @@ $(window).load(function() {
 				send : function (e, data) {
 					
 				  var name = fileToId(data.files[0]);
+				  console.debug(data.files[0])
 				  //$('#' + name).append('<div  class="progress"  ><div  class="bar" style="width: 0;"></div></div>');
 				  $('#upload-manager h4 span').text(data.files[0].name);
 				},

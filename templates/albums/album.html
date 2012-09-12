@@ -7,15 +7,7 @@
 {% block "content" %}
   
   <section>
-      {% if album.is_root %}
-     <h2>Bienvenue</h2>
-     {% else %}
-     {% if album.is_user_root %}
-     <h2>Album de {{album.owner.get_full_name}}</h2>
-     {% else %}
-     <h2>{{album}}</h2>
-     {% endif %}
-     {% endif %} 
+      
      <header>
        {% if breadcrumbs %}
        <ul class="breadcrumb">
@@ -29,10 +21,10 @@
         
         
         <li class="pull-right">
-          <a href="" class="start-slides" data-url="{% url 'gallery_view' pk=album.pk %}" >diaporama</a>   
-          <a href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  >Nouvel album</a>   
-          <a href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  >Editer cet album</a>
-          <input id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple >   
+          <a class="btn btn-small start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a>   
+          <a class="btn btn-small" href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a>   
+          <a class="btn btn-small" href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a>
+          <button class="btn btn-small" style="position:relative; "><span style="position:absolute;">ajouter des photos</span><input style="opacity:0"  id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></button>   
         </li>
       </ul>
       

@@ -41,36 +41,44 @@ class AlbumView(ListView):
         
         img = PILImage.open(file)
         
-        output_file = StringIO()
-        img.save(output_file, "PNG")
+        #output_file = StringIO()
+        #img.save(output_file, "PNG")
         
 
         #writing file manually into model
         #because we don't need form of any type.
         
         try:
-                        
+            
+            new_image = Image()
+            
+            #print EXIF.process_file(file)
             # exif datas
             dateTimeOriginal = None
             exif = img._getexif()
             if exif is not None:
                 for tag, value in exif.items():
+                    
                     decoded = TAGS.get(tag, tag)
+                    
                     if  decoded == 'DateTimeOriginal':
-                        dateTimeOriginal = value
-            if dateTimeOriginal is not None:
-                image_date = parse(dateTimeOriginal)
-            else:
-                image_date = datetime.datetime.now()
+                        new_image.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                        
+            
                 
             #@TODO si dateTimeOriginal is None, prendre la date de modification du fichier
-            name = "%s.png" % '.'.join(filename.split('.')[:-1]) 
-            name = name.lower()
+            name = filename.lower()
             
-            img = Image(name=name, album=self.get_album(), date=image_date)
-            img.file.save(
+            
+            new_image.name = name
+            new_image.album=self.get_album()
+            if new_image.date is None:
+                new_image.date=datetime.datetime.now()
+            
+            
+            new_image.file.save(
                           filename
-                          , ContentFile(output_file.getvalue()), save=True)
+                          , file, save=True)
         except IntegrityError,e:
             print e
             return HttpResponseServerError(u"Le fichier \"%s\" est déja présent dans cet album" % filename) 

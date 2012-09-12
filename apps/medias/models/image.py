@@ -11,10 +11,10 @@ class Image(Media):
     def upload_path(self, filename):
         return '%s/%s' % ('/'.join([c.name for c in self.album.get_ancestors()] + [self.album.name]), filename)
     
-    file = ImageHashField(upload_to=upload_path, height_field='height', width_field='width', hash_field='hash', max_length=1024)
+    #file = ImageHashField(upload_to=upload_path, height_field='height', width_field='width', hash_field='hash', max_length=1024)
     
-    width = models.PositiveIntegerField()
-    height = models.PositiveIntegerField()
+    #width = models.PositiveIntegerField()
+    #height = models.PositiveIntegerField()
     
     def generate_thumbnail(self, size):
         image = get_thumbnail(self.file.file, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), upscale=True)
