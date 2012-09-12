@@ -1,6 +1,7 @@
 from common import *
 from pipeline import *
-from subprocess import check_output
+from subprocess import Popen, PIPE
+
  
 DEBUG = True
 
@@ -10,7 +11,7 @@ PIPELINE_AUTO = True
 PIPELINE_VERSION = False
 PIPELINE_VERSIONING = 'pipeline.versioning.mtime.MTimeVersioning'
 
-PIPELINE_STYLUS_BINARY = check_output(['which','stylus'])
+PIPELINE_STYLUS_BINARY = Popen("which stylus", shell=True, stdout=PIPE).stdout.read().split('\n')[0]
 
 INTERNAL_IPS = ('127.0.0.1')
 
