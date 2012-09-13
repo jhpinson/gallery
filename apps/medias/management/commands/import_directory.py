@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 
                 if len(path) == 0:
                     cat = root_category
-                    
+                    created = False
                 else:
                     p = path.split('/')[-1]
                     cat, created = Album.objects.get_or_create(name=p, parent=root_category, created_by = user, modified_by=user)
