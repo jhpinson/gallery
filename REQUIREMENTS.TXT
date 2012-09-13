@@ -5,7 +5,7 @@ MySQL-python==1.2.3
 django-grappelli==2.3.5
 raven
 -e git+https://github.com/carljm/django-model-utils.git#egg=django-model-utils
--e git+https://github.com/sorl/sorl-thumbnail.git#egg=django-sorl
+-e git+git@github.com:oxys-net/sorl-thumbnail.git#egg=sorl-thumbnail
 django-bootstrap-toolkit==2.5.4
 django-mptt
 PIL

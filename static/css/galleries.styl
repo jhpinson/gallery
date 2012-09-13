@@ -1,0 +1,69 @@
+#gallery
+  display block
+  height 100%
+  width 100%
+  background-color rgba(0,0,0,0.9)
+  content ""
+  z-index 999999
+  position fixed
+  top 0px
+  left 0px
+  .content-w
+    img
+      max-height 800px 
+  .item
+    color #FFF
+    display block
+    border 1px solid rgba(255,255,255,0.1)
+    box-shadow 0 0 10px #000
+    position relative
+    width 100%
+    height 100%
+    text-align center
+    .item-w
+      top 60px
+      left 60px
+      bottom 60px
+      right 60px
+      position absolute
+  .legend
+    position absolute
+    bottom 0px
+    left 0px
+    right 0px
+    background-color rgba(0,0,0,0.7)
+    text-align left
+    padding 10px
+
+    h3
+      margin 0
+      font-weight 400
+      font-family Rokkitt
+      font-size 180%
+      margin 0 0 10px 0
+      color #279bf4
+      text-shadow 1px 1px 1px #000
+      &:before
+        display none
+    nav
+      position absolute
+      top 10px
+      right 10px
+      button
+        background-color transparent
+        background-image url('./img/gallery-nav.png')
+        height 19px
+        width 23px
+        overflow hidden
+        border none
+        text-indent -99999px
+        opacity 1
+        float none
+        margin-right 3px
+        &.prev
+          background-position-y -38px
+        &.next
+          background-position-y -19px
+        &:hover
+          background-position-x -23px
+
