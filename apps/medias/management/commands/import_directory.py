@@ -39,8 +39,9 @@ class Command(BaseCommand):
                     p = path.split('/')[-1]
                     cat, created = Album.objects.get_or_create(name=p, parent=root_category, created_by = user, modified_by=user)
                     
-                if cat.pk < 164:
+                if not created:
                     continue
+                
                 for image in images:
                     
                     img_path = "%s/%s" % (rep, image)
@@ -74,7 +75,6 @@ class Command(BaseCommand):
                                       , ContentFile(f.read()), save=True)
                         
                     except IntegrityError,e:
-                        print e
                         continue
                     
                     except Exception,e:
