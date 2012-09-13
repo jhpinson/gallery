@@ -20,6 +20,7 @@ from dateutil.parser import parse
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils.timezone import utc, get_current_timezone
 
 class AlbumView(ListView):
     
@@ -41,40 +42,24 @@ class AlbumView(ListView):
         
         img = PILImage.open(file)
         
-        #output_file = StringIO()
-        #img.save(output_file, "PNG")
-        
-
-        #writing file manually into model
-        #because we don't need form of any type.
-        
         try:
             
             new_image = Image()
-            
-            #print EXIF.process_file(file)
-            # exif datas
-            dateTimeOriginal = None
             exif = img._getexif()
             if exif is not None:
                 for tag, value in exif.items():
-                    
                     decoded = TAGS.get(tag, tag)
-                    
                     if  decoded == 'DateTimeOriginal':
                         new_image.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
-                        
+                        break
             
                 
-            #@TODO si dateTimeOriginal is None, prendre la date de modification du fichier
             name = filename.lower()
-            
-            
             new_image.name = name
             new_image.album=self.get_album()
-            if new_image.date is None:
-                new_image.date=datetime.datetime.now()
             
+            if new_image.date is None:
+                new_image.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
             
             new_image.file.save(
                           filename

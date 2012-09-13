@@ -85,6 +85,18 @@ $(window).load(function() {
             var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#upload-manager #progressall .bar').css('width', progress + '%');
         }
-			})
+			});
+			
+			$('.fileupload').bind('fileuploadsubmit', function (e, data) {
+				
+				 if (typeof(data.formData) === 'undefined') {
+				  data.formData = {};
+				 }
+				 
+				 for (var i = 0, l = data.files.length; i<l;i++) {
+				  data.formData[data.files[i].name] = data.files[i].lastModifiedDate.toJSON();	
+				 }
+			   
+			});
 
 });

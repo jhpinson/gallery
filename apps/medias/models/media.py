@@ -20,7 +20,8 @@ class MediaQuerySet(InheritanceQuerySet):
 class Media(ChangeTrackMixin, models.Model):
     
     def upload_path(self, filename):
-        return '%s/%s' % ('/'.join([c.name for c in self.album.get_ancestors()] + [self.album.name]), filename)
+        path = "/".join([str(self.created_by.pk), str(self.date.year), "%02d" % self.date.month, "%02d" % self.date.day, filename])
+        return path
     
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
@@ -33,7 +34,8 @@ class Media(ChangeTrackMixin, models.Model):
     
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
-    date = models.DateTimeField(null=True)
+    date = models.DateTimeField()
+    
     hash = models.CharField(max_length=40)
     
     def __init__(self, *args, **kwargs):

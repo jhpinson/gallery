@@ -20,6 +20,9 @@ class Album( MPTTModel):
     images_count = models.PositiveIntegerField(default=0)
     album_count = models.PositiveIntegerField(default=0)
     
+    start_date = models.DateTimeField(null=True)
+    end_date = models.DateTimeField(null=True)
+    
     @property
     def display_name(self):
         if self.is_user_root is True:
@@ -57,6 +60,9 @@ class Album( MPTTModel):
         from medias.models.image import Image
         self.album_count = self.get_descendant_count()
         self.images_count = Image.objects.filter(album__in=self.get_descendants(include_self=True)).count()
+        if self.images_count > 0:
+            self.start_date = Image.objects.filter(album__in=self.get_descendants(include_self=True)).order_by('date')[0].date
+            self.end_date = Image.objects.filter(album__in=self.get_descendants(include_self=True)).order_by('-date')[0].date
         self.save()
         if self.parent is not None:
             self.parent.consolidate_count()
