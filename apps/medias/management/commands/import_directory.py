@@ -45,11 +45,11 @@ class Command(BaseCommand):
                     img_path = "%s/%s" % (rep, image)
                     
                     f = open(img_path, 'r')
-                    img = PILImage.open(f)
+                    
                     
                     
                     try:
-                        
+                        img = PILImage.open(f)
                         new_image = Image(created_by=user, modified_by=user)
                         exif = img._getexif()
                         if exif is not None:
@@ -75,11 +75,15 @@ class Command(BaseCommand):
                     except IntegrityError,e:
                         print e
                         continue
-                        
+                    
+                    except Exception,e:
+                        print e
+                        continue
+                    
                     f.close()
                     
                     
                     
-                print cat, len(images)
+                print cat.pk, len(images)
             
             
