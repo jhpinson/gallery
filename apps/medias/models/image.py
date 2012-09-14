@@ -28,7 +28,10 @@ class Image(Media):
         
     def delete(self, *args, **kwargs):
         
-        delete(self.file.file)
+        try:
+            delete(self.file.file)
+        except IOError:
+            pass
         self.file.delete(save=False)
         
         super(Image, self).delete(*args, **kwargs)
