@@ -38,6 +38,9 @@ class Media(ChangeTrackMixin, models.Model):
     
     hash = models.CharField(max_length=40)
     
+    def generate_thumbnails(self):
+        pass
+    
     def __init__(self, *args, **kwargs):
         self._cache = {}
         super(Media, self).__init__(*args, **kwargs)
