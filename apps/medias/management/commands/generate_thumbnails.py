@@ -4,25 +4,20 @@ from medias.models import Image
 class Command(BaseCommand):
     
     def handle(self, *args, **kwargs):
+        self.generate('small')
+        #self.generate('small')
+        self.generate('large')
         
-        images = Image.objects.all()
+    def generate(self, size):
+        
+        images = Image.objects.all().exclude(thumbnails__size=size)
         i = 0
         total = images.count()
-        for image in images.order_by('pk'):
+        for image in images:
             i += 1
             try:
-                image.generate_thumbnail('small')
+                image.generate_thumbnail(size)
             except Exception,e:
                 pass
-            
-            try:
-                image.generate_thumbnail('medium')
-            except Exception,e:
-                pass
-            
-            try:
-                image.generate_thumbnail('large')
-            except Exception,e:
-                pass
-            
-            print '%s / %s' % (i, total)
+        
+        print "%s %s / %s" % (size, i, total)

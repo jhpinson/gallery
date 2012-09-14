@@ -188,7 +188,7 @@ LOGGING = {
     },
 }
 
-THUMBNAIL_SIZES = {'small' : {'width' : 150, 'height':120}, 'medium' : {'width' : 640, 'height' : 480}, 'large' : {'width' : 2560, 'height':1440},}
+THUMBNAIL_SIZES = {'small' : {'width' : 150, 'height':120}, 'medium' : {'width' : 1024, 'height' : 768}, 'large' : {'width' : 2560, 'height':1920},}
 
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
 DAJAXICE_XMLHTTPREQUEST_JS_IMPORT = False
