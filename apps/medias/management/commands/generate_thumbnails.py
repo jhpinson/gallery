@@ -17,7 +17,11 @@ class Command(BaseCommand):
             i += 1
             try:
                 image.generate_thumbnail(size)
+                
+            except IOError,e:
+                print "IOERROR deleting file", image.pk, image.file.url, image.delete()
+                
             except Exception,e:
-                print e
+                print e, image.pk, image.file.url
         
             print "%s %s / %s" % (size, i, total)
