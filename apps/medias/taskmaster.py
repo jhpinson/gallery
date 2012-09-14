@@ -69,7 +69,7 @@ def handle_job(data):
             obj.date= datetime.datetime.fromtimestamp(os.path.getmtime(image_path))
         
         f.seek(0)
-        image_path.file.save(
+        obj.file.save(
                       name
                       , ContentFile(f.read()), save=True)
         
