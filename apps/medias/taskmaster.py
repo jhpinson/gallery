@@ -1,6 +1,12 @@
 from django.contrib.auth.models import User
 from structures.models import Album
+from medias.models import Image, Video
 import os
+from PIL import Image as PILImage
+from django.db.utils import IntegrityError
+from PIL.ExifTags import TAGS
+import datetime
+from django.core.files.base import ContentFile
 
 def get_jobs(last=0):
     
@@ -26,10 +32,53 @@ def get_jobs(last=0):
                 cat, created = Album.objects.get_or_create(name=p, parent=root_category, created_by = user, modified_by=user)
                 
             for image in images:
-                yield cat.pk, "%s/%s" % (rep, image), user.pk
+                yield cat.pk, rep, image, user.pk
                 
 def handle_job(data):
-    album_pk, album_pk, user_pk = data
-    print album_pk, album_pk, user_pk
+    album_pk, rep, name, user_pk = data
     
+    image_path = "%s/%s" % (rep, name)
     
+    f = open(image_path, 'r')
+    
+    if name.lower().split('.')[-1] in ['mpg', 'avi', 'mov']:
+        clazz = Video
+    else:
+        clazz = Image
+    
+    obj =  clazz(created_by_id=user_pk, modified_by_id=user_pk, name=name, album_id=album_pk)
+    
+    try:
+        
+        if clazz == Image:
+        
+            img = PILImage.open(f)
+            
+            exif = img._getexif()
+            if exif is not None:
+                for tag, value in exif.items():
+                    decoded = TAGS.get(tag, tag)
+                    if  decoded == 'DateTimeOriginal':
+                        obj.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                        break
+        
+            
+        
+        
+        if obj.date is None:
+            obj.date= datetime.datetime.fromtimestamp(os.path.getmtime(image_path))
+        
+        f.seek(0)
+        image_path.file.save(
+                      name
+                      , ContentFile(f.read()), save=True)
+        
+    except IntegrityError,e:
+        pass
+    
+    except Exception,e:
+        print e
+        
+    
+    f.close()
+
