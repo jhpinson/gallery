@@ -28,8 +28,8 @@ def get_jobs(last=0):
             for image in images:
                 yield cat.pk, "%s/%s" % (rep, image), user.pk
                 
-def handle_job(album_pk, image_path, user_pk):
-    
+def handle_job(data):
+    album_pk, album_pk, user_pk = data
     print album_pk, album_pk, user_pk
     
     
