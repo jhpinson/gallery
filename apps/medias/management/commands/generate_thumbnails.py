@@ -18,6 +18,6 @@ class Command(BaseCommand):
             try:
                 image.generate_thumbnail(size)
             except Exception,e:
-                pass
+                print e
         
-        print "%s %s / %s" % (size, i, total)
+            print "%s %s / %s" % (size, i, total)
