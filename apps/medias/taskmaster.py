@@ -73,6 +73,8 @@ def handle_job(data):
                       name
                       , ContentFile(f.read()), save=True)
         
+        obj.generate_thumbnails()
+        
     except IntegrityError,e:
         pass
     
