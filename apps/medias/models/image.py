@@ -28,8 +28,9 @@ class Image(Media):
         
     def delete(self, *args, **kwargs):
         
-        self.file.delete_file()
         delete(self.file.file)
+        self.file.delete()
+        
         super(Image, self).delete(*args, **kwargs)
         
         
