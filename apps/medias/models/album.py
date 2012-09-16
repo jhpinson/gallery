@@ -5,7 +5,7 @@ class Album(Media):
     media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums')
     end_date = models.DateTimeField(null=True)
     
-    old_id = models.PositiveIntegerField()
+    #old_id = models.PositiveIntegerField()
     
     
     def get_ancestors(self):

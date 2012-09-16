@@ -132,7 +132,7 @@ class GalleryView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GalleryView, self).get_context_data(**kwargs)
         
-        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).media_set.select_subclasses()
+        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).medias.select_subclasses()
         
         return context
    
