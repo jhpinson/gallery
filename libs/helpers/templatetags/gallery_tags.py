@@ -6,7 +6,7 @@ register = template.Library()
 @register.simple_tag()
 def image_thumbnail(value, size):
     
-    data = getattr(value, 'thumbnail_%s' % size)
+    data = getattr(value, 'thumbnail_%s' % size)()
     
     data = dict(data, pk=value.pk)
     

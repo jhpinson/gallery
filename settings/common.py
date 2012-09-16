@@ -126,7 +126,8 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'helpers',
     'emailusernames',
-    'auth'
+    'auth',
+    'south',
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'

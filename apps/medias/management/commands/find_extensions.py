@@ -27,6 +27,9 @@ class Command(BaseCommand):
         for rep, dirs, files in os.walk(args[0]):
             
             for file in files:
+                if file.lower().split('.').count() == 1:
+                    continue
+                
                 ext = file.lower().split('.')[-1]
                 try:
                     extensions[ext] += 1

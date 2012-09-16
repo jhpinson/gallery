@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from structures.views import AlbumView
 admin.autodiscover()
 
 urlpatterns = patterns('')
@@ -22,11 +21,11 @@ except ImportError:
 urlpatterns += patterns('',
     url(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
                         
-    (r'^$', AlbumView.as_view(), {}, "home_view"),
+    
     # custom auth
     url(r'', include('auth.urls')),
     # albums
-    url(r'', include('structures.urls')),
+    #url(r'', include('structures.urls')),
     # medias
     url(r'', include('medias.urls')),
     

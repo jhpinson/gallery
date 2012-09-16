@@ -25,25 +25,26 @@ class Media(ChangeTrackMixin, models.Model):
     
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
+    date = models.DateTimeField()
     
-    file = FileHashField(upload_to=upload_path, hash_field='hash', max_length=1024)
+    file = FileHashField(upload_to=upload_path, hash_field='hash', max_length=1024, null=True)
+    hash = models.CharField(max_length=40, null=True)
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    album = models.ForeignKey('structures.Album')
+    oldalbum = models.PositiveIntegerField(null=True)
+    album = models.ForeignKey('medias.Media', related_name='medias', null=True)
     
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
-    date = models.DateTimeField()
-    
-    hash = models.CharField(max_length=40)
+    @property
+    def owner(self):
+        return self.created_by
     
     def generate_thumbnails(self):
         pass
     
-    def __init__(self, *args, **kwargs):
-        self._cache = {}
-        super(Media, self).__init__(*args, **kwargs)
+    
     
     def save(self, *args, **kwargs):
         
@@ -54,9 +55,9 @@ class Media(ChangeTrackMixin, models.Model):
 
         super(Media, self).save(*args, **kwargs)
         
-        if created:
-            self.album.consolidate_count()
-        
+        #if created:
+        #    self.album.consolidate_count()
+    """ 
     def __getattr__(self, name):
         
         if name[:10] == 'thumbnail_' or name[:10] == 'lazythumb_':
@@ -85,8 +86,9 @@ class Media(ChangeTrackMixin, models.Model):
             return self._cache[name]
             
         else:
-            return super(Media, self).__getattr__(self, name)
-    
+            print name, self.real_type, self.pk
+            return super(Media, self).__getattr__( name)
+    """
     def cast(self):
         return self.real_type.get_object_for_this_type(pk=self.pk)
     
@@ -98,7 +100,7 @@ class Media(ChangeTrackMixin, models.Model):
     
     class Meta:
         app_label = 'medias'
-        unique_together=('hash', 'album')
+        #unique_together=('hash', 'album')
         
         
 class Thumbnail(models.Model):

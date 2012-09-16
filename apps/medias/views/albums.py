@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 from django.views.generic.base import TemplateView
-from structures.models import Album
 from django.views.generic.list import ListView
-from medias.models.media import Media
 from django.views.generic.edit import CreateView, UpdateView
-from structures.forms import AlbumForm
-from django.http import HttpResponse, HttpResponseServerError
-from django.views.decorators.csrf import csrf_exempt
-from time import sleep
-from django.utils import simplejson
-from django.core.files.uploadedfile import UploadedFile
-from StringIO import StringIO
-from PIL import Image as PILImage
-from medias.models.image import Image
-from django.core.files.base import ContentFile
-from django.db.utils import IntegrityError
-from PIL.ExifTags import TAGS
-from dateutil.parser import parse
-import datetime
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils.timezone import utc, get_current_timezone
+from django.http import HttpResponse, HttpResponseServerError
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import simplejson
+from django.core.files.uploadedfile import UploadedFile
+from django.db.utils import IntegrityError
+
+from PIL import Image as PILImage
+from PIL.ExifTags import TAGS
+
+from dateutil.parser import parse
+import datetime
+
+from ..models.image import Image
+from ..forms import AlbumForm
+from ..models.album import Album
 
 class AlbumView(ListView):
     
@@ -64,6 +63,9 @@ class AlbumView(ListView):
             new_image.file.save(
                           filename
                           , file, save=True)
+            
+            new_image.generate_thumbnails()
+            
         except IntegrityError,e:
             print e
             return HttpResponseServerError(u"Le fichier \"%s\" est déja présent dans cet album" % filename) 
@@ -97,22 +99,25 @@ class AlbumView(ListView):
             if pk is not None:
                 self._album = Album.objects.get(pk=pk)
             else:
-                self._album = Album.objects.get(parent=None)
+                self._album = Album.objects.get(album=None)
         
         return self._album
         
     def get_queryset(self):
-        return self.get_album().media_set.select_subclasses()
-    
+        return self.get_album().medias.select_subclasses().models(Image)
+        
     def get_context_data(self, **kwargs):
         
         context = super(AlbumView, self).get_context_data(**kwargs)
         context['album'] = self.get_album()
+        print context['album'] 
+        # get facets
+        
         
         # root album
-        if self.get_album().parent is not None:
-            context['breadcrumbs'] = list(self.get_album().get_ancestors()) + [self.get_album()]
-        
+        if self.get_album().album is not None:
+            context['breadcrumbs'] = self.get_album().get_ancestors() + [self.get_album()]
+            
         return context
     
     
@@ -153,6 +158,6 @@ class CreateAlbum(CreateView):
         
         data = super(CreateAlbum, self).get_form_kwargs()
         
-        data['initial']['parent'] = self.kwargs.get('pk')
+        data['initial']['album'] = self.kwargs.get('pk')
         
         return data

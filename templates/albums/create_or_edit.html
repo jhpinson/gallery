@@ -1,7 +1,7 @@
 
 {% load  bootstrap_toolkit %}
 
-<form method='POST'  data-dajax-method='structures.save_album' {% if object %}data-pk="{{object.pk}}"{%endif%}>
+<form method='POST'  data-dajax-method='medias.save_album' {% if object %}data-pk="{{object.pk}}"{%endif%}>
   
   <div class="modal-body">
     {{ form|as_bootstrap }}

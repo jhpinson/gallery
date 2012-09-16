@@ -27,6 +27,8 @@ class Command(BaseCommand):
        
         for rep, dirs, files in os.walk(args[0]):
             
+            # mpg, mov, avi
+            
             images = [file for file in files if file.lower().split('.')[-1] in ['jpeg', 'jpg', 'png']]
             
             if len(images) > 0:
@@ -47,9 +49,6 @@ class Command(BaseCommand):
                     img_path = "%s/%s" % (rep, image)
                     
                     f = open(img_path, 'r')
-                    
-                    
-                    
                     try:
                         img = PILImage.open(f)
                         new_image = Image(created_by=user, modified_by=user)

@@ -1,5 +1,8 @@
 eclipse.preferences.version=1
-encoding//apps/structures/ajax.py=utf-8
-encoding//apps/structures/views.py=utf-8
+encoding//apps/medias/ajax.py=utf-8
+encoding//apps/medias/migrations/0003_oldalbum.py=utf-8
+encoding//apps/medias/migrations/0008_populate_new_albums.py=utf-8
+encoding//apps/medias/migrations/0009_restore_albums_ids.py=utf-8
+encoding//apps/medias/views/albums.py=utf-8
 encoding//libs/auth/ajax.py=utf-8
 encoding//libs/helpers/dajax.py=utf-8
