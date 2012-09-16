@@ -118,7 +118,7 @@ class AlbumView(ListView):
         
         # root album
         if self.get_album().album is not None:
-            context['breadcrumbs'] = self.get_album().get_ancestors() + [self.get_album()]
+            context['breadcrumbs'] = self.get_album().get_ancestors()[2:] + [self.get_album()]
             
         return context
     
