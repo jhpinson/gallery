@@ -121,7 +121,6 @@ INSTALLED_APPS = (
     'dajax',
     'bootstrap',
     'bootstrap_toolkit',
-    'structures',
     'medias',
     'sorl.thumbnail',
     'helpers',

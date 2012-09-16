@@ -32,7 +32,7 @@ class Media(ChangeTrackMixin, models.Model):
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    oldalbum = models.PositiveIntegerField(null=True)
+    #oldalbum = models.PositiveIntegerField(null=True)
     album = models.ForeignKey('medias.Media', related_name='medias', null=True)
     
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
