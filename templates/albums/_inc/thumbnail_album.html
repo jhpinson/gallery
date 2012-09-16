@@ -1,7 +1,7 @@
 <li class= "span2">
   <div class="thumbnail">
       <img src="/pix.gif">
-      <h5>{{media.name|truncatechars:"18"}}</h5>
+      <h5><a href="{{media.get_absolute_uri}}">{{media.name|truncatechars:"18"}}</a></h5>
       <p class='date'>{{media.date|date:"j F Y"}}</p>
     </div>
 </li>
