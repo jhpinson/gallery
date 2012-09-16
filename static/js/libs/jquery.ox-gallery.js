@@ -7,9 +7,9 @@
 		var lastMousePos = {x : 0, y : 0};
 		
 		// template for displaying items
-		var template = '' + '<div class="item" ><div class="item-w">' + '  <div style="position:relative;display: inline-block;"><img src="">'
+		var template = '' + '<div class="item" ><div class="item-w"><div class="table"><div class="table-cell">' + '  <div style="position:relative;display: inline-block;"><img src="">'
 				+ '  <div class="legend" style="display:none;">'
-				+ '    <h3></h3>' + '  </div></div>' + '</div></div>';
+				+ '    <h3></h3>' + '</div></div></div></div></div></div>';
     
 		var getPrefix = function getPrefix(prop){
         var prefixes = ['Moz','Khtml','Webkit','O','ms'],
@@ -182,8 +182,8 @@
               })
       	slideContainer.append(slide);
       	
-      	
         if(supportEffects) {
+        	console.debug((next ? offset : -offset))
           var transitionClass = next ? 'transition-next' : 'transition-prev';
           slideContainer.children('.item').addClass(transitionClass);
           setTimeout(function () {
@@ -226,7 +226,6 @@
 		var currentPos = 0;
     var effectDuration = 800;
     var supportEffects = getPrefix('transition') !== false;
-    
     var gallery = $('<div id="gallery"></div>');
     $('body').append(gallery);
 
@@ -240,7 +239,6 @@
       createEffectStyle();
     }
 		displaySlide(0, true);
-		// displaySlide(1);
 		$(document).bind('keyup', keyUpHandler);
 		$(document).bind('mousemove', mouseMove);
 		$(window).bind('resize', onResize);

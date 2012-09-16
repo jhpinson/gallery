@@ -20,6 +20,7 @@ import datetime
 from ..models.image import Image
 from ..forms import AlbumForm
 from ..models.album import Album
+from ..models.media import Media
 
 class AlbumView(ListView):
     
@@ -104,7 +105,8 @@ class AlbumView(ListView):
         return self._album
         
     def get_queryset(self):
-        return self.get_album().medias.select_subclasses().models(Image)
+        return Media.objects.filter(album=self.get_album())
+        #return self.get_album().medias.select_subclasses()
         
     def get_context_data(self, **kwargs):
         

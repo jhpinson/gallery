@@ -8,15 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Album.old_id'
-        db.add_column('medias_album', 'old_id',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=1),
+        # Adding field 'Media.is_an_album'
+        db.add_column('medias_media', 'is_an_album',
+                      self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'Album.old_id'
-        db.delete_column('medias_album', 'old_id')
+        # Deleting field 'Media.is_an_album'
+        db.delete_column('medias_media', 'is_an_album')
 
 
     models = {
@@ -59,8 +59,7 @@ class Migration(SchemaMigration):
         'medias.album': {
             'Meta': {'object_name': 'Album', '_ormbases': ['medias.Media']},
             'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'albums'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['medias.Media']"}),
-            'old_id': ('django.db.models.fields.PositiveIntegerField', [], {})
+            'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'albums'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['medias.Media']"})
         },
         'medias.image': {
             'Meta': {'object_name': 'Image', '_ormbases': ['medias.Media']},
@@ -76,10 +75,10 @@ class Migration(SchemaMigration):
             'file': ('filehashfield.fields.FileHashField', [], {'max_length': '1024', 'null': 'True'}),
             'hash': ('django.db.models.fields.CharField', [], {'max_length': '40', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_an_album': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
             'modified_at': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'update_by_media_set'", 'to': "orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
-            'oldalbum': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'real_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']", 'null': 'True'})
         },
         'medias.thumbnail': {

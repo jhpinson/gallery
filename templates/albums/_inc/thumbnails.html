@@ -1,6 +1,20 @@
 <ul class="thumbnails">
 {% if object_list %}
-  {% include "albums/_inc/thumbnails_li.html" %}
+  
+  {% for media in object_list %}
+    
+    {% ifequal media.real_type.name "image" %}
+      {% include "albums/_inc/thumbnail_image.html" with media=media.cast %}
+    {% else %}
+      {% ifequal media.real_type.name "album" %}
+        {% include "albums/_inc/thumbnail_album.html" %}
+      {% else %}
+        {% include "albums/_inc/thumbnail_video.html" %}
+      {% endifequal %}
+    {% endifequal %}
+    
+  {% endfor %}
+  
 {% endif %}
 </ul>
 {% include "pagination.html" %}

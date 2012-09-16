@@ -1,29 +1,19 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
+from medias.models import Album
 
-
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Deleting field 'Album.old_id'
-        db.delete_column('medias_album', 'old_id')
-
-        # Deleting field 'Media.oldalbum'
-        db.delete_column('medias_media', 'oldalbum')
-
-
+        "Write your forwards methods here."
+        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        Album.objects.all().update(is_an_album=1)
+            
     def backwards(self, orm):
-
-        # User chose to not deal with backwards NULL issues for 'Album.old_id'
-        raise RuntimeError("Cannot reverse this migration. 'Album.old_id' and its values cannot be restored.")
-        # Adding field 'Media.oldalbum'
-        db.add_column('medias_media', 'oldalbum',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(null=True),
-                      keep_default=False)
-
+        "Write your backwards methods here."
 
     models = {
         'auth.group': {
@@ -81,6 +71,7 @@ class Migration(SchemaMigration):
             'file': ('filehashfield.fields.FileHashField', [], {'max_length': '1024', 'null': 'True'}),
             'hash': ('django.db.models.fields.CharField', [], {'max_length': '40', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_an_album': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
             'modified_at': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'update_by_media_set'", 'to': "orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
@@ -102,3 +93,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['medias']
+    symmetrical = True

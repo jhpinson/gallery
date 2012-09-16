@@ -40,19 +40,6 @@
         <ul class="" id="upload-details">
         </ul>
       </div>
-      
-     {% for cat in album.get_children %}
-      {% if forloop.first %}
-      <div class="well well-small">
-        <h4>{% if album.parent %}Sous albums{% else %}Albums{% endif %}</h4>
-        <ul class="unstyled">
-      {%endif%}
-      <li><a href="{{cat.get_absolute_uri}}"><i class=" icon-folder-close"></i> {{cat.display_name}}</a></li>
-      {% if forloop.last %}
-      </ul>
-      </div>
-      {%endif%}
-     {% endfor %}  
     
     <div id="thumbnails" >
       {% include "albums/_inc/thumbnails.html" %}

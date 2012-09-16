@@ -8,30 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Album'
-        db.create_table('medias_album', (
-            ('media_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['medias.Media'], unique=True, primary_key=True)),
-            ('end_date', self.gf('django.db.models.fields.DateTimeField')(null=True)),
-        ))
-        db.send_create_signal('medias', ['Album'])
+        # Adding unique constraint on 'Media', fields ['album', 'hash']
+        db.create_unique('medias_media', ['album_id', 'hash'])
 
-
-        # Changing field 'Media.file'
-        db.alter_column('medias_media', 'file', self.gf('filehashfield.fields.FileHashField')(max_length=1024, null=True))
-
-        # Changing field 'Media.hash'
-        db.alter_column('medias_media', 'hash', self.gf('django.db.models.fields.CharField')(max_length=40, null=True))
 
     def backwards(self, orm):
-        # Deleting model 'Album'
-        db.delete_table('medias_album')
+        # Removing unique constraint on 'Media', fields ['album', 'hash']
+        db.delete_unique('medias_media', ['album_id', 'hash'])
 
-
-        # User chose to not deal with backwards NULL issues for 'Media.file'
-        raise RuntimeError("Cannot reverse this migration. 'Media.file' and its values cannot be restored.")
-
-        # User chose to not deal with backwards NULL issues for 'Media.hash'
-        raise RuntimeError("Cannot reverse this migration. 'Media.hash' and its values cannot be restored.")
 
     models = {
         'auth.group': {
@@ -73,14 +57,15 @@ class Migration(SchemaMigration):
         'medias.album': {
             'Meta': {'object_name': 'Album', '_ormbases': ['medias.Media']},
             'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['medias.Media']", 'unique': 'True', 'primary_key': 'True'})
+            'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'albums'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['medias.Media']"})
         },
         'medias.image': {
             'Meta': {'object_name': 'Image', '_ormbases': ['medias.Media']},
             'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['medias.Media']", 'unique': 'True', 'primary_key': 'True'})
         },
         'medias.media': {
-            'Meta': {'object_name': 'Media'},
+            'Meta': {'unique_together': "(('hash', 'album'),)", 'object_name': 'Media'},
+            'album': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'medias'", 'null': 'True', 'to': "orm['medias.Media']"}),
             'created_at': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'create_by_media_set'", 'to': "orm['auth.User']"}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),
@@ -88,10 +73,10 @@ class Migration(SchemaMigration):
             'file': ('filehashfield.fields.FileHashField', [], {'max_length': '1024', 'null': 'True'}),
             'hash': ('django.db.models.fields.CharField', [], {'max_length': '40', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_an_album': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
             'modified_at': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'update_by_media_set'", 'to': "orm['auth.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '512'}),
-            'oldalbum': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
             'real_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']", 'null': 'True'})
         },
         'medias.thumbnail': {

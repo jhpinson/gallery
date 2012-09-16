@@ -17,16 +17,13 @@ class Migration(SchemaMigration):
             ('modified_by', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='update_by_media_set', to=orm['auth.User'])),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=512)),
             ('description', self.gf('django.db.models.fields.TextField')(max_length=2048)),
-            ('file', self.gf('filehashfield.fields.FileHashField')(max_length=1024)),
-            ('real_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True)),
-            ('album', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['structures.Album'])),
             ('date', self.gf('django.db.models.fields.DateTimeField')()),
-            ('hash', self.gf('django.db.models.fields.CharField')(max_length=40)),
+            ('file', self.gf('filehashfield.fields.FileHashField')(max_length=1024, null=True)),
+            ('hash', self.gf('django.db.models.fields.CharField')(max_length=40, null=True)),
+            ('real_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True)),
+            ('album', self.gf('django.db.models.fields.related.ForeignKey')(related_name='medias', null=True, to=orm['medias.Media'])),
         ))
         db.send_create_signal('medias', ['Media'])
-
-        # Adding unique constraint on 'Media', fields ['hash', 'album']
-        db.create_unique('medias_media', ['hash', 'album_id'])
 
         # Adding model 'Thumbnail'
         db.create_table('medias_thumbnail', (
@@ -54,13 +51,17 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('medias', ['Video'])
 
+        # Adding model 'Album'
+        db.create_table('medias_album', (
+            ('media_ptr', self.gf('django.db.models.fields.related.OneToOneField')(related_name='albums', unique=True, primary_key=True, to=orm['medias.Media'])),
+            ('end_date', self.gf('django.db.models.fields.DateTimeField')(null=True)),
+        ))
+        db.send_create_signal('medias', ['Album'])
+
 
     def backwards(self, orm):
         # Removing unique constraint on 'Thumbnail', fields ['media', 'size']
         db.delete_unique('medias_thumbnail', ['media_id', 'size'])
-
-        # Removing unique constraint on 'Media', fields ['hash', 'album']
-        db.delete_unique('medias_media', ['hash', 'album_id'])
 
         # Deleting model 'Media'
         db.delete_table('medias_media')
@@ -73,6 +74,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Video'
         db.delete_table('medias_video')
+
+        # Deleting model 'Album'
+        db.delete_table('medias_album')
 
 
     models = {
@@ -112,19 +116,24 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'medias.album': {
+            'Meta': {'object_name': 'Album', '_ormbases': ['medias.Media']},
+            'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
+            'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'albums'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['medias.Media']"})
+        },
         'medias.image': {
             'Meta': {'object_name': 'Image', '_ormbases': ['medias.Media']},
             'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['medias.Media']", 'unique': 'True', 'primary_key': 'True'})
         },
         'medias.media': {
-            'Meta': {'unique_together': "(('hash', 'album'),)", 'object_name': 'Media'},
-            'album': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['structures.Album']"}),
+            'Meta': {'object_name': 'Media'},
+            'album': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'medias'", 'null': 'True', 'to': "orm['medias.Media']"}),
             'created_at': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'create_by_media_set'", 'to': "orm['auth.User']"}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),
             'description': ('django.db.models.fields.TextField', [], {'max_length': '2048'}),
-            'file': ('filehashfield.fields.FileHashField', [], {'max_length': '1024'}),
-            'hash': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
+            'file': ('filehashfield.fields.FileHashField', [], {'max_length': '1024', 'null': 'True'}),
+            'hash': ('django.db.models.fields.CharField', [], {'max_length': '40', 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified_at': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
             'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'update_by_media_set'", 'to': "orm['auth.User']"}),
@@ -143,25 +152,6 @@ class Migration(SchemaMigration):
         'medias.video': {
             'Meta': {'object_name': 'Video', '_ormbases': ['medias.Media']},
             'media_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['medias.Media']", 'unique': 'True', 'primary_key': 'True'})
-        },
-        'structures.album': {
-            'Meta': {'object_name': 'Album'},
-            'album_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'created_at': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
-            'created_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'create_by_album_set'", 'null': 'True', 'to': "orm['auth.User']"}),
-            'description': ('django.db.models.fields.TextField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
-            'end_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'images_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'level': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'lft': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'modified_at': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'modified_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'update_by_album_set'", 'null': 'True', 'to': "orm['auth.User']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'parent': ('mptt.fields.TreeForeignKey', [], {'related_name': "'children'", 'null': 'True', 'to': "orm['structures.Album']"}),
-            'rght': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'}),
-            'start_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True'}),
-            'tree_id': ('django.db.models.fields.PositiveIntegerField', [], {'db_index': 'True'})
         }
     }
 

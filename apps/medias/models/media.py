@@ -35,7 +35,13 @@ class Media(ChangeTrackMixin, models.Model):
     #oldalbum = models.PositiveIntegerField(null=True)
     album = models.ForeignKey('medias.Media', related_name='medias', null=True)
     
+    is_an_album = models.PositiveSmallIntegerField()
+    
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
+    
+    
+    def get_absolute_uri(self):
+        return self.cast().get_absolute_uri()
     
     @property
     def owner(self):
@@ -52,7 +58,9 @@ class Media(ChangeTrackMixin, models.Model):
         if self._state.adding:
             self.real_type = self._get_real_type()
             created = True
-
+            
+            self.is_an_album = 1 if self.real_type.model == 'album' else 0
+            
         super(Media, self).save(*args, **kwargs)
         
         #if created:
@@ -100,8 +108,8 @@ class Media(ChangeTrackMixin, models.Model):
     
     class Meta:
         app_label = 'medias'
-        #unique_together=('hash', 'album')
-        
+        unique_together=('hash', 'album')
+        ordering=['-is_an_album', 'date']
         
 class Thumbnail(models.Model):
     
