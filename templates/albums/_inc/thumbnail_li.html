@@ -1,4 +1,8 @@
 {% load gallery_tags %}
 <li class= "span2">
-  <a href="#" class="thumbnail"> {% image_thumbnail media "small" %} </a>
+  <div class="thumbnail">
+      {% image_thumbnail media "small" %}
+      <h6>{{media.name}}</h6>
+      <p class='date'>{{media.date}}</p>
+    </div>
 </li>

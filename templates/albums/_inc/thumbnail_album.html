@@ -1,3 +1,7 @@
-<li class= "span2 album">
-  <a href="{{media.get_absolute_uri}}" class="thumbnail">{{media.name}}</a>
+<li class= "span2">
+  <div class="thumbnail">
+      <img src="/pix.gif">
+      <h5>{{media.name}}</h5>
+      <p class='date'>{{media.date|date:"j F Y"}}</p>
+    </div>
 </li>
