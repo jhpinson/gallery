@@ -2,10 +2,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from model_utils.managers import PassThroughManager, InheritanceQuerySet
-from django.core.urlresolvers import  reverse
 from model_utils import Choices
-from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 from helpers.mixins import ChangeTrackMixin
 from filehashfield.fields import FileHashField
 
@@ -32,8 +29,8 @@ class Media(ChangeTrackMixin, models.Model):
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    #oldalbum = models.PositiveIntegerField(null=True)
-    album = models.ForeignKey('medias.Media', related_name='medias', null=True)
+    oldalbum = models.PositiveIntegerField(null=True)
+    parent_album = models.ForeignKey('medias.Album', related_name='medias', null=True)
     
     is_an_album = models.PositiveSmallIntegerField()
     
@@ -108,7 +105,7 @@ class Media(ChangeTrackMixin, models.Model):
     
     class Meta:
         app_label = 'medias'
-        unique_together=('hash', 'album')
+        #unique_together=('hash', 'album')
         ordering=['-is_an_album', 'date']
         
 class Thumbnail(models.Model):

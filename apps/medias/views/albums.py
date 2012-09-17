@@ -105,14 +105,13 @@ class AlbumView(ListView):
         return self._album
         
     def get_queryset(self):
-        return Media.objects.filter(album=self.get_album())
+        return Media.objects.filter(album=self.get_album()).select_subclasses()
         #return self.get_album().medias.select_subclasses()
         
     def get_context_data(self, **kwargs):
         
         context = super(AlbumView, self).get_context_data(**kwargs)
         context['album'] = self.get_album()
-        print context['album'] 
         # get facets
         
         

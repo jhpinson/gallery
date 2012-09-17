@@ -1,8 +1,9 @@
 from django.db import models
 from medias.models import Media
+from medias.models import Thumbnail
 
 class Album(Media):
-    media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums')
+    #media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums', parent_link=True)
     end_date = models.DateTimeField(null=True)
     
     #old_id = models.PositiveIntegerField()
@@ -22,6 +23,13 @@ class Album(Media):
     def get_children(self):
         
         return Album.objects.filter(album=self)
+    
+    def default_thumbnail(self):
+        try:
+            return Thumbnail.objects.get(media_id=self.pk, size='small').url
+        except Exception,e:
+            return '/pix.gif'
+            
     
     @property
     def display_name(self):
