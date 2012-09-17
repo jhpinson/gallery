@@ -1,9 +1,5 @@
 eclipse.preferences.version=1
 encoding//apps/medias/ajax.py=utf-8
-encoding//apps/medias/migrations/0003_is_an_album.py=utf-8
-encoding//apps/medias/migrations/0005_auto__add_field_media_oldalbum__chg_field_media_album.py=utf-8
-encoding//apps/medias/migrations/0006_oldalbum.py=utf-8
-encoding//apps/medias/migrations/0009_parent_album.py=utf-8
 encoding//apps/medias/views/albums.py=utf-8
 encoding//libs/auth/ajax.py=utf-8
 encoding//libs/helpers/dajax.py=utf-8

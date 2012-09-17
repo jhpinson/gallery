@@ -12,17 +12,17 @@ class Album(Media):
     def get_ancestors(self):
         
         ancestors = []
-        current = self.album
+        current = self.parent_album
         while current is not None:
             ancestors.append(current)
-            current = current.album
+            current = current.parent_album
             
         return ancestors
         
     
     def get_children(self):
         
-        return Album.objects.filter(album=self)
+        return Album.objects.filter(parent_album=self)
     
     def default_thumbnail(self):
         try:
@@ -40,12 +40,12 @@ class Album(Media):
     
     @property
     def is_root(self):
-        return self.name=='root' and self.parent is None
+        return self.name=='root' and self.parent_album is None
     
     @property
     def is_user_root(self):
         try:
-            return self.album.is_root()
+            return self.parent_album.is_root()
         except:
             return False
     

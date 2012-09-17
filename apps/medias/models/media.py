@@ -29,7 +29,6 @@ class Media(ChangeTrackMixin, models.Model):
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    oldalbum = models.PositiveIntegerField(null=True)
     parent_album = models.ForeignKey('medias.Album', related_name='medias', null=True)
     
     is_an_album = models.PositiveSmallIntegerField()

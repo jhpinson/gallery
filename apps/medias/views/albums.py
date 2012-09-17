@@ -100,12 +100,12 @@ class AlbumView(ListView):
             if pk is not None:
                 self._album = Album.objects.get(pk=pk)
             else:
-                self._album = Album.objects.get(album=None)
+                self._album = Album.objects.get(parent_album=None)
         
         return self._album
         
     def get_queryset(self):
-        return Media.objects.filter(album=self.get_album()).select_subclasses()
+        return Media.objects.filter(parent_album=self.get_album()).select_subclasses()
         #return self.get_album().medias.select_subclasses()
         
     def get_context_data(self, **kwargs):
@@ -116,7 +116,7 @@ class AlbumView(ListView):
         
         
         # root album
-        if self.get_album().album is not None:
+        if self.get_album().parent_album is not None:
             context['breadcrumbs'] = self.get_album().get_ancestors()[2:] + [self.get_album()]
             
         return context
