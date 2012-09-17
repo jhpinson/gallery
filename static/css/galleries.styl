@@ -4,7 +4,7 @@
   width 100%
   background-color rgba(0,0,0,0.9)
   content ""
-  z-index 999999
+  z-index 2000
   position fixed
   top 0px
   left 0px
@@ -15,8 +15,9 @@
   .content-w
     position relative  
     height 100%
+    position relative
     img
-      max-height 800px 
+      max-height 100%
     .table
       display table
       height 100%
@@ -78,4 +79,6 @@
           background-position-y -19px
         &:hover
           background-position-x -23px
+        &.close
+          margin-top -1px
 

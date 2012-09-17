@@ -1,7 +1,9 @@
 (function($) {
 
   var initGallery = function(items) {
-
+    $(window).resize(function() {
+      $('.item-w img').css('max-height',($(window).height()-120)+'px')
+    });
     var currentSlide = null;
     var displayLegend = true;
     var lastMousePos = {
@@ -10,6 +12,7 @@
     };
 
     // template for displaying items
+
     var template = ''
         + '<div class="item" ><div class="item-w"><div class="table"><div class="table-cell">'
         + '  <div style="position:relative;display: inline-block;"><img src="">'
@@ -177,12 +180,9 @@
         
         $('<img>').attr('src', item.attr('data-img-src')).load(
             function() {
-              console.debug('_preloadImage', idx)
               if (!callbackCalled && (idx == 2 || idx == items.length - 1)) {
-                console.debug('callback')
                 callbackCalled = true;
                 callback();
-                
               }
               
               if (idx < items.length - 1) {
@@ -224,7 +224,7 @@
             left : (next ? offset : -offset) + 'px'
           })
       slideContainer.append(slide);
-
+      $('.item-w img').css('max-height',($(window).height()-120)+'px')
       slide.find('img').load(function() {
 
         if (supportEffects) {
@@ -296,7 +296,8 @@
     $(document).bind('mousemove', mouseMove);
     $(window).bind('resize', onResize);
     gallery.click(function(e) {
-          if (e.srcElement == gallery[0]) {
+      var src = $(e.srcElement);
+          if (src.hasClass('item') || src.hasClass('table-cell')) {
             close();
           }
         })
