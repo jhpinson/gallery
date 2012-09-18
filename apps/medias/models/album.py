@@ -1,15 +1,14 @@
 from django.db import models
-from medias.models import Media
-from medias.models import Thumbnail
-from medias.models.image import Image
+from medias.models import Media, Thumbnail, Image, Video
+
 from middleware.request import get_current_user
 
 class Album(Media):
-    #media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums', parent_link=True)
     end_date = models.DateTimeField(null=True)
     
-    #old_id = models.PositiveIntegerField()
-    
+    album_count = models.PositiveIntegerField(default=0)
+    image_count = models.PositiveIntegerField(default=0)
+    video_count = models.PositiveIntegerField(default=0)
     
     def get_ancestors(self):
         
@@ -60,27 +59,20 @@ class Album(Media):
     def get_absolute_uri(self):
         return 'album_view', None, {'pk': self.pk}
     
-    def save(self, *args, **kwargs):
-        created = False
-        if self._state.adding:
-            created = True
-        
-        super(Album, self).save(*args, **kwargs)
-        #if created:
-        #    self.consolidate_count()
         
     def consolidate_count(self):
-        """
-        from .image import Image
-        self.album_count = self.get_descendant_count()
-        self.images_count = Image.objects.filter(album__in=self.get_descendants(include_self=True)).count()
-        if self.images_count > 0:
-            self.start_date = Image.objects.filter(album__in=self.get_descendants(include_self=True)).order_by('date')[0].date
-            self.end_date = Image.objects.filter(album__in=self.get_descendants(include_self=True)).order_by('-date')[0].date
+        
+        self.album_count = Album.objects.filter(parent_album=self).count()
+        self.image_count = Image.objects.filter(parent_album=self).count()
+        self.video_count = Video.objects.filter(parent_album=self).count()
+        
+        if self.album_count > 0 or self.image_count > 0 or self.video_count > 0:
+            self.start_date = Media.objects.filter(parent_album=self).order_by('date')[0].date
+            self.end_date = Media.objects.filter(parent_album=self).order_by('-date')[0].date
+        
         self.save()
-        if self.parent is not None:
-            self.parent.consolidate_count()
-        """
+        
+        
         
     def __unicode__(self):
         if self.is_user_root:

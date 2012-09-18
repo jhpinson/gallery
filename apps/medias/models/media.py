@@ -59,6 +59,9 @@ class Media(ChangeTrackMixin, models.Model):
             
         super(Media, self).save(*args, **kwargs)
         
+        if created and self.parent_album is not None:
+                self.parent_album.consolidate_count()
+        
         #if created:
         #    self.album.consolidate_count()
     """ 
