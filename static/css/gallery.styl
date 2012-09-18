@@ -5,11 +5,20 @@ body
 .thumbnails 
   li
     .thumbnail
+    
+      &.album
+        height 200px
+        
+      &.video, &.image
+        height 160px
+    
       text-align  center
       .thumbnail-container
-        
         display inline-block
-        h5 
+        
+        
+        
+        h5, h6
           line-height 5px
           text-align  left
         p.date 
@@ -17,7 +26,7 @@ body
           font-size 12px
           margin  0
           text-align  left
-        height 200px
+        
         img 
           width auto
           max-height 120px
@@ -27,6 +36,8 @@ body
             float right
           .label
             float left
+        div.stats
+          text-align  left
   
 #gallery
   bottom 0

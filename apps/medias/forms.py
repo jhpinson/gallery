@@ -7,6 +7,6 @@ class AlbumForm(ModelForm):
     class Meta:
         model = Album
         widgets = {
-            'album': HiddenInput,
+            'parent_album': HiddenInput,
         }
-        fields = ('name', 'description',)
+        fields = ('name', 'description', 'parent_album',)
