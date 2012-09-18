@@ -9,3 +9,4 @@ class AlbumForm(ModelForm):
         widgets = {
             'album': HiddenInput,
         }
+        fields = ('name', 'description',)

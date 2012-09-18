@@ -5,7 +5,7 @@ from model_utils.managers import PassThroughManager, InheritanceQuerySet
 from model_utils import Choices
 from helpers.mixins import ChangeTrackMixin
 from filehashfield.fields import FileHashField
-
+from datetime import datetime
 class MediaQuerySet(InheritanceQuerySet):
             
     def models(self, *models):
@@ -22,7 +22,7 @@ class Media(ChangeTrackMixin, models.Model):
     
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=datetime.now)
     
     file = FileHashField(upload_to=upload_path, hash_field='hash', max_length=1024, null=True)
     hash = models.CharField(max_length=40, null=True)

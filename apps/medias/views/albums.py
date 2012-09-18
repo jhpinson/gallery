@@ -21,6 +21,8 @@ from ..models.image import Image
 from ..forms import AlbumForm
 from ..models.album import Album
 from ..models.media import Media
+from django.core.exceptions import ObjectDoesNotExist
+from middleware.request import get_current_user
 
 class AlbumView(ListView):
     
@@ -95,12 +97,16 @@ class AlbumView(ListView):
         
         if self._album is None:
         
-            pk = self.kwargs.get('pk', 19181)
+            pk = self.kwargs.get('pk', None)
             
             if pk is not None:
                 self._album = Album.objects.get(pk=pk)
             else:
-                self._album = Album.objects.get(parent_album=None)
+                try:
+                    self._album = Album.objects.get(parent_album__name='root', parent_album__parent_album=None)
+                except ObjectDoesNotExist:
+                    root, created =  Album.objects.get_or_create(name='root',parent_album=None)
+                    self._album = Album.objects.create(name=get_current_user().pk , parent_album=root)
         
         return self._album
         
@@ -117,7 +123,7 @@ class AlbumView(ListView):
         
         # root album
         if self.get_album().parent_album is not None:
-            context['breadcrumbs'] = self.get_album().get_ancestors()[2:] + [self.get_album()]
+            context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]
             
         return context
     
@@ -159,6 +165,5 @@ class CreateAlbum(CreateView):
         
         data = super(CreateAlbum, self).get_form_kwargs()
         
-        data['initial']['album'] = self.kwargs.get('pk')
-        
+        data['initial']['parent_album'] = self.kwargs.get('pk')
         return data

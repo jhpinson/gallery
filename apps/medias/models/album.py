@@ -2,6 +2,7 @@ from django.db import models
 from medias.models import Media
 from medias.models import Thumbnail
 from medias.models.image import Image
+from middleware.request import get_current_user
 
 class Album(Media):
     #media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums', parent_link=True)
@@ -15,27 +16,32 @@ class Album(Media):
         ancestors = []
         current = self.parent_album
         while current is not None:
-            ancestors.append(current)
+            ancestors.insert(0,current)
             current = current.parent_album
-            
+          
         return ancestors
         
     
     def get_children(self):
         
-        return Album.objects.filter(parent_album=self)
+        return self.medias
     
     def default_thumbnail(self):
         try:
             return Thumbnail.objects.get(media_id=self.get_children().models(Image)[0], size='small')
         except Exception,e:
+            print e
             return '/pix.gif'
             
     
     @property
     def display_name(self):
         if self.is_user_root is True:
-            return self.owner.get_full_name()
+            
+            if self.owner == get_current_user():
+                return 'Mes albums'
+            else:
+                return self.owner.get_full_name()
         else:
             return self.name
     
@@ -46,7 +52,7 @@ class Album(Media):
     @property
     def is_user_root(self):
         try:
-            return self.parent_album.is_root()
+            return self.parent_album.is_root
         except:
             return False
     
@@ -84,14 +90,3 @@ class Album(Media):
 
     class Meta:
         app_label = 'medias'
-
-#Post signal to autocreate profile
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-
-def create_user_root_album(sender, instance, created, **kwargs):
-    if created:
-        root, created =  Album.objects.get_or_create(name='root',parent=None)
-        Album.objects.create(name=instance.pk ,created_by=instance, modified_by=instance, parent=root)
-
-post_save.connect(create_user_root_album, sender=User)    
