@@ -2,13 +2,15 @@
 {% load url from future %}
 <li class= "span2">
   <div class="thumbnail">
-    
-      <img src="{{media.default_thumbnail.url}}">
-      <h5><a href="{{media.get_absolute_uri}}">{{media.name|truncatechars:"18"}}</a></h5>
-      <p class='date'>{{media.date|date:"j F Y"}}</p>
-      <div class="actions" >
-        <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a> 
-        <a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a>
+      <div class="thumbnail-container">
+        <div class="actions" >
+          <span class="label label-info">album</span>
+          <a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a>
+          <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a> 
+        </div>
+        <img src="{{media.default_thumbnail.url}}">
+        <h5><a href="{{media.get_absolute_uri}}">{{media.name|truncatechars:"18"}}</a></h5>
+        <p class='date'>{{media.date|date:"j F Y"}}</p>
       </div>
     </div>
 </li>
