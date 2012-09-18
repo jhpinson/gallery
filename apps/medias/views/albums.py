@@ -56,7 +56,7 @@ class AlbumView(ListView):
                 
             name = filename.lower()
             new_image.name = name
-            new_image.album=self.get_album()
+            new_image.parent_album=self.get_album()
             
             if new_image.date is None:
                 new_image.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
@@ -95,7 +95,7 @@ class AlbumView(ListView):
         
         if self._album is None:
         
-            pk = self.kwargs.get('pk', None)
+            pk = self.kwargs.get('pk', 19181)
             
             if pk is not None:
                 self._album = Album.objects.get(pk=pk)

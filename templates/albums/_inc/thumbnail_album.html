@@ -1,7 +1,7 @@
 {% load gallery_tags %}
 <li class= "span2">
   <div class="thumbnail">
-      <img src="{{media.default_thumbnail}}">
+      <img src="{{media.default_thumbnail.url}}">
       <h5><a href="{{media.get_absolute_uri}}">{{media.name|truncatechars:"18"}}</a></h5>
       <p class='date'>{{media.date|date:"j F Y"}}</p>
     </div>

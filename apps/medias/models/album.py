@@ -1,6 +1,7 @@
 from django.db import models
 from medias.models import Media
 from medias.models import Thumbnail
+from medias.models.image import Image
 
 class Album(Media):
     #media_ptr = models.OneToOneField('medias.Media', primary_key=True, related_name='albums', parent_link=True)
@@ -26,7 +27,7 @@ class Album(Media):
     
     def default_thumbnail(self):
         try:
-            return Thumbnail.objects.get(media_id=self.pk, size='small').url
+            return Thumbnail.objects.get(media_id=self.get_children().models(Image)[0], size='small')
         except Exception,e:
             return '/pix.gif'
             
