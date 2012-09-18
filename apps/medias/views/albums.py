@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import simplejson
 from django.core.files.uploadedfile import UploadedFile
 from django.db.utils import IntegrityError
+from django.db import connection
 
 from PIL import Image as PILImage
 from PIL.ExifTags import TAGS
@@ -23,6 +24,38 @@ from ..models.album import Album
 from ..models.media import Media
 from django.core.exceptions import ObjectDoesNotExist
 from middleware.request import get_current_user
+from django.contrib.contenttypes.models import ContentType
+from urlparse import urlparse, parse_qs
+from django.utils.http import urlencode
+
+def construct_url(url, query_dict = None):
+    parse_result = urlparse(url)
+    
+    query = {}
+    
+    if len(parse_result.query) > 0:
+        query = parse_qs(parse_result.query)
+        
+        for key, value in query.iteritems():
+            query[key] = value
+          
+    
+    if query_dict is not None:
+        for key, value in query_dict.iteritems():
+            query[key] = [value]
+            
+    if len(query.keys()) > 0:
+        _query= []
+        for key, values in query.iteritems():
+            if len(values) == 1:
+                _query.append(urlencode({key: values[0]}))
+            else:
+                for value in values:
+                    _query.append(urlencode({key: value}))
+                
+        query = '&'.join(_query)
+        
+    return "%s%s%s" % ( parse_result.path, "?%s" % query if query is not None else '', "#%s" % parse_result.fragment if len(parse_result.fragment) > 0 else '')
 
 class AlbumView(ListView):
     
@@ -111,16 +144,57 @@ class AlbumView(ListView):
         return self._album
         
     def get_queryset(self):
-        return Media.objects.filter(parent_album=self.get_album()).select_subclasses()
+        
+        filters = {}
+        
+        qs =  Media.objects.filter(parent_album=self.get_album())
+        
+        for facet, value in self.get_current_facets().iteritems():
+            if facet in ['year', 'month']:
+                filters['date__%s' % facet] = value
+        
+        if len(filters.keys()) > 0:
+            qs = qs.filter(**filters)
+            
+        return qs.select_subclasses()
         #return self.get_album().medias.select_subclasses()
         
+    def get_current_facets(self):
+        
+        facets = {}
+        facets['year'] = self.request.GET.get('year', Media.objects.filter(parent_album=self.get_album()).order_by('-date')[0].date.year)
+        facets['month'] = self.request.GET.get('month', Media.objects.filter(parent_album=self.get_album(), date__year=facets['year']).order_by('-date')[0].date.month)
+        return facets
+    
     def get_context_data(self, **kwargs):
         
         context = super(AlbumView, self).get_context_data(**kwargs)
         context['album'] = self.get_album()
+        
         # get facets
+        current_facets = self.get_current_facets()
+        facets = {}
+        url = self.request.get_full_path()
         
+        cursor = connection.cursor()
+        cursor.execute("SELECT real_type_id, count(*) from medias_media where parent_album_id=%s group by real_type_id", [self.get_album().pk])
+        facets['real_type'] = []
+        for res in cursor.fetchall():
+            facets['real_type'].append({'name' :ContentType.objects.get(pk=res[0]).model, 'count' : res[1], 'url' : None})
         
+        cursor.execute("SELECT year(date), count(*) from medias_media where parent_album_id=%s group by  year(date)", [self.get_album().pk])
+        facets['year'] = []
+        for res in cursor.fetchall():
+            facets['year'].append({'name' :res[0], 'count' : res[1], 'url' : construct_url(url, {'year' : res[0]}), 'current' : current_facets.get('year') == res[0]})
+            
+        cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and parent_album_id=%s group by  month(date)", [current_facets.get('year'), self.get_album().pk])
+        facets['month'] = []
+        for res in cursor.fetchall():
+            facets['month'].append({'name' :res[0], 'count' : res[1], 'url' : construct_url(url, {'month' : res[0]}), 'current' : current_facets.get('month') == res[0]})
+            
+            
+        context['facets'] = facets
+        print context['facets']
         # root album
         if self.get_album().parent_album is not None:
             context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]
@@ -139,7 +213,7 @@ class GalleryView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GalleryView, self).get_context_data(**kwargs)
         
-        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).medias.select_subclasses()
+        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).medias.models(Image).select_subclasses()
         
         return context
    

@@ -30,6 +30,18 @@
       
       {% endif %}
       
+      <ul>
+        {% for facet in facets.year %}
+          <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
+        {% endfor %}
+      </ul>
+      
+      <ul>
+        {% for facet in facets.month %}
+          <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
+        {% endfor %}
+      </ul>
+      
      </header>
      
      <div id="upload-manager" class="well" style="display:none">
