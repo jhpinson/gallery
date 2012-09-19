@@ -54,23 +54,56 @@
 
   <div class="row">
     <div class="span2 pull-right">
-      <div class="chrono well sidebar-nav ">
-        <ul class="nav nav-pills  year">
-          {% for facet in facets.year %}
-          <li class="{% if facet.current %}active{%endif%}">
-            <a href="{{facet.url}}">{{facet.name}}</a>
-          </li>
-          {% endfor %}
+      
+        
+        {%if current_facets.year or  current_facets.month %}
+        <div class="sidebar-nav well well-small">
+          <h4>Filtres actifs</h4>
+        <ul class="nav current-filters">
+          {% if current_facets.year %}
+          <li><a href="{{current_facets.year.url}}"><i class="icon-remove"></i></a> {{current_facets.year.name}}</li>
+          {% endif %}
+          
+          {% if current_facets.month %}
+          <li><a href="{{current_facets.month.url}}"><i class="icon-remove"></i></a> {{current_facets.month.name}}</li>
+          {% endif %}
         </ul>
+        </div>
+        {% endif %}
+       
+        
+        {% for facet in facets.year %}
+          {% if forloop.first %}
+          <div class="sidebar-nav well well-small">
+            <h4>Filtrer par année</h4>
+          <ul class="nav ">
+          {% endif %}
+            <li >
+              <a href="{{facet.url}}"><i class="icon-plus"></i> {{facet.name}}</a>
+            </li>
+          {% if forloop.last %}
+          </ul>
+          </div>
+          {% endif %}
+        {% endfor %}
+    
+    
+        {% for facet in facets.month %}
+          {% if forloop.first %}
+          <div class="sidebar-nav well well-small">
+            <h4>Filtrer par mois</h4>
+          <ul class="nav  ">
+          {% endif %}
+            <li >
+              <a href="{{facet.url}}"><i class="icon-plus"></i> {{facet.name}}</a>
+            </li>
+          {% if forloop.last %}
+          </ul>
+          </div>
+          {% endif %}
+        {% endfor %}
 
-        <ul class="nav nav-pills  month">
-          {% for facet in facets.month %}
-          <li class="{% if facet.current %}active{%endif%}">
-            <a href="{{facet.url}}">{{facet.name}}</a>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
+        
     </div>
     
     <div id="thumbnails" class=" span10">
