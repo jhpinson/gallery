@@ -192,7 +192,7 @@ class AlbumView(ListView):
         cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and parent_album_id=%s group by  month(date)", [current_facets.get('year'), self.get_album().pk])
         facets['month'] = []
         for res in cursor.fetchall():
-            facets['month'].append({'name' :MONTH[res[0]-1]   , 'count' : res[1], 'url' : construct_url(url, {'month' : res[0]}), 'current' : int(current_facets.get('month')) == int(res[0])})
+            facets['month'].append({'name' :MONTH[res[0]-1]   , 'count' : res[1], 'url' : construct_url(url, {'month' : res[0], 'year' : current_facets.get('year')}, clean=True), 'current' : int(current_facets.get('month')) == int(res[0])})
             
             
         context['facets'] = facets

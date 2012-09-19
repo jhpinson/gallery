@@ -5,58 +5,73 @@
 {% block "body-class" %}fileupload{% endblock %}
 
 {% block "content" %}
-  
-  <section>
-      
-     <header>
-       {% if breadcrumbs %}
-       <ul class="breadcrumb">
-         {% for crumb in breadcrumbs %}
-         {% if forloop.last %}
-          <li class="active">{{crumb.display_name}}</li>
-         {% else %}
-          <li><a href="{{crumb.get_absolute_uri}}">{{crumb.display_name}}</a> <span class="divider">/</span></li>
-         {% endif %}
-        {% endfor %}
-        
-        
-        <li class="pull-right">
-          <a class="btn btn-small start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a>   
-          <a class="btn btn-small" href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a>   
-          <a class="btn btn-small" href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a>
-          <button class="btn btn-small" style="position:relative; "><span style="position:absolute;">ajouter des photos</span><input style="opacity:0"  id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></button>   
-        </li>
-      </ul>
-      
+
+<section>
+
+  <header>
+    {% if breadcrumbs %}
+    <ul class="breadcrumb">
+      {% for crumb in breadcrumbs %}
+      {% if forloop.last %}
+      <li class="active">
+        {{crumb.display_name}}
+      </li>
+      {% else %}
+      <li>
+        <a href="{{crumb.get_absolute_uri}}">{{crumb.display_name}}</a><span class="divider">/</span>
+      </li>
       {% endif %}
-      
-      <ul class="nav nav-pills">
-        {% for facet in facets.year %}
-          <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
-        {% endfor %}
-      </ul>
-      
-      <ul class="nav nav-pills">
-        {% for facet in facets.month %}
-          <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
-        {% endfor %}
-      </ul>
-      
-     </header>
-     
-     <div id="upload-manager" class="well" style="display:none">
-       <h4>Téléversement de <span></span></h4>
-       <div id="progressall" class=" progress progress-striped active">
-          <div  class="bar" style="width: 0;"></div>
-        </div>
-        <ul class="" id="upload-details">
+      {% endfor %}
+
+      <li class="pull-right">
+        <a class="btn btn-small start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a>
+        <a class="btn btn-small" href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a>
+        <a class="btn btn-small" href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a>
+        <button class="btn btn-small" style="position:relative; ">
+          <span style="position:absolute;">ajouter des photos</span>
+          <input style="opacity:0"  id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple >
+        </button>
+      </li>
+    </ul>
+
+    {% endif %}
+
+  </header>
+
+  <div id="upload-manager" class="well" style="display:none">
+    <h4>Téléversement de <span></span></h4>
+    <div id="progressall" class=" progress progress-striped active">
+      <div  class="bar" style="width: 0;"></div>
+    </div>
+    <ul class="" id="upload-details"></ul>
+  </div>
+
+  <div class="row">
+    <div class="span2 pull-right">
+      <div class="chrono well sidebar-nav ">
+        <ul class="nav nav-pills  year">
+          {% for facet in facets.year %}
+          <li class="{% if facet.current %}active{%endif%}">
+            <a href="{{facet.url}}">{{facet.name}}</a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <ul class="nav nav-pills  month">
+          {% for facet in facets.month %}
+          <li class="{% if facet.current %}active{%endif%}">
+            <a href="{{facet.url}}">{{facet.name}}</a>
+          </li>
+          {% endfor %}
         </ul>
       </div>
+    </div>
     
-    <div id="thumbnails" >
+    <div id="thumbnails" class=" span10">
       {% include "albums/_inc/thumbnails.html" %}
     </div>
-  </section>
-  
-  
+  </div>
+
+</section>
+
 {% endblock %}
