@@ -28,17 +28,19 @@ from django.contrib.contenttypes.models import ContentType
 from urlparse import urlparse, parse_qs
 from django.utils.http import urlencode
 
-def construct_url(url, query_dict = None):
+MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
+
+def construct_url(url, query_dict = None, clean=False):
     parse_result = urlparse(url)
     
     query = {}
-    
-    if len(parse_result.query) > 0:
-        query = parse_qs(parse_result.query)
-        
-        for key, value in query.iteritems():
-            query[key] = value
-          
+    if not clean:
+        if len(parse_result.query) > 0:
+            query = parse_qs(parse_result.query)
+            
+            for key, value in query.iteritems():
+                query[key] = value
+      
     
     if query_dict is not None:
         for key, value in query_dict.iteritems():
@@ -185,12 +187,12 @@ class AlbumView(ListView):
         cursor.execute("SELECT year(date), count(*) from medias_media where parent_album_id=%s group by  year(date)", [self.get_album().pk])
         facets['year'] = []
         for res in cursor.fetchall():
-            facets['year'].append({'name' :res[0], 'count' : res[1], 'url' : construct_url(url, {'year' : res[0]}), 'current' : current_facets.get('year') == res[0]})
+            facets['year'].append({'name' :res[0], 'count' : res[1], 'url' : construct_url(url, {'year' : res[0]}, clean=True), 'current' : int(current_facets.get('year')) == int(res[0])})
             
         cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and parent_album_id=%s group by  month(date)", [current_facets.get('year'), self.get_album().pk])
         facets['month'] = []
         for res in cursor.fetchall():
-            facets['month'].append({'name' :res[0], 'count' : res[1], 'url' : construct_url(url, {'month' : res[0]}), 'current' : current_facets.get('month') == res[0]})
+            facets['month'].append({'name' :MONTH[res[0]-1]   , 'count' : res[1], 'url' : construct_url(url, {'month' : res[0]}), 'current' : int(current_facets.get('month')) == int(res[0])})
             
             
         context['facets'] = facets

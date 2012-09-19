@@ -30,13 +30,13 @@
       
       {% endif %}
       
-      <ul>
+      <ul class="nav nav-pills">
         {% for facet in facets.year %}
           <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
         {% endfor %}
       </ul>
       
-      <ul>
+      <ul class="nav nav-pills">
         {% for facet in facets.month %}
           <li class="{% if facet.current %}active{%endif%}"><a href="{{facet.url}}">{{facet.name}}</a></li>        
         {% endfor %}
