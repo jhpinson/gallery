@@ -2,7 +2,7 @@
 
 {% load url from future %}
 
-{% block "body-class" %}fileupload{% endblock %}
+{% block "body-class" %}{% if album.is_leaf %}fileupload{%endif%}{% endblock %}
 
 {% block "content" %}
 
@@ -24,13 +24,19 @@
       {% endfor %}
 
       <li class="pull-right">
+        {% if album.is_leaf %}
         <a class="btn btn-small start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a>
+        {% endif %}
+        {% if album.is_user_root %}
         <a class="btn btn-small" href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a>
         <a class="btn btn-small" href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a>
+        {% endif %}
+        {% if album.is_leaf %}
         <button class="btn btn-small" style="position:relative; ">
           <span style="position:absolute;">ajouter des photos</span>
           <input style="opacity:0"  id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple >
         </button>
+        {% endif %}
       </li>
     </ul>
 

@@ -18,10 +18,9 @@ from PIL.ExifTags import TAGS
 from dateutil.parser import parse
 import datetime
 
-from ..models.image import Image
 from ..forms import AlbumForm
-from ..models.album import Album
-from ..models.media import Media
+from ..models import Album, Video, Image, Media
+
 from django.core.exceptions import ObjectDoesNotExist
 from middleware.request import get_current_user
 from django.contrib.contenttypes.models import ContentType
@@ -146,7 +145,7 @@ class AlbumView(ListView):
         return self._album
         
     def get_queryset(self):
-        
+        """
         filters = {}
         
         qs =  Media.objects.filter(parent_album=self.get_album())
@@ -159,20 +158,26 @@ class AlbumView(ListView):
             qs = qs.filter(**filters)
             
         return qs.select_subclasses()
-        #return self.get_album().medias.select_subclasses()
+        """
+        if self.get_album().is_leaf:
+            return self.get_album().medias.models(Image, Video).select_subclasses().order_by('date')
+        else:
+            return self.get_album().medias.models(Album).select_subclasses().order_by('-date')
         
+    """    
     def get_current_facets(self):
         
         facets = {}
         facets['year'] = self.request.GET.get('year', Media.objects.filter(parent_album=self.get_album()).order_by('-date')[0].date.year)
         facets['month'] = self.request.GET.get('month', Media.objects.filter(parent_album=self.get_album(), date__year=facets['year']).order_by('-date')[0].date.month)
         return facets
+    """
     
     def get_context_data(self, **kwargs):
         
         context = super(AlbumView, self).get_context_data(**kwargs)
         context['album'] = self.get_album()
-        
+        """
         # get facets
         current_facets = self.get_current_facets()
         facets = {}
@@ -197,6 +202,7 @@ class AlbumView(ListView):
             
         context['facets'] = facets
         print context['facets']
+        """
         # root album
         if self.get_album().parent_album is not None:
             context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]

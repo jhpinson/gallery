@@ -10,6 +10,10 @@ class Album(Media):
     image_count = models.PositiveIntegerField(default=0)
     video_count = models.PositiveIntegerField(default=0)
     
+    @property
+    def is_leaf(self):
+        return self.parent_album.is_user_root
+    
     def get_ancestors(self):
         
         ancestors = []
