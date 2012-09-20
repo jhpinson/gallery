@@ -9,8 +9,6 @@ class Image(ThumbAccessors, Media):
     def upload_path(self, filename):
         return '%s/%s' % ('/'.join([c.name for c in self.album.get_ancestors()] + [self.album.name]), filename)
     
-    
-    
     def generate_thumbnails(self):
         self.generate_thumbnail('small')
         self.generate_thumbnail('medium')

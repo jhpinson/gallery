@@ -221,7 +221,7 @@ class AlbumView(ListView):
             current_facets['year'] = {'name' : current_facets['year'], 'url' : construct_url(url, clean=True)}
             
         if current_facets.get('month') is not None:
-            current_facets['month'] = {'name' : current_facets['month'], 'url' : construct_url(url, {'year' : current_facets.get('year')}, clean=True)}
+            current_facets['month'] = {'name' : MONTH[int(current_facets['month'])-1], 'url' : construct_url(url, {'year' : current_facets.get('year')}, clean=True)}
             
         context['facets'] = facets
         context['current_facets'] = current_facets
