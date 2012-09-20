@@ -24,7 +24,10 @@ class Video(Media):
             self.generate_thumbnail('medium', f)
             f.seek(0)
             self.generate_thumbnail('large', f)
-        
+            
+            f.close()
+            os.remove(tmp_file)
+            
     def generate_versions(self):
         
         if not self.video_versions.filter(type=VideoVersion.TYPES.webm).exists():
