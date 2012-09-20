@@ -13,7 +13,7 @@ class Video(Media):
         
     def generate_thumbnails(self):
         
-        retcode, stdtout, stderr, tmp_file = thumbnail(self.file.path)
+        retcode,tmp_file = thumbnail(self.file.path)
         
         if retcode == 0:
             
@@ -29,7 +29,7 @@ class Video(Media):
         
         if not self.video_versions.filter(type=VideoVersion.TYPES.webm).exists():
             try:
-                retcode, stdtout, stderr, tmp_file = webm(self.file.path)
+                retcode,  tmp_file = webm(self.file.path)
             except Exception:
                 retcode = 1
             
