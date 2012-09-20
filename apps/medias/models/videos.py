@@ -2,6 +2,8 @@ from medias.models.media import Media
 from django.db import models
 from model_utils import Choices
 from helpers.ffmpeg import webm
+from django.core.files.base import ContentFile
+import os
 
 class Video(Media):
     
@@ -11,11 +13,24 @@ class Video(Media):
         
     def generate_versions(self):
         
-        #if not self.video_versions.filter(type=VideoVersion.TYPES.webm).exists():
-        return webm(self.file.path)
+        if not self.video_versions.filter(type=VideoVersion.TYPES.webm).exists():
+            try:
+                retcode, stdtout, stderr, tmp_file = webm(self.file.path)
+            except Exception:
+                retcode = 1
             
+            version = VideoVersion(video=self, type=VideoVersion.TYPES.webm)
             
-        
+            if retcode == 0:
+                version.status = VideoVersion.STATUSES.ready
+                f = open(tmp_file, 'r')
+                version.file.save("%s.webm" % self.pk, ContentFile(f.read()), save=False)
+                f.close()
+                os.remove(tmp_file)
+            else:
+                version.status = VideoVersion.STATUSES.error
+            version.save()
+                
     class Meta:
         app_label = 'medias'
         
@@ -23,13 +38,13 @@ class Video(Media):
 class VideoVersion(models.Model):
     
     TYPES = Choices(('webm', 'video/webm'),)
-    STATUS = Choices('ready', 'failed')
+    STATUSES = Choices('ready', 'failed')
     
     video = models.ForeignKey(Video, related_name='video_versions')
     file = models.FileField(upload_to='videos-versions/%Y/%m/',  max_length=1024, null=False)
     type = models.CharField(max_length=10, choices=TYPES, null=True)
     
-    status = models.CharField(max_length=50, choices=STATUS)
+    status = models.CharField(max_length=50, choices=STATUSES)
     
     class Meta:
         app_label = 'medias'
