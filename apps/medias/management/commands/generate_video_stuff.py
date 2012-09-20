@@ -11,4 +11,5 @@ class Command(BaseCommand):
                 print "done %s" % video.pk
             except Exception,e:
                 print "ERROR %s" % e
+                print e.__class__
         

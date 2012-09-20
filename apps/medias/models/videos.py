@@ -28,7 +28,7 @@ class Video(Media):
                 f.close()
                 os.remove(tmp_file)
             else:
-                version.status = VideoVersion.STATUSES.error
+                version.status = VideoVersion.STATUSES.failed
             version.save()
                 
     class Meta:

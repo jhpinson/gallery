@@ -20,7 +20,7 @@ def webm(input_file):
     
     tmp_file = "%s.webm" % tempfile.mkstemp()[1]
     
-    retcode, stdtout, stderr = runProcess(["ffmpeg", "-i", input_file,  tmp_file] )
+    retcode, stdtout, stderr = runProcess(["ffmpeg", "-y" ,"-i", input_file,  tmp_file] )
     
     return retcode, stdtout, stderr, tmp_file
     
