@@ -1,7 +1,7 @@
 from medias.models.media import Media
 from django.db import models
 from model_utils import Choices
-from helpers.ffmpeg import webm
+from helpers.ffmpeg import webm, thumbnail
 from django.core.files.base import ContentFile
 import os
 
@@ -10,6 +10,20 @@ class Video(Media):
     def save(self, *args, **kwargs):
         super(Video, self).save(*args, **kwargs)
         #self.generate_versions()
+        
+    def generate_thumbnails(self):
+        
+        retcode, stdtout, stderr, tmp_file = thumbnail(self.file.path)
+        
+        if retcode == 0:
+            
+            f = open(tmp_file, 'r')
+            
+            self.generate_thumbnail('small', f)
+            f.seek(0)
+            self.generate_thumbnail('medium', f)
+            f.seek(0)
+            self.generate_thumbnail('large', f)
         
     def generate_versions(self):
         

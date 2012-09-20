@@ -6,6 +6,8 @@ from model_utils import Choices
 from helpers.mixins import ChangeTrackMixin
 from filehashfield.fields import FileHashField
 from datetime import datetime
+from sorl.thumbnail.shortcuts import get_thumbnail
+from django.conf import settings
 class MediaQuerySet(InheritanceQuerySet):
             
     def models(self, *models):
@@ -46,7 +48,16 @@ class Media(ChangeTrackMixin, models.Model):
     def generate_thumbnails(self):
         pass
     
-    
+    def generate_thumbnail(self, size, f):
+        image = get_thumbnail(f, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), upscale=True)
+        
+        data = {'url' : image.url, 'width':image.width, 'height':image.height}
+        
+        if not Thumbnail.objects.filter(media=self, size=size).exists():
+            thumb = Thumbnail(media=self, size=size, **data)
+            thumb.save()
+        
+        return data
     
     def save(self, *args, **kwargs):
         

@@ -24,4 +24,11 @@ def webm(input_file):
     
     return retcode, stdtout, stderr, tmp_file
     
+def thumbnail(input_file):
     
+    tmp_file = "%s.png" % tempfile.mkstemp()[1]
+    
+    retcode, stdtout, stderr = runProcess(["ffmpeg", "-y" ,"-i", input_file, "-vframes","1","-ss", "2", "-an", tmp_file] )
+    
+    
+    return retcode, stdtout, stderr, tmp_file

@@ -8,6 +8,7 @@ class Command(BaseCommand):
         for video in Video.objects.all():
             try:
                 video.generate_versions()
+                video.generate_thumbnails()
                 print "done %s" % video.pk
             except Exception,e:
                 print "ERROR %s" % e
