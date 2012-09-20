@@ -23,10 +23,13 @@ class Video(Media):
 class VideoVersion(models.Model):
     
     TYPES = Choices(('webm', 'video/webm'),)
+    STATUS = Choices('ready', 'failed')
     
     video = models.ForeignKey(Video, related_name='video_versions')
     file = models.FileField(upload_to='videos-versions/%Y/%m/',  max_length=1024, null=False)
-    type = models.CharField(max_length=10, choices=TYPES, null=False)
+    type = models.CharField(max_length=10, choices=TYPES, null=True)
+    
+    status = models.CharField(max_length=50, choices=STATUS)
     
     class Meta:
         app_label = 'medias'
