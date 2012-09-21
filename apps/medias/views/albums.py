@@ -26,6 +26,7 @@ from middleware.request import get_current_user
 from django.contrib.contenttypes.models import ContentType
 from urlparse import urlparse, parse_qs
 from django.utils.http import urlencode
+from helpers.ffmpeg import metadata
 
 MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
 
@@ -78,36 +79,54 @@ class AlbumView(ListView):
         wrapped_file = UploadedFile(file)
         filename = wrapped_file.name
         
-        img = PILImage.open(file)
+        if filename.lower().split('.')[-1] in ['mpg', 'avi', 'mov']:
+            
+            new_video = Video()
+            new_video.parent_album=self.get_album()
+            new_video.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
+            new_video.file.save(
+                              filename
+                              , file, save=True)
+            
+            video_date = metadata(new_video.file.path)
+            if video_date is not None:
+                new_video.date = video_date
+                new_video.save()
+            
+            new_video.generate_thumbnails()
+            
+        else:
         
-        try:
+            img = PILImage.open(file)
             
-            new_image = Image()
-            exif = img._getexif()
-            if exif is not None:
-                for tag, value in exif.items():
-                    decoded = TAGS.get(tag, tag)
-                    if  decoded == 'DateTimeOriginal':
-                        new_image.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
-                        break
-            
+            try:
                 
-            name = filename.lower()
-            new_image.name = name
-            new_image.parent_album=self.get_album()
-            
-            if new_image.date is None:
-                new_image.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
-            
-            new_image.file.save(
-                          filename
-                          , file, save=True)
-            
-            new_image.generate_thumbnails()
-            
-        except IntegrityError,e:
-            print e
-            return HttpResponseServerError(u"Le fichier \"%s\" est déja présent dans cet album" % filename) 
+                new_image = Image()
+                exif = img._getexif()
+                if exif is not None:
+                    for tag, value in exif.items():
+                        decoded = TAGS.get(tag, tag)
+                        if  decoded == 'DateTimeOriginal':
+                            new_image.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                            break
+                
+                    
+                name = filename.lower()
+                new_image.name = name
+                new_image.parent_album=self.get_album()
+                
+                if new_image.date is None:
+                    new_image.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
+                
+                new_image.file.save(
+                              filename
+                              , file, save=True)
+                
+                new_image.generate_thumbnails()
+                
+            except IntegrityError,e:
+                print e
+                return HttpResponseServerError(u"Le fichier \"%s\" est déja présent dans cet album" % filename) 
         
         
         return HttpResponse(simplejson.dumps({'name' : request.FILES.items()[0][1].name}), content_type="application/json")

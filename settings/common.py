@@ -15,6 +15,8 @@ sys.path.append(PROJECT_ROOT / 'libs')
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+
+
 SENTRY_SITE = None
 SENTRY_DSN = environ.get('SENTRY_DNS', None)
 
@@ -51,6 +53,8 @@ USE_I18N = True
 USE_L10N = True
 
 MEDIA_ROOT = SITE_ROOT / 'data/medias/'
+
+TEMPORARY_DIR = MEDIA_ROOT / 'tmp'
 
 MEDIA_URL = '/medias/'
 

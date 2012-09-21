@@ -8,6 +8,8 @@ from filehashfield.fields import FileHashField
 from datetime import datetime
 from sorl.thumbnail.shortcuts import get_thumbnail
 from django.conf import settings
+from sorl.thumbnail import delete
+
 class MediaQuerySet(InheritanceQuerySet):
             
     def models(self, *models):
@@ -73,40 +75,17 @@ class Media(ChangeTrackMixin, models.Model):
         if created and self.parent_album is not None:
                 self.parent_album.consolidate_count()
         
-        #if created:
-        #    self.album.consolidate_count()
-    """ 
-    def __getattr__(self, name):
         
-        if name[:10] == 'thumbnail_' or name[:10] == 'lazythumb_':
-            
-            if self._cache.get(name, None) is None:
-            
-                size = name[10:]
-                data = {}
-                try:
-                    thumb = self.thumbnails.get(size=size)
-                    data['url'] = thumb.url
-                    data['width'] = thumb.width
-                    data['height'] = thumb.height
-                    data['exists'] = True
-                    self._cache[name] = data
-                except ObjectDoesNotExist:
-                    if name[:10] == 'lazythumb_':
-                        data['url'] = reverse('lazy_thumbnail_view', kwargs={'pk' : self.pk, 'size' : size})
-                    else:
-                        data['url'] = reverse('generate_thumbnail_view', kwargs={'pk' : self.pk, 'size' : size})
-                    data['width'] = settings.THUMBNAIL_SIZES[size]['width']
-                    data['height'] = settings.THUMBNAIL_SIZES[size]['height']
-                    data['exists'] = False
-                    self._cache[name] = data
-            
-            return self._cache[name]
-            
-        else:
-            print name, self.real_type, self.pk
-            return super(Media, self).__getattr__( name)
-    """
+    def delete(self, *args, **kwargs):
+        
+        try:
+            delete(self.file.file)
+        except IOError:
+            pass
+        self.file.delete(save=False)
+        
+        super(Media, self).delete(*args, **kwargs)
+        
     def cast(self):
         return self.real_type.get_object_for_this_type(pk=self.pk)
     

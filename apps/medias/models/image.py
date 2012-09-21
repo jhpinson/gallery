@@ -14,18 +14,6 @@ class Image(ThumbAccessors, Media):
         self.generate_thumbnail('medium', self.file.file)
         self.generate_thumbnail('large', self.file.file)
     
-    
-        
-    def delete(self, *args, **kwargs):
-        
-        try:
-            delete(self.file.file)
-        except IOError:
-            pass
-        self.file.delete(save=False)
-        
-        super(Image, self).delete(*args, **kwargs)
-        
         
     class Meta:
         app_label = 'medias'

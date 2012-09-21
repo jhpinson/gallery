@@ -4,10 +4,12 @@ from model_utils import Choices
 from helpers.ffmpeg import webm, thumbnail
 from django.core.files.base import ContentFile
 import os
+from medias.models.mixins import ThumbAccessors
 
-class Video(Media):
+class Video(ThumbAccessors, Media):
     
     def save(self, *args, **kwargs):
+        
         super(Video, self).save(*args, **kwargs)
         #self.generate_versions()
         
@@ -16,16 +18,10 @@ class Video(Media):
         retcode,tmp_file = thumbnail(self.file.path)
         
         if retcode == 0:
+            self.generate_thumbnail('small', tmp_file)
+            self.generate_thumbnail('medium', tmp_file)
+            self.generate_thumbnail('large', tmp_file)
             
-            f = open(tmp_file, 'r')
-            
-            self.generate_thumbnail('small', f)
-            f.seek(0)
-            self.generate_thumbnail('medium', f)
-            f.seek(0)
-            self.generate_thumbnail('large', f)
-            
-            f.close()
             os.remove(tmp_file)
             
     def generate_versions(self):
