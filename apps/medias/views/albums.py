@@ -78,10 +78,12 @@ class AlbumView(ListView):
         file = request.FILES[u'files[]']
         wrapped_file = UploadedFile(file)
         filename = wrapped_file.name
+        name = filename.lower()
         
-        if filename.lower().split('.')[-1] in ['mpg', 'avi', 'mov']:
+        if filename.lower().split('.')[-1] in ['mpg', 'avi', 'mov', 'mts']:
             
             new_video = Video()
+            new_video.name = name
             new_video.parent_album=self.get_album()
             new_video.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
             new_video.file.save(
@@ -111,7 +113,7 @@ class AlbumView(ListView):
                             break
                 
                     
-                name = filename.lower()
+                
                 new_image.name = name
                 new_image.parent_album=self.get_album()
                 
@@ -262,7 +264,7 @@ class GalleryView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GalleryView, self).get_context_data(**kwargs)
         
-        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).medias.models(Image).select_subclasses()
+        context['medias'] = Album.objects.get(pk=kwargs.get('pk')).medias.models(Image, Video).select_subclasses()
         
         return context
    

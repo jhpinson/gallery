@@ -6,10 +6,18 @@ from django.utils import simplejson
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.views.generic.detail import DetailView
+from ..models import Media, Image, Video
 
+class ModalVideoView(DetailView):
+    model = Video
+    template_name = 'medias/modal-video-player.html'
 
-
-
+class MediaView(DetailView):
+    model = Media
+    queryset = Media.objects.models(Image, Video).select_subclasses()
+    template_name = 'medias/media_detailview.html'
+    
 class GenerateThumbnail(View):
     
     @method_decorator(login_required)

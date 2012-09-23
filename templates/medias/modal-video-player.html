@@ -1,0 +1,7 @@
+<video id="video-{{object.pk}}" class="video-js vjs-default-skin" controls
+preload="auto"  width="800" height="600" poster="{{object.thumbnail_medium.url}}"
+data-setup="{}">
+  {% for version in object.video_versions.all %}
+  <source src="{{version.file.url}}" type='{{version.get_type_display}}'>
+  {% endfor %}
+</video>

@@ -41,6 +41,7 @@ PIPELINE_JS = {
             'js/libs/jquery.ox-gallery.js',
             'js/messages.js',
             'js/lazy-gallery.js',
+            'js/lazy-video.js',
             
         ),
         'output_filename': 'c/lazy.r?.js',

@@ -3,6 +3,7 @@ from sorl.thumbnail.shortcuts import get_thumbnail
 from sorl.thumbnail import delete
 from django.conf import settings
 from medias.models.mixins import ThumbAccessors
+from django.db.models import permalink
 
 class Image(ThumbAccessors, Media):
     
@@ -15,5 +16,9 @@ class Image(ThumbAccessors, Media):
         self.generate_thumbnail('large', self.file.file)
     
         
+    @permalink
+    def get_absolute_url(self):
+        return 'media_view', None, {'pk': self.pk}
+    
     class Meta:
         app_label = 'medias'

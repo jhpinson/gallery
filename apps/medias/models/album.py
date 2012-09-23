@@ -31,7 +31,7 @@ class Album(Media):
     
     def default_thumbnail(self):
         try:
-            return Thumbnail.objects.get(media_id=self.get_children().models(Image)[0], size='small')
+            return Thumbnail.objects.get(media_id=self.get_children().models(Image, Video)[0], size='small')
         except Exception,e:
             print e
             return '/pix.gif'
