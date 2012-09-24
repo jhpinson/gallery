@@ -90,7 +90,7 @@ class AlbumView(ListView):
                               filename
                               , file, save=True)
             
-            video_date = metadata(new_video.file.path)
+            video_date = getattr(metadata(new_video.file.path), 'date')
             if video_date is not None:
                 new_video.date = video_date
                 new_video.save()
