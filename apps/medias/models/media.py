@@ -24,6 +24,9 @@ class Media(ChangeTrackMixin, models.Model):
         path = "/".join([str(self.created_by.pk), str(self.date.year), "%02d" % self.date.month, "%02d" % self.date.day, filename])
         return path
     
+    STATUSES = Choices('published', 'failed')
+    status = models.CharField(max_length=20, choices=STATUSES, default=STATUSES.published)
+    
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048)
     date = models.DateTimeField(default=datetime.now)

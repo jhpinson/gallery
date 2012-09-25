@@ -15,8 +15,12 @@ class Video(ThumbAccessors, Media):
         #self.generate_versions()
         
     def generate_thumbnails(self):
-        
-        retcode,tmp_file = thumbnail(self.file.path)
+        try:
+            retcode,tmp_file = thumbnail(self.file.path)
+        except Exception:
+            self.status = Media.STATUSES.failed
+            self.save()
+            return
         
         if retcode == 0:
             self.generate_thumbnail('small', tmp_file)
