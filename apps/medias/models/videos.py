@@ -5,6 +5,7 @@ from helpers.ffmpeg import webm, thumbnail, metadata
 from django.core.files.base import ContentFile
 import os
 from medias.models.mixins import ThumbAccessors
+from subprocess import CalledProcessError
 
 class Video(ThumbAccessors, Media):
     
@@ -37,7 +38,7 @@ class Video(ThumbAccessors, Media):
                 if not self.video_versions.filter(type=VideoVersion.TYPES.webm, size=s[0]).exists():
                     try:
                         retcode,  tmp_file = webm(self.file.path, s[0])
-                    except Exception:
+                    except Exception, CalledProcessError:
                         retcode = 1
                     
                     version = VideoVersion(video=self, type=VideoVersion.TYPES.webm, size=s[0])
