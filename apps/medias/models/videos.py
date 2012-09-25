@@ -26,7 +26,7 @@ class Video(ThumbAccessors, Media):
             
     def generate_versions(self):
         meta = metadata(self.file.path)
-        size = int(meta.get('size')[1]) if meta is not None else None
+        size = int(meta.get('size')[1]) if meta.get('size') is not None else None
         
         if size is None:
             return
