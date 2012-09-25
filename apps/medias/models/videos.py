@@ -25,7 +25,11 @@ class Video(ThumbAccessors, Media):
             os.remove(tmp_file)
             
     def generate_versions(self):
-        size = int(metadata(self.file.path).get('size')[1])
+        meta = metadata(self.file.path)
+        size = int(meta.get('size')[1]) if meta is not None else None
+        
+        if size is None:
+            return
         
         for s in VideoVersion.SIZES:
             if int(s[0]) <= size:
