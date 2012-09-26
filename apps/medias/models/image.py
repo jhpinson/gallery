@@ -17,7 +17,7 @@ class Image(ThumbAccessors, Media):
     
         
     @permalink
-    def get_absolute_url(self):
+    def get_absolute_uri(self):
         return 'media_view', None, {'pk': self.pk}
     
     class Meta:

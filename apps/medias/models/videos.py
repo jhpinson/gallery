@@ -6,8 +6,13 @@ from django.core.files.base import ContentFile
 import os
 from medias.models.mixins import ThumbAccessors
 from subprocess import CalledProcessError
+from django.db.models import permalink
 
 class Video(ThumbAccessors, Media):
+    
+    @permalink
+    def get_absolute_uri(self):
+        return 'media_view', None, {'pk': self.pk}
     
     def save(self, *args, **kwargs):
         

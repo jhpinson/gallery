@@ -22,22 +22,7 @@
       </li>
       {% endif %}
       {% endfor %}
-
-      <li class="pull-right">
-        {% if album.is_leaf %}
-        <a class="btn btn-small start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a>
-        {% endif %}
-        {% if album.is_user_root %}
-        <a class="btn btn-small" href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a>
-        <a class="btn btn-small" href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a>
-        {% endif %}
-        {% if album.is_leaf %}
-        <button class="btn btn-small" style="position:relative; ">
-          <span style="position:absolute;">ajouter des photos</span>
-          <input style="opacity:0"  id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple >
-        </button>
-        {% endif %}
-      </li>
+      
     </ul>
 
     {% endif %}
@@ -54,11 +39,32 @@
 
   <div class="row">
     <div class="span2 pull-right">
-      
+        
+        <div class="sidebar-nav well well-small">
+          
+          <h5>Options</h5>
+          
+          <ul class="nav">
+            
+            {% if album.is_leaf %}
+            <li ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
+            {% endif %}
+            
+            {% if album.is_user_root %}
+            <li ><a  href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
+            <li ><a href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a></li>
+            {% endif %}
+            
+            {% if album.is_leaf %}
+            <li ><input   id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></li>
+            {% endif %}
+          </ul>
+        </div>
+        
         
         {%if current_facets.year or  current_facets.month %}
         <div class="sidebar-nav well well-small">
-          <h4>Filtres actifs</h4>
+          <h5>Filtres actifs</h5>
         <ul class="nav current-filters">
           {% if current_facets.year %}
           <li><a href="{{current_facets.year.url}}"><i class="icon-remove"></i></a> {{current_facets.year.name}}</li>
@@ -75,7 +81,7 @@
         {% for facet in facets.year %}
           {% if forloop.first %}
           <div class="sidebar-nav well well-small">
-            <h4>Filtrer par année</h4>
+            <h5>Filtrer par année</h5>
           <ul class="nav ">
           {% endif %}
             <li >
@@ -91,7 +97,7 @@
         {% for facet in facets.month %}
           {% if forloop.first %}
           <div class="sidebar-nav well well-small">
-            <h4>Filtrer par mois</h4>
+            <h5>Filtrer par mois</h5>
           <ul class="nav  ">
           {% endif %}
             <li >

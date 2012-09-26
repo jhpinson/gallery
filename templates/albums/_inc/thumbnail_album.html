@@ -8,8 +8,8 @@
           <a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a>
           <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a> 
         </div>
-        <img src="{{media.default_thumbnail.url}}">
-        <h5><a href="{{media.get_absolute_uri}}">{{media.name|truncatechars:"18"}}</a></h5>
+        <a href="{{media.get_absolute_uri}}"><img src="{{media.default_thumbnail.url}}"></a>
+        <h5>{{media.name|truncatechars:"18"}}</h5>
         <p class='date'>{{media.date|date:"j F Y"}}</p>
         <div class="stats">
           {% if media.album_count  %}<span><i class="icon-folder-close"></i> {{media.album_count}}</span>{%endif%}

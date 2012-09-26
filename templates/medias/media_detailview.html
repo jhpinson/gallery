@@ -3,12 +3,48 @@
 
 {% block "body-class" %}media image{% endblock %}
 
+{% block extra_lazy %}
+    <script>
+      $(document).ready(function() {
+        var $videojs = $('.video-js');
+        var height = parseInt($('.video-wrapper').width() * 720 / 1280);
+        $videojs.attr('width', $('.video-wrapper').width());
+        $videojs.attr('height', height);
+        $videojs.css({width : $('.video-wrapper').width() + 'px', height : height + 'px'})
+        
+    });
+    </script>
+{% endblock %}
+
 {% block "content" %}
-  
-  <article>
-    <div class='image-wrapper'>
-    {% image_thumbnail object "medium" %}
-    </div>
+  <div class="row">
+    
+    <div class="span2 pull-right">
+    <ul class="pager">
+      <li class="previous {% if not prev %}disabled{%endif%}">
+        <a href="{% if prev %}{{prev.get_absolute_uri}}{% endif %}">&larr; Older</a>
+      </li>
+      <li class="next {% if not next %}disabled{%endif%}">
+        <a href="{% if next %}{{next.get_absolute_uri}}{% endif %}">Newer &rarr;</a>
+      </li>
+    </ul>
+  </div>
+    
+  <article class="span10">
+    {% ifequal object.real_type.model 'image' %}
+      <div class='image-wrapper'>
+      {% image_thumbnail object "medium" %}
+      </div>
+    {% else %}
+      <div class="video-wrapper">
+        <video width="1280" height="720" class="video-js vjs-default-skin" controls>
+          {% for version in object.video_versions.all %}
+          <source src="{{version.file.url}}" type='{{version.get_type_display}}'>
+          {% endfor %}
+        </video>
+      </div>
+    
+    {% endifequal %}
     <h6>{{media.name}}</h6>
     <p class='date'>
       {{object.date|date:"j F Y \à H\hi"}}
@@ -16,4 +52,5 @@
     
   </article>
   
+  </div>
 {% endblock %}

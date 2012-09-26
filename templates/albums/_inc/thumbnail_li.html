@@ -2,7 +2,7 @@
 <li class= "span2">
   <div class="thumbnail image">
     <div class="thumbnail-container">
-      <a href="{{media.get_absolute_url}}">{% image_thumbnail media "small" %}</a>
+      <a href="{{media.get_absolute_uri}}">{% image_thumbnail media "small" %}</a>
       <h6>{{media.name}}</h6>
       <p class='date'>
         {{media.date|date:"j F Y \à H\hi"}}

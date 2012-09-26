@@ -13,10 +13,26 @@ class ModalVideoView(DetailView):
     model = Video
     template_name = 'medias/modal-video-player.html'
 
+
 class MediaView(DetailView):
     model = Media
     queryset = Media.objects.models(Image, Video).select_subclasses()
     template_name = 'medias/media_detailview.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(MediaView, self).get_context_data(**kwargs)
+        try:
+            context['next'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__gte=self.object.date).exclude(pk=self.object.pk).order_by('date')[0]
+        except Exception:
+            context['next'] = False
+            
+            
+        try:
+            context['prev'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__lte=self.object.date).exclude(pk=self.object.pk).order_by('date').reverse()[0]
+        except Exception,e:
+            context['prev'] = False
+            
+        return context
     
 class GenerateThumbnail(View):
     

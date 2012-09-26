@@ -11,7 +11,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/bootstrap.css',
             'css/jquery.jgrowl.css',
-            #'css/style.css',
+            'video-js/video-js.css',
             'css/galleries.styl',
             'css/ox-gallery.css',
             'css/gallery.styl',
@@ -32,6 +32,7 @@ PIPELINE_JS = {
             'js/libs/fileupload/jquery.iframe-transport.js',
             'js/libs/fileupload/jquery.fileupload.js',
             'js/libs/jquery.jgrowl.js',
+            'video-js/video.js',
             'js/bootstrap.js',
             'js/thumbnails.js',
             'js/html-id.js',

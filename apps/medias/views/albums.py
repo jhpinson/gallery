@@ -236,13 +236,17 @@ class AlbumView(ListView):
             for res in cursor.fetchall():
                 if current_facets.get('month') is not None and int(current_facets.get('month')) == int(res[0]):
                     continue
-                facets['month'].append({'name' :MONTH[res[0]-1]   , 'nb' : res[1], 'url' : construct_url(url, {'month' : res[0], 'year' : current_facets.get('year')}, clean=True)})
+                facets['month'].append({'name' :MONTH[res[0]-1]   , 'nb' : res[1], 'url' : construct_url(url, {'month' : int(res[0]), 'year' : int(current_facets.get('year'))}, clean=True)})
             
         if current_facets.get('year') is not None:
             current_facets['year'] = {'name' : current_facets['year'], 'url' : construct_url(url, clean=True)}
             
         if current_facets.get('month') is not None:
-            current_facets['month'] = {'name' : MONTH[int(current_facets['month'])-1], 'url' : construct_url(url, {'year' : current_facets.get('year')}, clean=True)}
+            current_facets['month'] = {'name' : MONTH[int(current_facets['month'])-1], 'url' : construct_url(url, {'year' : current_facets.get('year')['name']}, clean=True)}
+            
+        if current_facets.get('year') is  None and len(facets['year']) <= 1:
+            del facets['year']
+            
             
         context['facets'] = facets
         context['current_facets'] = current_facets
