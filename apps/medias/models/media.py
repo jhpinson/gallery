@@ -54,7 +54,11 @@ class Media(ChangeTrackMixin, models.Model):
     def generate_thumbnails(self):
         pass
     
-    def generate_thumbnail(self, size, f):
+    def generate_thumbnail(self, size, f=None):
+        
+        if f is None:
+            f = self.file.file
+        
         image = get_thumbnail(f, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), upscale=True)
         
         data = {'url' : image.url, 'width':image.width, 'height':image.height}
