@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load gallery_tags %}
-
+{% load gallery_tags gallery_filters %}
+{% load url from future %}
 {% block "body-class" %}media image{% endblock %}
 
 {% block extra_lazy %}
@@ -17,27 +17,75 @@
 {% endblock %}
 
 {% block "content" %}
+
+  
+    <ul class="breadcrumb">
+      <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
+      
+      {% for crumb in breadcrumbs %}
+      {% if forloop.last %}
+      <li class="active">
+        {{crumb.name}}
+      </li>
+      {% else %}
+      <li>
+        <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
+      </li>
+      {% endif %}
+      {% endfor %}
+      
+      <li class="pull-right">
+        {% if prev %}
+        <a href="{% if prev %}{{prev.get_absolute_uri}}{% endif %}"><i class="icon-chevron-left"></i></a>
+      {% else %}
+      <span><i class="icon-chevron-left"></i></span>
+      {% endif %}
+      {% if next %}
+        <a href="{% if next %}{{next.get_absolute_uri}}{% endif %}"><i class="icon-chevron-right"></i></a>
+        {% else %}
+      <span><i class="icon-chevron-right"></i></span>
+      {% endif %}
+      </li>
+      
+    </ul>
+    
+    
   <div class="row">
     
     <div class="span2 pull-right">
-    <ul class="pager">
-      <li class="previous {% if not prev %}disabled{%endif%}">
-        <a href="{% if prev %}{{prev.get_absolute_uri}}{% endif %}">&larr; Older</a>
+      <div class="sidebar-nav well well-small">
+      
+      
+    <ul class="nav">
+      <li ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=object.parent_album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
+      <li>
+        {{object.name}}
       </li>
-      <li class="next {% if not next %}disabled{%endif%}">
-        <a href="{% if next %}{{next.get_absolute_uri}}{% endif %}">Newer &rarr;</a>
+      <li>
+      {{object.date|date:"j F Y \à H\hi"}}
       </li>
+      
     </ul>
+    </div>
   </div>
     
   <article class="span10">
+    
+    {% if not media.description %}
+        {% if media|can_edit_field:"description" %}
+          <p class="lead">cliquez ici pour ajouter une description</p>
+        {% endif %}
+      {% else %}
+        <p class="lead">{{media.description}}</p>
+      {% endif %}  
+    
     {% ifequal object.real_type.model 'image' %}
       <div class='image-wrapper'>
       {% image_thumbnail object "medium" %}
       </div>
     {% else %}
       <div class="video-wrapper">
-        <video width="1280" height="720" class="video-js vjs-default-skin" controls>
+        <video width="1280" height="720" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
           {% for version in object.video_versions.all %}
           <source src="{{version.file.url}}" type='{{version.get_type_display}}'>
           {% endfor %}
@@ -45,10 +93,7 @@
       </div>
     
     {% endifequal %}
-    <h6>{{media.name}}</h6>
-    <p class='date'>
-      {{object.date|date:"j F Y \à H\hi"}}
-    </p>
+    
     
   </article>
   

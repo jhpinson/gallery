@@ -13,7 +13,8 @@ class ModalVideoView(DetailView):
     model = Video
     template_name = 'medias/modal-video-player.html'
 
-
+    
+    
 class MediaView(DetailView):
     model = Media
     queryset = Media.objects.models(Image, Video).select_subclasses()
@@ -31,7 +32,9 @@ class MediaView(DetailView):
             context['prev'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__lte=self.object.date).exclude(pk=self.object.pk).order_by('date').reverse()[0]
         except Exception,e:
             context['prev'] = False
-            
+        
+        context['breadcrumbs'] = self.object.parent_album.get_ancestors()[1:] + [self.object.parent_album, self.object]
+        
         return context
     
 class GenerateThumbnail(View):

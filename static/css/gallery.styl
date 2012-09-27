@@ -1,7 +1,16 @@
 body
   #main-container
     margin-top 60px
-  
+    width 1170px
+    margin-left auto
+    margin-right auto
+    
+  &.media
+    .image-wrapper
+      img
+        margin 0 auto
+        display block
+    
 .current-filters
   li
     a
@@ -10,9 +19,14 @@ body
 .thumbnails 
   li
     .thumbnail
-    
+      
+      
       &.album
         height 200px
+        span.img
+          display inline-block
+          width 150px
+          height 115px
         
       &.video, &.image
         height 160px
@@ -30,11 +44,14 @@ body
           margin  0
           text-align  left
         
-        img 
+        img
           width auto
-          max-height 120px
+          max-height 115px
+          
         div.actions
+          display inline-block
           margin-top 5px
+          width 150px
           a
             float right
           .label

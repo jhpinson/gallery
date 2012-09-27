@@ -6,9 +6,17 @@
         <div class="actions" >
           <span class="label label-info">album</span>
           <a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a>
-          <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a> 
+          {% if media.can_play_diaporama %}
+          <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a>
+          {% endif %} 
         </div>
-        <a href="{{media.get_absolute_uri}}"><img src="{{media.default_thumbnail.url}}"></a>
+        <a  href="{{media.get_absolute_uri}}">
+          {%if media.album_thumbnail %}
+          <img src="{{media.album_thumbnail.url}}">
+          {% else %}
+          <span class='img'></span>
+          {%endif%}
+         </a>
         <h5>{{media.name|truncatechars:"18"}}</h5>
         <p class='date'>{{media.date|date:"j F Y"}}</p>
         <div class="stats">

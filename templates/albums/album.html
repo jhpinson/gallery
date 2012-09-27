@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load gallery_filters %}
 {% load url from future %}
 
 {% block "body-class" %}{% if album.is_leaf %}fileupload{%endif%}{% endblock %}
@@ -11,22 +11,42 @@
   <header>
     {% if breadcrumbs %}
     <ul class="breadcrumb">
+      
+      <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
+      
       {% for crumb in breadcrumbs %}
       {% if forloop.last %}
       <li class="active">
-        {{crumb.display_name}}
+        {{crumb.name}}
       </li>
       {% else %}
       <li>
-        <a href="{{crumb.get_absolute_uri}}">{{crumb.display_name}}</a><span class="divider">/</span>
+        <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
       </li>
       {% endif %}
       {% endfor %}
       
+      <li class="pull-right">
+        {% if is_paginated %}
+        {% if page_obj.has_previous %}<a href="?page={{page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} page {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="?page={{page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}        
+        {% endif %}
+      </li>
     </ul>
 
     {% endif %}
-
+    
+    
+      {% if not album.description %}
+        {% if album|can_edit_field:"description" %}
+          <p class="lead">cliquez ici pour ajouter une description à votre album</p>
+        {% endif %}
+      {% else %}
+        <p class="lead">{{album.description}}</p>
+      {% endif %}  
+    
+    
+    
+    
   </header>
 
   <div id="upload-manager" class="well" style="display:none">
@@ -46,18 +66,14 @@
           
           <ul class="nav">
             
-            {% if album.is_leaf %}
-            <li ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
-            {% endif %}
-            
-            {% if album.is_user_root %}
-            <li ><a  href="{% url 'album_create_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
+            {% if album %}
+            <li {% if not album.can_play_diaporama %}class="disabled"{%endif%} ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
             <li ><a href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a></li>
+            <li ><input   id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></li>
+            {% else %}
+            <li ><a  href="{% url 'album_create_view' %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
             {% endif %}
             
-            {% if album.is_leaf %}
-            <li ><input   id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></li>
-            {% endif %}
           </ul>
         </div>
         

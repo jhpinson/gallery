@@ -19,14 +19,13 @@ from dateutil.parser import parse
 import datetime
 
 from ..forms import AlbumForm
-from ..models import Album, Video, Image, Media
+from ..models import Album, Video, Image
 
-from django.core.exceptions import ObjectDoesNotExist
-from middleware.request import get_current_user
 from django.contrib.contenttypes.models import ContentType
 from urlparse import urlparse, parse_qs
 from django.utils.http import urlencode
 from helpers.ffmpeg import metadata
+from django.core.paginator import Paginator
 
 MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
 
@@ -159,21 +158,25 @@ class AlbumView(ListView):
             if pk is not None:
                 self._album = Album.objects.get(pk=pk)
             else:
+                self._album = False
+                
+            """else:
                 try:
                     self._album = Album.objects.get(parent_album__name='root', parent_album__parent_album=None)
                 except ObjectDoesNotExist:
                     root, created =  Album.objects.get_or_create(name='root',parent_album=None)
                     self._album = Album.objects.create(name=get_current_user().pk , parent_album=root)
-        
+            """
+            
         return self._album
         
     def get_queryset(self):
         filters = {}
         
-        if self.get_album().is_leaf:
-            qs = self.get_album().medias.models(Image, Video).select_subclasses().order_by('date')
+        if self.get_album():
+            qs = self.get_album().medias.models(Image, Video).select_subclasses().order_by('date').select_subclasses()
         else:
-            qs = self.get_album().medias.models(Album).select_subclasses().order_by('-date')
+            qs = Album.objects.all().order_by('-date')
         
         for facet, value in self.get_current_facets().iteritems():
              
@@ -183,9 +186,8 @@ class AlbumView(ListView):
         if len(filters.keys()) > 0:
             qs = qs.filter(**filters)
             
-        return qs.select_subclasses()
+        return qs
 
-        
         
     
     def get_current_facets(self):
@@ -210,33 +212,41 @@ class AlbumView(ListView):
         facets = {}
         url = self.request.get_full_path()
         
+        
+        
         cursor = connection.cursor()
         #cursor.execute("SELECT real_type_id, count(*) from medias_media where parent_album_id=%s group by real_type_id", [self.get_album().pk])
         #facets['real_type'] = []
         #for res in cursor.fetchall():
         #    facets['real_type'].append({'name' :ContentType.objects.get(pk=res[0]).model, 'count' : res[1], 'url' : None})
         
-        if self.get_album().is_leaf:
-            real_types = [ContentType.objects.get_for_model(Image).pk, ContentType.objects.get_for_model(Video).pk,]
+        if self.get_album():
+            real_types = [ContentType.objects.get_for_model(Image).pk, ContentType.objects.get_for_model(Video).pk]
         else:
             real_types = [ContentType.objects.get_for_model(Album).pk] * 2
         
         
-        cursor.execute("SELECT year(date), count(*) from medias_media where parent_album_id=%s and real_type_id in %s group by  year(date)", [self.get_album().pk, real_types])
-        facets['year'] = []
-        for res in cursor.fetchall():
-            if  current_facets.get('year') is not None and int(current_facets.get('year')) == int(res[0]):
-                continue
-            facets['year'].append({'name' :res[0], 'nb' : res[1], 'url' : construct_url(url, {'year' : res[0]}, clean=True)})
+        full_qs_pk =  [v[0] for v in context['page_obj'].paginator.object_list.values_list('pk')]
+        if len(full_qs_pk) == 1:
+            full_qs_pk = full_qs_pk * 2
         
-        if current_facets.get('year') is not None:
-                
-            cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and parent_album_id=%s and real_type_id in %s group by  month(date)", [current_facets.get('year'), self.get_album().pk, real_types])
-            facets['month'] = []
+        if len(full_qs_pk) > 1:
+        
+            cursor.execute("SELECT year(date), count(*) from medias_media where id in %s and real_type_id in %s group by  year(date)", [full_qs_pk, real_types])
+            facets['year'] = []
             for res in cursor.fetchall():
-                if current_facets.get('month') is not None and int(current_facets.get('month')) == int(res[0]):
+                if  current_facets.get('year') is not None and int(current_facets.get('year')) == int(res[0]):
                     continue
-                facets['month'].append({'name' :MONTH[res[0]-1]   , 'nb' : res[1], 'url' : construct_url(url, {'month' : int(res[0]), 'year' : int(current_facets.get('year'))}, clean=True)})
+                facets['year'].append({'name' :res[0], 'nb' : res[1], 'url' : construct_url(url, {'year' : res[0]}, clean=True)})
+            
+            if current_facets.get('year') is not None:
+                    
+                cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and id in %s and real_type_id in %s group by  month(date)", [current_facets.get('year'), full_qs_pk, real_types])
+                facets['month'] = []
+                for res in cursor.fetchall():
+                    if current_facets.get('month') is not None and int(current_facets.get('month')) == int(res[0]):
+                        continue
+                    facets['month'].append({'name' :MONTH[res[0]-1]   , 'nb' : res[1], 'url' : construct_url(url, {'month' : int(res[0]), 'year' : int(current_facets.get('year'))}, clean=True)})
             
         if current_facets.get('year') is not None:
             current_facets['year'] = {'name' : current_facets['year'], 'url' : construct_url(url, clean=True)}
@@ -244,15 +254,19 @@ class AlbumView(ListView):
         if current_facets.get('month') is not None:
             current_facets['month'] = {'name' : MONTH[int(current_facets['month'])-1], 'url' : construct_url(url, {'year' : current_facets.get('year')['name']}, clean=True)}
             
-        if current_facets.get('year') is  None and len(facets['year']) <= 1:
-            del facets['year']
+        if current_facets.get('year') is  None and len(facets.get('year', [])) <= 1:
+            try:
+                del facets['year']
+            except KeyError:
+                pass
             
             
         context['facets'] = facets
         context['current_facets'] = current_facets
         # root album
-        if self.get_album().parent_album is not None:
+        if self.get_album() :
             context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]
+        
             
         return context
     
@@ -294,5 +308,5 @@ class CreateAlbum(CreateView):
         
         data = super(CreateAlbum, self).get_form_kwargs()
         
-        data['initial']['parent_album'] = self.kwargs.get('pk')
+        data['initial']['parent_album'] = self.kwargs.get('pk', None)
         return data

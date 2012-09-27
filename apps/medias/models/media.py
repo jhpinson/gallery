@@ -9,8 +9,9 @@ from datetime import datetime
 from sorl.thumbnail.shortcuts import get_thumbnail
 from django.conf import settings
 from sorl.thumbnail import delete
+from medias.models.mixins.manager import PermissionManager
 
-class MediaQuerySet(InheritanceQuerySet):
+class MediaQuerySet(PermissionManager, InheritanceQuerySet):
             
     def models(self, *models):
         return self.filter(real_type__in=[ContentType.objects.get_for_model(model) for model in models])
@@ -28,7 +29,7 @@ class Media(ChangeTrackMixin, models.Model):
     status = models.CharField(max_length=20, choices=STATUSES, default=STATUSES.published)
     
     name = models.CharField(max_length=512)
-    description = models.TextField(max_length=2048)
+    description = models.TextField(max_length=2048, null=True, blank=True)
     date = models.DateTimeField(default=datetime.now)
     
     file = FileHashField(upload_to=upload_path, hash_field='hash', max_length=1024, null=True)
@@ -36,7 +37,7 @@ class Media(ChangeTrackMixin, models.Model):
     
     real_type = models.ForeignKey(ContentType, editable=False, null=True)
     
-    parent_album = models.ForeignKey('medias.Album', related_name='medias', null=True)
+    parent_album = models.ForeignKey('medias.Album', related_name='medias', null=True, blank=True)
     
     is_an_album = models.PositiveSmallIntegerField()
     

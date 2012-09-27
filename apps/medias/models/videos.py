@@ -4,11 +4,20 @@ from model_utils import Choices
 from helpers.ffmpeg import webm, thumbnail, metadata
 from django.core.files.base import ContentFile
 import os
-from medias.models.mixins import ThumbAccessors
+from medias.models.mixins.models import ThumbAccessors
 from subprocess import CalledProcessError
 from django.db.models import permalink
+from model_utils.managers import PassThroughManager
+from django.db.models.query import QuerySet
+from medias.models.mixins.manager import PermissionManager
+
+
+class VideoQuerySet(PermissionManager, QuerySet):
+    pass
 
 class Video(ThumbAccessors, Media):
+    
+    objects = PassThroughManager.for_queryset_class(VideoQuerySet)()
     
     @permalink
     def get_absolute_uri(self):

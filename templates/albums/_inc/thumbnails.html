@@ -3,15 +3,6 @@
   
   {% for media in object_list %}
     
-    {% ifchanged media.real_type.name %}
-      
-      {% if not forloop.first %}
-      </ul>
-      <ul class="thumbnails">
-      {% endif %}
-      
-    {%endifchanged%}
-    
     {% ifequal media.real_type.name "image" %}
       {% include "albums/_inc/thumbnail_image.html" with media=media.cast %}
     {% else %}
@@ -26,4 +17,3 @@
   
 {% endif %}
 </ul>
-{% include "pagination.html" %}
