@@ -9,31 +9,31 @@
 <section>
 
   <header>
-    {% if breadcrumbs %}
+    {% if breadcrumbs or is_paginated %}
     <ul class="breadcrumb">
       
-      <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
-      
-      {% for crumb in breadcrumbs %}
-      {% if forloop.last %}
-      <li class="active">
-        {{crumb.name}}
-      </li>
-      {% else %}
-      <li>
-        <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
-      </li>
-      {% endif %}
-      {% endfor %}
-      
+        <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
+        {% if breadcrumbs %}
+        {% for crumb in breadcrumbs %}
+          {% if forloop.last %}
+          <li class="active">
+            {{crumb.name}}
+          </li>
+          {% else %}
+          <li>
+            <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
+          </li>
+          {% endif %}
+        {% endfor %}
+       {% endif %}
       <li class="pull-right">
         {% if is_paginated %}
         {% if page_obj.has_previous %}<a href="?page={{page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} page {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="?page={{page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}        
         {% endif %}
       </li>
     </ul>
-
-    {% endif %}
+  {% endif %}
+   
     
     
       {% if not album.description %}
