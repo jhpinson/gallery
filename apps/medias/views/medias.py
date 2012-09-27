@@ -44,7 +44,7 @@ class GenerateThumbnail(View):
         return super(GenerateThumbnail, self).dispatch( request, *args, **kwargs)
     
     def get(self, request, *args, **kwargs):
-        from medias.models.media import Media
+        from medias.models import Media
         m = Media.objects.get(pk=kwargs.get('pk'))
         json = m.cast().generate_thumbnail(kwargs.get('size'))
         return HttpResponse(simplejson.dumps(json), content_type='application/json')
