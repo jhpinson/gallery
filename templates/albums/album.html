@@ -12,6 +12,7 @@
     {% if breadcrumbs or is_paginated %}
     <ul class="breadcrumb">
        {% if breadcrumbs %}
+       
         <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
         {% for crumb in breadcrumbs %}
           {% if forloop.last %}
@@ -24,6 +25,8 @@
           </li>
           {% endif %}
         {% endfor %}
+        {% else %}
+        <li>&nbsp;</li>
        {% endif %}
       <li class="pull-right">
         {% if is_paginated %}
