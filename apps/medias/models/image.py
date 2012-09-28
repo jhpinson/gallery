@@ -29,3 +29,4 @@ class Image(ThumbAccessors, Media):
     
     class Meta:
         app_label = 'medias'
+        verbose_name = 'Photo'

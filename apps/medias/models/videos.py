@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from medias.models.media import Media
 from django.db import models
 from model_utils import Choices
@@ -74,7 +76,7 @@ class Video(ThumbAccessors, Media):
                 
     class Meta:
         app_label = 'medias'
-        
+        verbose_name = u'Vidéo'
         
 class VideoVersion(models.Model):
     

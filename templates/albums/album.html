@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% load gallery_filters %}
+{% load gallery_filters gallery_tags %}
 {% load url from future %}
 
-{% block "body-class" %}{% if album.is_leaf %}fileupload{%endif%}{% endblock %}
+{% block "body-class" %}{% if album %}fileupload{%endif%}{% endblock %}
 
 {% block "content" %}
 
@@ -30,7 +30,7 @@
        {% endif %}
       <li class="pull-right">
         {% if is_paginated %}
-        {% if page_obj.has_previous %}<a href="?page={{page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} page {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="?page={{page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}        
+        {% if page_obj.has_previous %}<a href="{{request.get_full_path|set_page:page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} page {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="{{request.get_full_path|set_page:page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}        
         {% endif %}
       </li>
     </ul>
@@ -66,7 +66,13 @@
             {% if album %}
             <li {% if not album.can_play_diaporama %}class="disabled"{%endif%} ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
             <li ><a href="{% url 'album_update_view' pk=album.pk %}" data-modal="modal"  ><i class="icon-edit"></i> edit</a></li>
-            <li ><input   id="fileUploadInput"  id="truc" type="file" name="files[]"  multiple ></li>
+            <li >
+              <div class="fileinputs">
+                <a class="fakefile"><i class="icon-plus"></i> ajouter des photos</a>
+                <input   id="fileUploadInput"  type="file" name="files[]"  multiple >
+                
+              </div>
+            </li>
             {% else %}
             <li ><a  href="{% url 'album_create_view' %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
             {% endif %}
@@ -75,21 +81,48 @@
         </div>
         
         
-        {%if current_facets.year or  current_facets.month %}
+        {%if current_facets %}
         <div class="sidebar-nav well well-small">
           <h5>Filtres actifs</h5>
         <ul class="nav current-filters">
-          {% if current_facets.year %}
-          <li><a href="{{current_facets.year.url}}"><i class="icon-remove"></i></a> {{current_facets.year.name}}</li>
-          {% endif %}
           
-          {% if current_facets.month %}
-          <li><a href="{{current_facets.month.url}}"><i class="icon-remove"></i></a> {{current_facets.month.name}}</li>
-          {% endif %}
+          {% for facet in current_facets %}
+          <li><a href="{{facet.url}}"><i class="icon-remove"></i></a> {{facet.name}}</li>
+          {% endfor %}          
+          
         </ul>
         </div>
         {% endif %}
        
+        {% for facet in facets.type %}
+          {% if forloop.first %}
+          <div class="sidebar-nav well well-small">
+            <h5>Filtrer par media</h5>
+          <ul class="nav  ">
+          {% endif %}
+            <li >
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+            </li>
+          {% if forloop.last %}
+          </ul>
+          </div>
+          {% endif %}
+        {% endfor %}
+        
+        {% for facet in facets.user %}
+          {% if forloop.first %}
+          <div class="sidebar-nav well well-small">
+            <h5>Filtrer par utilisateur</h5>
+          <ul class="nav  ">
+          {% endif %}
+            <li >
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+            </li>
+          {% if forloop.last %}
+          </ul>
+          </div>
+          {% endif %}
+        {% endfor %}
         
         {% for facet in facets.year %}
           {% if forloop.first %}
@@ -98,7 +131,7 @@
           <ul class="nav ">
           {% endif %}
             <li >
-              <a href="{{facet.url}}"><i class="icon-plus"></i> {{facet.name}}</a>
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i> {{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
             </li>
           {% if forloop.last %}
           </ul>
@@ -114,20 +147,41 @@
           <ul class="nav  ">
           {% endif %}
             <li >
-              <a href="{{facet.url}}"><i class="icon-plus"></i> {{facet.name}}</a>
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i> {{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
             </li>
           {% if forloop.last %}
           </ul>
           </div>
           {% endif %}
         {% endfor %}
-
+        
+        {% for facet in facets.day %}
+          {% if forloop.first %}
+          <div class="sidebar-nav well well-small">
+            <h5>Filtrer par jour</h5>
+          <ul class="nav  ">
+          {% endif %}
+            <li >
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+            </li>
+          {% if forloop.last %}
+          </ul>
+          </div>
+          {% endif %}
+        {% endfor %}
+        
         
     </div>
     
     <div id="thumbnails" class=" span10">
       {% include "albums/_inc/thumbnails.html" %}
+      {% if is_paginated %}
+    <div class="pull-right">
+        {% if page_obj.has_previous %}<a href="{{request.get_full_path|set_page:page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} page {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="{{request.get_full_path|set_page:page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}        
+      </div>
+    {% endif %}
     </div>
+    
   </div>
 
 </section>

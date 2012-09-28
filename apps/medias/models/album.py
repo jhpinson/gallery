@@ -96,3 +96,4 @@ class Album(Media):
 
     class Meta:
         app_label = 'medias'
+        verbose_name = 'Album'

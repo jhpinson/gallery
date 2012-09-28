@@ -19,6 +19,35 @@ body
       img
         margin 0 auto
         display block
+  
+ 
+.fileinputs
+  position relative
+  overflow  hidden
+  input[type=file]
+    position relative
+    -moz-opacity 0 
+    opacity 0
+    z-index 2
+    width 1000px
+    left  -400px
+    &:hover
+      cursor pointer
+      
+  .fakefile 
+    position absolute
+    top 0px
+    left 0px
+    z-index 1
+    width 100%
+    
+    &.hover
+      text-decoration none
+      background-color #eeeeee
+      color #005580
+
+      
+ 
     
 .current-filters
   li

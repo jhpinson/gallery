@@ -43,6 +43,7 @@ PIPELINE_JS = {
             'js/messages.js',
             'js/lazy-gallery.js',
             'js/lazy-video.js',
+            'js/lazy-scripts.js',
             
         ),
         'output_filename': 'c/lazy.r?.js',

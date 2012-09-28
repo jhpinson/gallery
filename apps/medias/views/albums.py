@@ -11,6 +11,7 @@ from django.utils import simplejson
 from django.core.files.uploadedfile import UploadedFile
 from django.db.utils import IntegrityError
 from django.db import connection
+from django.utils.dateformat import format
 
 from PIL import Image as PILImage
 from PIL.ExifTags import TAGS
@@ -25,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from urlparse import urlparse, parse_qs
 from django.utils.http import urlencode
 from helpers.ffmpeg import metadata
-from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
 
@@ -43,7 +44,8 @@ def construct_url(url, query_dict = None, clean=False):
     
     if query_dict is not None:
         for key, value in query_dict.iteritems():
-            query[key] = [value]
+            if value is not None:
+                query[key] = [value]
             
     if len(query.keys()) > 0:
         _query= []
@@ -180,9 +182,15 @@ class AlbumView(ListView):
         
         for facet, value in self.get_current_facets().iteritems():
              
-            if facet in ['year', 'month']:
+            if facet in ['year', 'month', 'day']:
                 filters['date__%s' % facet] = value
-        
+            
+            if facet == 'type':
+                filters['real_type_id'] = value
+                
+            if facet == 'user':
+                filters['created_by_id'] = value
+                
         if len(filters.keys()) > 0:
             qs = qs.filter(**filters)
             
@@ -195,12 +203,33 @@ class AlbumView(ListView):
         facets = {}
         if self.request.GET.get('year', None) is not None:
             facets['year'] = self.request.GET.get('year')
+            
+        if self.request.GET.get('user', None) is not None:
+            facets['user'] = self.request.GET.get('user')
              
-        if self.request.GET.get('month', None) is not None and facets.get('year', None) is not None:
+        if self.request.GET.get('month', None) is not None:
             facets['month'] = self.request.GET.get('month')
-
+            
+        if self.request.GET.get('day', None) is not None:
+            facets['day'] = self.request.GET.get('day')
+            
+        if self.request.GET.get('type', None) is not None:
+            facets['type'] = self.request.GET.get('type')
+        
         return facets
     
+    def get_day(self, year, month, day):
+        return "%s %s" %( format(datetime.date(int(year), int(month) ,int(day)), 'l' ), day)
+    
+    def get_month(self, year, month):
+        return format(datetime.date(int(year), int(month), 1), 'F')
+        
+    def get_type(self, ct):
+        return ContentType.objects.get(pk=ct).model_class()._meta.verbose_name
+    
+    def get_user(self, id):
+        
+        return User.objects.get(pk=id).get_full_name()
     
     def get_context_data(self, **kwargs):
         
@@ -219,50 +248,97 @@ class AlbumView(ListView):
         #facets['real_type'] = []
         #for res in cursor.fetchall():
         #    facets['real_type'].append({'name' :ContentType.objects.get(pk=res[0]).model, 'count' : res[1], 'url' : None})
-        
-        if self.get_album():
-            real_types = [ContentType.objects.get_for_model(Image).pk, ContentType.objects.get_for_model(Video).pk]
-        else:
-            real_types = [ContentType.objects.get_for_model(Album).pk] * 2
-        
+                
         
         full_qs_pk =  [v[0] for v in context['page_obj'].paginator.object_list.values_list('pk')]
         if len(full_qs_pk) == 1:
             full_qs_pk = full_qs_pk * 2
         
         if len(full_qs_pk) > 1:
-        
-            cursor.execute("SELECT year(date), count(*) from medias_media where id in %s and real_type_id in %s group by  year(date)", [full_qs_pk, real_types])
+            
+            cursor.execute("SELECT real_type_id, count(*) from medias_media where  id in %s  group by real_type_id", [full_qs_pk])
+            facets['type'] = []
+            for res in cursor.fetchall():
+                if current_facets.get('type') is not None and int(current_facets.get('type')) == int(res[0]):
+                    continue
+                facets['type'].append({'name' :self.get_type(res[0]), 'nb' : res[1], 'value' : res[0], 'param' : 'type'})
+           
+            cursor.execute("SELECT created_by_id, count(*) from medias_media where  id in %s  group by created_by_id", [full_qs_pk])
+            facets['user'] = []
+            for res in cursor.fetchall():
+                if current_facets.get('user') is not None and int(current_facets.get('user')) == int(res[0]):
+                    continue
+                facets['user'].append({'name' :self.get_user(res[0]), 'nb' : res[1], 'value' : res[0], 'param' : 'user'})
+           
+            
+            
+            cursor.execute("SELECT year(date), count(*) from medias_media where id in %s group by  year(date)", [full_qs_pk])
             facets['year'] = []
             for res in cursor.fetchall():
-                if  current_facets.get('year') is not None and int(current_facets.get('year')) == int(res[0]):
-                    continue
-                facets['year'].append({'name' :res[0], 'nb' : res[1], 'url' : construct_url(url, {'year' : res[0]}, clean=True)})
-            
-            if current_facets.get('year') is not None:
+                facets['year'].append({'name' :res[0], 'nb' : res[1], 'value' : res[0], 'param' : 'year'})
+                
+                if current_facets.get('year') is not None and int(current_facets.get('year')) == int(res[0]):
+                        facets['year'][-1]['current'] = True
+                
+            # si  facet year => month or day ?
+            if current_facets.get('year') is not None or len(facets['year']) == 1:
+                
+                year = current_facets.get('year', facets['year'][0]['value'])
                     
-                cursor.execute("SELECT month(date), count(*) from medias_media where year(date) = %s and id in %s and real_type_id in %s group by  month(date)", [current_facets.get('year'), full_qs_pk, real_types])
+                cursor.execute("SELECT month(date), count(*) from medias_media where  id in %s group by  month(date)", [ full_qs_pk])
                 facets['month'] = []
                 for res in cursor.fetchall():
+                    
+                    facets['month'].append({'name' :self.get_month(year, res[0])   , 'nb' : res[1], 'value' : res[0], 'param' : 'month'})
+                    
                     if current_facets.get('month') is not None and int(current_facets.get('month')) == int(res[0]):
+                        facets['month'][-1]['current'] = True
+                  
+                
+                month =  current_facets.get('month', facets['month'][0]['value'])
+                cursor.execute("SELECT day(date), count(*) from medias_media where  id in %s  group by  day(date)", [full_qs_pk])
+                facets['day'] = []
+                for res in cursor.fetchall():
+                    
+                    if current_facets.get('day') is not None and int(current_facets.get('day')) == int(res[0]):
                         continue
-                    facets['month'].append({'name' :MONTH[res[0]-1]   , 'nb' : res[1], 'url' : construct_url(url, {'month' : int(res[0]), 'year' : int(current_facets.get('year'))}, clean=True)})
+                    facets['day'].append({'name' : self.get_day(year, month, res[0])   , 'nb' : res[1], 'value' : res[0], 'param' : 'day'})
             
+           
+        if current_facets.get('month') is None and len(facets.get('month', []))>1:
+            del  facets['day']
+                
+            
+        
+        current_facets_value = dict(current_facets)
+        
+        context['current_facets'] = []
+        
+        if current_facets.get('user') is not None:
+            context['current_facets'].append({'name' : self.get_user(current_facets['user']), 'value' : current_facets['user'], 'url' : construct_url(url, dict(current_facets_value, user=None),clean=True)})
+        
+        if current_facets.get('type') is not None:
+            context['current_facets'].append({'name' : self.get_type(current_facets['type']), 'value' : current_facets['type'], 'url' : construct_url(url, dict(current_facets_value, type=None),clean=True)})
+        
         if current_facets.get('year') is not None:
-            current_facets['year'] = {'name' : current_facets['year'], 'url' : construct_url(url, clean=True)}
+            context['current_facets'].append({'name' : current_facets['year'], 'value' : current_facets['year'], 'url' : construct_url(url, dict(current_facets_value, year=None, month=None, day=None), clean=True)})
             
         if current_facets.get('month') is not None:
-            current_facets['month'] = {'name' : MONTH[int(current_facets['month'])-1], 'url' : construct_url(url, {'year' : current_facets.get('year')['name']}, clean=True)}
+            context['current_facets'].append({'name' : self.get_month(year, current_facets.get('month')), 'value' : current_facets['month'], 'url' : construct_url(url, dict(current_facets_value,  month=None, day=None), clean=True)})
             
-        if current_facets.get('year') is  None and len(facets.get('year', [])) <= 1:
-            try:
-                del facets['year']
-            except KeyError:
-                pass
+        if current_facets.get('day') is not None:
+            context['current_facets'].append({'name' : self.get_day(year, month, current_facets['day']) , 'url' : construct_url(url, dict(current_facets_value, day=None), clean=True)})
+            
+        for facet in facets.keys():
+            
+            facets[facet] = [v for v in facets[facet] if v.get('current', False) is not True]
+            
+            if len(facets[facet]) <= 1:
+                facets[facet] = None
+            
             
             
         context['facets'] = facets
-        context['current_facets'] = current_facets
         # root album
         if self.get_album() :
             context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]
