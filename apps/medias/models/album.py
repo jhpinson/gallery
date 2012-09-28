@@ -92,10 +92,7 @@ class Album(Media):
         
         
     def __unicode__(self):
-        if self.is_user_root:
-            return self.owner.get_full_name()
-        else:
-            return self.name
+        return self.name
 
     class Meta:
         app_label = 'medias'

@@ -4,98 +4,104 @@
 {% block "body-class" %}media image{% endblock %}
 
 {% block extra_lazy %}
-    <script>
-      $(document).ready(function() {
-        var $videojs = $('.video-js');
-        var height = parseInt($('.video-wrapper').width() * 720 / 1280);
-        $videojs.attr('width', $('.video-wrapper').width());
-        $videojs.attr('height', height);
-        $videojs.css({width : $('.video-wrapper').width() + 'px', height : height + 'px'})
-        
-    });
-    </script>
+<script>
+  $(document).ready(function() {
+    var $videojs = $('.video-js');
+    var height = parseInt($('.video-wrapper').width() * 720 / 1280);
+    $videojs.attr('width', $('.video-wrapper').width());
+    $videojs.attr('height', height);
+    $videojs.css({
+      width : $('.video-wrapper').width() + 'px',
+      height : height + 'px'
+    })
+
+  }); 
+</script>
 {% endblock %}
 
 {% block "content" %}
 
-  
-    <ul class="breadcrumb">
-      <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
-      
-      {% for crumb in breadcrumbs %}
-      {% if forloop.last %}
-      <li class="active">
-        {{crumb.name}}
-      </li>
-      {% else %}
-      <li>
-        <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
-      </li>
-      {% endif %}
-      {% endfor %}
-      
-      <li class="pull-right">
-        {% if prev %}
-        <a href="{% if prev %}{{prev.get_absolute_uri}}{% endif %}"><i class="icon-chevron-left"></i></a>
-      {% else %}
-      <span><i class="icon-chevron-left"></i></span>
-      {% endif %}
-      {% if next %}
-        <a href="{% if next %}{{next.get_absolute_uri}}{% endif %}"><i class="icon-chevron-right"></i></a>
-        {% else %}
-      <span><i class="icon-chevron-right"></i></span>
-      {% endif %}
-      </li>
-      
-    </ul>
-    
-    
-  <div class="row">
-    
-    <div class="span2 pull-right">
-      <div class="sidebar-nav well well-small">
-      
-      
-    <ul class="nav">
-      <li ><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=object.parent_album.pk %}" ><i class=" icon-play"></i> diaporama</a></li>
-      <li>
-        {{object.name}}
-      </li>
-      <li>
-      {{object.date|date:"j F Y \à H\hi"}}
-      </li>
-      
-    </ul>
+<ul class="breadcrumb">
+  <li>
+    <a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span>
+  </li>
+
+  {% for crumb in breadcrumbs %}
+  {% if forloop.last %}
+  <li class="active">
+    {{crumb.name}}
+  </li>
+  {% else %}
+  <li>
+    <a href="{{crumb.get_absolute_uri}}">{{crumb.name}}</a><span class="divider">/</span>
+  </li>
+  {% endif %}
+  {% endfor %}
+
+  <li class="pull-right">
+    {% if is_paginated %}
+    {% if page_obj.has_previous %}<a href="?page={{page_obj.previous_page_number}}"><i class="icon-chevron-left"></i></a>{%endif%} photo {{page_obj.number}} / {{paginator.num_pages}} {% if page_obj.has_next %}<a href="?page={{page_obj.next_page_number}}"><i class="icon-chevron-right"></i></a>{% endif %}
+    {% endif %}
+  </li>
+
+</ul>
+
+<div class="row">
+
+  <div class="span2 pull-right">
+    <div class="sidebar-nav well well-small">
+
+      <ul class="nav">
+        <li >
+          <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=object.parent_album.pk %}" ><i class=" icon-play"></i> diaporama</a>
+        </li>
+
+      </ul>
     </div>
-  </div>
     
+    <div class="sidebar-nav well well-small">
+      <p>
+        <abbr title="Titre de la photo">Titre</abbr> <span>{{object.name}}</span>
+      </p>
+      
+      <p>
+        <abbr title="Date">Date</abbr> <span>{{object.date|date:"j F Y \à H\hi"}}</span>
+      </p>
+      
+      <p>
+        <abbr title="Description">Descr.</abbr> <span contenteditable="true">{% if object.description %}{{object.description}}{%else%}Votre description ici{%endif%}</span>
+      </p>
+      
+    </div>
+        
+    
+    
+  </div>
+
+
+
   <article class="span10">
-    
-    {% if not media.description %}
-        {% if media|can_edit_field:"description" %}
-          <p class="lead">cliquez ici pour ajouter une description</p>
-        {% endif %}
-      {% else %}
-        <p class="lead">{{media.description}}</p>
-      {% endif %}  
-    
+
     {% ifequal object.real_type.model 'image' %}
-      <div class='image-wrapper'>
+    <div class='image-wrapper'>
       {% image_thumbnail object "medium" %}
-      </div>
+    </div>
     {% else %}
-      <div class="video-wrapper">
-        <video width="1280" height="720" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
-          {% for version in object.video_versions.all %}
-          <source src="{{version.file.url}}" type='{{version.get_type_display}}'>
-          {% endfor %}
-        </video>
-      </div>
-    
+    <div class="video-wrapper">
+      <video width="1280" height="720" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
+        {% for version in object.video_versions.all %}
+        <source src="{{version.file.url}}" type='{{version.get_type_display}}'>
+        {% endfor %}
+      </video>
+    </div>
+
     {% endifequal %}
-    
-    
+
+    <footer>
+      © {{object.created_by.get_full_name}}
+    </footer>
+
   </article>
-  
-  </div>
+
+</div>
 {% endblock %}

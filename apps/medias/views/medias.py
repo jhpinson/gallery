@@ -8,21 +8,38 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.detail import DetailView
 from ..models import Media, Image, Video
+from django.core.urlresolvers import reverse
+from django.views.generic.list import ListView
 
 class ModalVideoView(DetailView):
     model = Video
     template_name = 'medias/modal-video-player.html'
 
     
-    
 class MediaView(DetailView):
     model = Media
-    queryset = Media.objects.models(Image, Video).select_subclasses()
+    
+    def get(self, request, *args, **kwargs):
+        
+        media = self.get_object()
+        position = media.get_position() + 1
+        
+        return HttpResponseRedirect("%s?page=%s" % (reverse('album_media_view', kwargs={'pk': media.parent_album.pk}), position))
+    
+class AlbumMediaView(ListView):
+    model = Media
+    
     template_name = 'medias/media_detailview.html'
+    paginate_by = 1
+    context_object_name = 'object'
+    
+    def get_queryset(self):
+        return Media.objects.models(Image, Video).filter(parent_album_id=self.kwargs.get('pk')).select_subclasses()
     
     def get_context_data(self, **kwargs):
-        context = super(MediaView, self).get_context_data(**kwargs)
-        try:
+        context = super(AlbumMediaView, self).get_context_data(**kwargs)
+        context['object'] = context['object'][0] 
+        """try:
             context['next'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__gte=self.object.date).exclude(pk=self.object.pk).order_by('date')[0]
         except Exception:
             context['next'] = False
@@ -33,7 +50,9 @@ class MediaView(DetailView):
         except Exception,e:
             context['prev'] = False
         
-        context['breadcrumbs'] = self.object.parent_album.get_ancestors()[1:] + [self.object.parent_album, self.object]
+        """
+        
+        context['breadcrumbs'] =  [ context['object'].parent_album, context['object']]
         
         return context
     

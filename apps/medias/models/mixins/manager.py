@@ -7,4 +7,6 @@ class PermissionManager(object):
         
         super(PermissionManager, self).__init__( *args, **kwargs)
         
-        self.query.add_q(Q(created_by = get_current_user))
+        current_user = get_current_user()
+        if current_user is not None:
+            self.query.add_q(Q(created_by = get_current_user))
