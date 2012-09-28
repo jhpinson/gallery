@@ -10,7 +10,7 @@
 
   <header>
     {% if breadcrumbs or is_paginated %}
-    <ul class="breadcrumb">
+    <ul class="breadcrumb fixit">
        {% if breadcrumbs %}
        
         <li><a href="{% url "home_view" %}">Accueil</a><span class="divider">/</span></li>
@@ -35,8 +35,6 @@
       </li>
     </ul>
   {% endif %}
-   
-    
     
       {% if not album.description %}
         {% if album|can_edit_field:"description" %}
@@ -45,9 +43,6 @@
       {% else %}
         <p class="lead">{{album.description}}</p>
       {% endif %}  
-    
-    
-    
     
   </header>
 
@@ -60,7 +55,7 @@
   </div>
 
   <div class="row">
-    <div class="span2 pull-right">
+    <div class="span2 pull-right fixit">
         
         <div class="sidebar-nav well well-small">
           

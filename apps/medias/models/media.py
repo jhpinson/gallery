@@ -44,6 +44,11 @@ class Media(ChangeTrackMixin, models.Model):
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
     
+    def get_position(self):
+        from ..models import Image, Video
+        qs = [ r[0] for r in self.parent_album.medias.models(Image, Video).values_list('pk')]
+        return qs.index(self.pk )
+        
     def get_absolute_uri(self):
         return self.cast().get_absolute_uri()
     

@@ -5,6 +5,7 @@ from medias.models.mixins.models import ThumbAccessors
 from django.db.models.query import QuerySet
 from model_utils.managers import PassThroughManager
 from medias.models.mixins.manager import PermissionManager
+from medias.models.videos import Video
 
 class ImageQuerySet(PermissionManager, QuerySet):
     pass
@@ -20,9 +21,10 @@ class Image(ThumbAccessors, Media):
         self.generate_thumbnail('medium', self.file.file)
         self.generate_thumbnail('large', self.file.file)
     
-        
+            
     @permalink
     def get_absolute_uri(self):
+        
         return 'media_view', None, {'pk': self.pk}
     
     class Meta:

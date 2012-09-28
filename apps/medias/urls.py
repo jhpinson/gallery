@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from medias.views.medias import GenerateThumbnail, LazyThumbnail, MediaView,\
-    ModalVideoView
+    ModalVideoView, AlbumMediaView
 
 
 urlpatterns = patterns('',
@@ -22,5 +22,6 @@ urlpatterns += patterns('',
      (r'^create-album/$', CreateAlbum.as_view(), {}, "album_create_view"),
      (r'^update-album/(?P<pk>\d+)/$', UpdateAlbum.as_view(), {}, "album_update_view"),
      (r'^media/(?P<pk>\d+)/$', MediaView.as_view(), {}, "media_view"),
+     (r'^album-media/(?P<pk>\d+)/$', AlbumMediaView.as_view(), {}, "album_media_view"),
      (r'^modal-video/(?P<pk>\d+)/$', ModalVideoView.as_view(), {}, "modal_video_view"),
 )
