@@ -294,19 +294,22 @@ class AlbumView(ListView):
                     if current_facets.get('month') is not None and int(current_facets.get('month')) == int(res[0]):
                         facets['month'][-1]['current'] = True
                   
-                
-                month =  current_facets.get('month', facets['month'][0]['value'])
-                cursor.execute("SELECT day(date), count(*) from medias_media where  id in %s  group by  day(date)", [full_qs_pk])
-                facets['day'] = []
-                for res in cursor.fetchall():
-                    
-                    if current_facets.get('day') is not None and int(current_facets.get('day')) == int(res[0]):
-                        continue
-                    facets['day'].append({'name' : self.get_day(year, month, res[0])   , 'nb' : res[1], 'value' : res[0], 'param' : 'day'})
+                if current_facets.get('month') is not None or len(facets['month']) == 1:
+                    month =  current_facets.get('month', facets['month'][0]['value'])
+                    cursor.execute("SELECT day(date), count(*) from medias_media where  id in %s  group by  day(date)", [full_qs_pk])
+                    facets['day'] = []
+                    for res in cursor.fetchall():
+                        
+                        if current_facets.get('day') is not None and int(current_facets.get('day')) == int(res[0]):
+                            continue
+                        facets['day'].append({'name' : self.get_day(year, month, res[0])   , 'nb' : res[1], 'value' : res[0], 'param' : 'day'})
             
            
         if current_facets.get('month') is None and len(facets.get('month', []))>1:
-            del  facets['day']
+            try:
+                del  facets['day']
+            except KeyError:
+                pass
                 
             
         
