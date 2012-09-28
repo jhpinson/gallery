@@ -43,11 +43,10 @@ $(window).load(function() {
 				},
 				
 				send : function (e, data) {
-					
+					$('#progressall').removeClass('progress-success');
 				  var name = fileToId(data.files[0]);
-				  console.debug(data.files[0])
 				  //$('#' + name).append('<div  class="progress"  ><div  class="bar" style="width: 0;"></div></div>');
-				  $('#upload-manager h4 span').text(data.files[0].name);
+				  $('#upload-manager h5 span').text(data.files[0].name);
 				},
 				
 				stop : function () {
@@ -73,13 +72,15 @@ $(window).load(function() {
 					
 					
 				},
-				/*
+				
 				progress : function (e, data) {
           var name = fileToId(data.files[0]);
 					var progress = parseInt(data.loaded / data.total * 100, 10);
-          $('#upload-manager #'+ name +' .bar').css('width', progress + '%');
+          if (progress == 100) {
+          	$('#progressall').addClass('progress-success');
+          }
           
-        },*/
+        },
 				
 				progressall : function (e, data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);

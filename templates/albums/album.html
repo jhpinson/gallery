@@ -47,10 +47,11 @@
   </header>
 
   <div id="upload-manager" class="well" style="display:none">
-    <h4>Téléversement de <span></span></h4>
-    <div id="progressall" class=" progress progress-striped active">
+    <h5>Téléversement de <span></span></h5>
+    <div id="progressall" class=" progress active">
       <div  class="bar" style="width: 0;"></div>
     </div>
+    <small>Merci de ne pas fermer cette fenêtre.</small>
     <ul class="" id="upload-details"></ul>
   </div>
 
@@ -101,7 +102,7 @@
           <ul class="nav  ">
           {% endif %}
             <li >
-              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i> {{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
             </li>
           {% if forloop.last %}
           </ul>
@@ -116,7 +117,7 @@
           <ul class="nav  ">
           {% endif %}
             <li >
-              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i> {{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
             </li>
           {% if forloop.last %}
           </ul>
@@ -162,7 +163,7 @@
           <ul class="nav  ">
           {% endif %}
             <li >
-              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i>{{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
+              <a href="{% set_qs request.get_full_path facet.param facet.value %}"><i class="icon-arrow-right"></i> {{facet.name}} <span class="muted pull-right">{{facet.nb}}</span></a>
             </li>
           {% if forloop.last %}
           </ul>
