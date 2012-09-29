@@ -90,6 +90,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    'social_auth.context_processors.social_auth_login_redirect',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -131,6 +135,8 @@ INSTALLED_APPS = (
     'emailusernames',
     'auth',
     'south',
+    'generic_confirmation',
+    'social_auth',
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'
@@ -199,6 +205,41 @@ DAJAXICE_XMLHTTPREQUEST_JS_IMPORT = False
 DAJAXICE_JSON2_JS_IMPORT = False
 
 AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.contrib.dropbox.DropboxBackend',
     'emailusernames.backends.EmailAuthBackend',
+    'auth.backends.ForceAuthBackend',
 )
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+
+FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+FACEBOOK_APP_ID=environ.get('FACEBOOK_APP_ID', None)
+FACEBOOK_API_SECRET=environ.get('FACEBOOK_API_SECRET', None)
+
+GOOGLE_OAUTH_EXTRA_SCOPE = ['https://www.googleapis.com/auth/userinfo.profile']
+GOOGLE_OAUTH2_CLIENT_ID = environ.get('GOOGLE_OAUTH2_CLIENT_ID', None)
+GOOGLE_OAUTH2_CLIENT_SECRET = environ.get('GOOGLE_OAUTH2_CLIENT_SECRET', None)
+
+DROPBOX_APP_ID = environ.get('DROPBOX_APP_ID', None)
+DROPBOX_API_SECRET = environ.get('DROPBOX_API_SECRET', None)
+
+TWITTER_CONSUMER_KEY = environ.get('TWITTER_CONSUMER_KEY', None)
+TWITTER_CONSUMER_SECRET = environ.get('TWITTER_CONSUMER_SECRET', None)
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/?action=registration-succeed'
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', 'first_name', 'last_name', 'username']
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    'social_auth.backends.pipeline.misc.save_status_to_session',
+    'auth.pipeline.redirect_to_form',
+    'auth.pipeline.email',
+    'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    'social_auth.backends.pipeline.user.update_user_details',
+    #'auth.pipeline.update_profile',
+)

@@ -1,5 +1,7 @@
 from django import template
-import re
+import re, urlparse
+from django.template.defaultfilters import stringfilter
+from django.contrib.sites.models import Site
 
 register = template.Library()
 
@@ -28,3 +30,19 @@ def set_page(url, page):
         
     return url
 
+@register.filter
+@stringfilter
+def css_class(value):
+    value = value.lower().strip()
+    return re.sub(r'\s+', '-', value)
+
+
+@register.filter
+@stringfilter
+def make_absolute_url(value):
+    p = urlparse.urlparse(value)
+    if p.netloc == '':
+        domain = Site.objects.get_current().domain
+        return urlparse.urljoin("http://%s/" % domain, value)
+    else:
+        return value

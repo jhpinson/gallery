@@ -2,11 +2,10 @@
 {% load i18n bootstrap_toolkit gallery_filters %}
 
 <div class="modal-header">
-  
-  <h3>Se connecter </h3>
+  <h3>Créer un compte</h3>
 </div>
 
-<form method='POST'  data-dajax-method='auth.login' id="modal-login">
+<form method='POST'  data-dajax-method='auth.register' id="modal-login">
   <div class="modal-body">
     <div class="login-password">
       <h2>Saisissez vos identifiants, </h2>
@@ -30,7 +29,7 @@
         </div>
       </div>
       
-      <a class="pull-left" href="{% url 'register' %}">Je n'ai pas de compte</a>
+      <a class="pull-left" href="{% url 'login' %}">J'ai déja un compte</a>
       <button type="submit" data-loading-text="{% trans "please wait..." %}" class="btn btn-primary" >{% trans "OK" %}</button>
       {% csrf_token %}
       <input type="hidden" name="next" value="{{request.GET.next}}">

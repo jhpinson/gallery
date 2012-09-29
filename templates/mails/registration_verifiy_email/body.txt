@@ -1,0 +1,6 @@
+{% load i18n gallery_filters %}
+{% trans "Click on the link below to confirm your email adress and continue the registration process" %}
+
+{{link|make_absolute_url}}
+
+{% include "mails/default_footer.txt" %}

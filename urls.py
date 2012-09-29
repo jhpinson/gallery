@@ -21,11 +21,18 @@ except ImportError:
 urlpatterns += patterns('',
     url(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
                         
+     # generic confirmation
+    url(r'gc/', include('generic_confirmation.urls')),
+    
+    # social auth
+    url(r'social-auth/', include('social_auth.urls')),
     
     # custom auth
     url(r'', include('auth.urls')),
+    
     # albums
     #url(r'', include('structures.urls')),
+    
     # medias
     url(r'', include('medias.urls')),
     

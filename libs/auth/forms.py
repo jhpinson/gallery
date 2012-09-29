@@ -1,7 +1,58 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext_lazy as _
-from django.forms.widgets import HiddenInput
+from generic_confirmation.forms import DeferredFormMixIn
+from django.forms.models import ModelForm
+from django.contrib.auth.models import User
+from generic_confirmation.models import DeferredAction
+from helpers.mails import send
+from django.core.urlresolvers import reverse
+from emailusernames.utils import user_exists
+from django.contrib.auth.hashers import make_password
+
+
+class SocialRegistrationEmailForm(DeferredFormMixIn, forms.Form):
+    instance = None
+    
+    email = forms.EmailField(label = _('Email'), max_length=75)
+    
+    def save(self, user=None, request = None, **kwargs):
+        
+        
+        if not self.is_valid():
+            raise Exception("only call save() on a form after calling is_valid().")
+        
+        if request is None:
+            raise Exception('request must be provided')
+        
+        
+        form_class_name = u"%s.%s" % (self.__class__.__module__, 
+                                      self.__class__.__name__)
+
+        data = {'form_class':form_class_name, 'form_input':dict(request.session._get_session() , saved_email=self.cleaned_data['email']), 
+                'token':self._gen_token(),}
+        
+        valid_until = kwargs.pop('valid_until', None)
+        if valid_until is None:
+            self._get_expiration_date()
+        data.update({'valid_until': valid_until})
+        
+        defer = DeferredAction.objects.create(**data)
+
+        if self.instance is not None:
+            # this extra step makes sure that ModelForms for editing and for
+            # creating objects both work.
+            defer.instance_object = self.instance
+            defer.save()
+
+        
+        send('registration_verifiy_email', self.cleaned_data['email'], {'link' : reverse('social_registration_confirm', kwargs={'token' : defer.token})})
+            
+        return defer.token
+        
+        
+    class Meta:
+        model = None
 
 class AuthenticationForm(forms.Form):
     """
@@ -56,3 +107,57 @@ class AuthenticationForm(forms.Form):
 
     def get_user(self):
         return self.user_cache
+    
+    
+class RegistrationForm(DeferredFormMixIn, ModelForm):
+    
+    email = forms.CharField(label=_("Email"), max_length=30)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if user_exists(email):
+            raise forms.ValidationError(_("A user with that email already exists."))
+        return email
+    
+    class Meta:
+        model = User
+        fields = ("email", "password")
+    
+    def save(self, user=None, request = None, **kwargs):
+        
+        
+        if not self.is_valid():
+            raise Exception("only call save() on a form after calling is_valid().")
+        
+        if request is None:
+            raise Exception('request must be provided')
+        
+        
+        form_class_name = u"%s.%s" % (self.__class__.__module__, 
+                                      self.__class__.__name__)
+        
+        self.data['password'] = make_password(self.data['password'])
+        
+        data = {'form_class':form_class_name, 'form_input':self.data, 
+                'token':self._gen_token(),}
+        #
+        valid_until = kwargs.pop('valid_until', None)
+        if valid_until is None:
+            self._get_expiration_date()
+        data.update({'valid_until': valid_until})
+        
+        defer = DeferredAction.objects.create(**data)
+
+        if self.instance is not None:
+            # this extra step makes sure that ModelForms for editing and for
+            # creating objects both work.
+            defer.instance_object = self.instance
+            defer.save()
+
+        
+        send('registration_verifiy_email', self.cleaned_data['email'], {'link' : reverse('regular_registration_confirm', kwargs={'token' : defer.token})})
+            
+        return defer.token
+    
+    

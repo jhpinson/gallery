@@ -1,0 +1,49 @@
+{% extends "boilerplate.html" %}
+{% load i18n bootstrap_toolkit %}
+{% block "body" %}
+<div class="modal" id="modal" data-width="350">
+
+  <form method='POST' data-dajax-method='auth.social_registration_email' id="modal-login">
+    
+    <div class="modal-body">
+        <h2>Veuillez fournir votre adresse email afin de finaliser la création de votre compte.</h2>
+        <div class="alert alert-block alert-error" style="display:none"></div>
+        <div class="control-group required">
+          <label class="control-label" for="id_email">Email</label>
+          <div class="controls">
+            <button type="submit" data-loading-text="{% trans "please wait..." %}" class="btn btn-primary pull-right" >{% trans "Valider" %}</button>
+            <input id="id_email" type="text" name="email" placeholder="Email" maxlength="30">
+            <div id="error_email" style="display:none">
+              <p class="help-block error-tpl"></p>
+            </div>
+          </div>
+        </div>
+      {% csrf_token %}
+      
+    </div>
+    
+    
+  </form>
+</div>
+<div class="modal-backdrop"></div>
+{% endblock %}
+
+
+{% block extra_lazy %}
+<script>
+  $(document).ready(function() {
+    
+    var width = $('#modal').attr('data-width');
+      if (typeof(width) !== 'undefined') {
+        $("#modal").css({
+              width : width + 'px',
+              'margin-left' : function() {
+                return -($(this).width() / 2);
+              }
+            });
+      }
+    
+      setupSubmitForm("#modal");
+  }); 
+</script>
+{% endblock %}

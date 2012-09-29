@@ -1,0 +1,15 @@
+{% load i18n bootstrap_toolkit %}
+{% block content %}
+<div class="modal-body">
+  <button type="button" class="close" data-dismiss="modal">
+    ×
+  </button>
+  
+    <h3>{% trans "Vérification de votre adresse email" %}</h3>
+    <p>{% trans "Un email vous a été envoyé afin de vérifier l'adresse que vous avez fournie, veuillez suivre les instructions qu'il contient."%}</p>
+  
+</div>
+<div class="modal-footer">
+  <a href="#" class="btn" data-dismiss="modal">Close</a>
+</div>
+{% endblock %}
