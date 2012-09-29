@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'south',
     'generic_confirmation',
     'social_auth',
+    'profiles',
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'
@@ -203,6 +204,8 @@ THUMBNAIL_SIZES = {'small' : {'width' : 150, 'height':120}, 'medium' : {'width' 
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
 DAJAXICE_XMLHTTPREQUEST_JS_IMPORT = False
 DAJAXICE_JSON2_JS_IMPORT = False
+
+AUTH_PROFILE_MODULE = 'profiles.Profile'
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
