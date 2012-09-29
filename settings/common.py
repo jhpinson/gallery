@@ -228,7 +228,7 @@ DROPBOX_API_SECRET = environ.get('DROPBOX_API_SECRET', None)
 
 TWITTER_CONSUMER_KEY = environ.get('TWITTER_CONSUMER_KEY', None)
 TWITTER_CONSUMER_SECRET = environ.get('TWITTER_CONSUMER_SECRET', None)
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/?action=registration-succeed'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/'
 SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', 'first_name', 'last_name', 'username']
 SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.social_auth_user',
