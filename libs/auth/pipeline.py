@@ -7,7 +7,7 @@ from django.core.files.base import ContentFile
 def redirect_to_form( *args, **kwargs):
      
     if kwargs.get('request').user.is_authenticated():
-        kwargs['request'].session.set('saved_email',kwargs.get('request').user.email) 
+        kwargs['request'].session['saved_email'] = kwargs.get('request').user.email 
         return
      
     if not kwargs.get('details').get('email') and not kwargs['request'].session.get('saved_email') and \
