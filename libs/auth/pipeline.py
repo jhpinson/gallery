@@ -58,7 +58,7 @@ def update_profile(*args, **kwargs):
         p = user.get_profile()
         
         input_file = StringIO(urllib2.urlopen(avatar_url).read())
-        p.avatar.save(str(p.uuid)+'.jpg', ContentFile(input_file.getvalue()), save=True)
+        p.avatar.save('tmp'+'.jpg', ContentFile(input_file.getvalue()), save=True)
         
     if not user.is_active:
         user.is_active = True
