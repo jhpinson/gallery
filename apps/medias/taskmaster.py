@@ -1,12 +1,8 @@
 from django.contrib.auth.models import User
-from structures.models import Album
-from medias.models import Image, Video
+from medias.models import Album
 import os
-from PIL import Image as PILImage
 from django.db.utils import IntegrityError
-from PIL.ExifTags import TAGS
 import datetime
-from django.core.files.base import ContentFile
 from middleware.request import set_current_user
 from helpers import create_media
 
