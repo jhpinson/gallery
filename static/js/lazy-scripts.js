@@ -1,5 +1,33 @@
 $(document).ready(function() {
       
+	
+	   
+	
+	   var displayImageActions = {};
+      $('div.image').mouseover(function (e) {
+      	
+      	 var $el = $(this).forceId();
+         $el.find('.actions').slideDown(200);
+        
+        if (typeof(displayImageActions[$el.attr('id')]) !== 'undefined') {
+              clearTimeout(displayImageActions[$el.attr('id')]);
+              delete displayImageActions[$el.attr('id')]
+            }
+      });	
+	     
+      
+      $('div.image').mouseout(function (e) {
+      	var $el = $(this).forceId();
+      	if (typeof(displayImageActions[$el.attr('id')]) !== 'undefined') {
+              clearTimeout(displayImageActions[$el.attr('id')]);
+              delete displayImageActions[$el.attr('id')]
+            }
+
+            displayImageActions[$el.attr('id')] = setTimeout(function() {
+                  $el.find('.actions').fadeOut(200);
+                }, 400)
+      	
+      });
 	     // FILE INPUT STYLE
 			$('.fileinputs').each(function(id, el) {
 						var $el = $(el);

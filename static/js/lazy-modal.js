@@ -4,13 +4,13 @@ $(document).ready(function() {
       // popup modal
       $('*[data-modal]').click(function(e) {
             e.preventDefault();
-
+            console.debug('lalalalal')
             var href = $(e.target).attr('href');
 
             if (typeof(href) === 'undefined') {
               href = $(e.currentTarget).attr('href');
             }
-
+            
             if (href.indexOf('#') == 0) {
               var width = $(e.target).attr('data-width');
               if (typeof(width) !== 'undefined') {

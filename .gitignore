@@ -2,3 +2,6 @@
 .pydevproject
 *.pyc
 *.mo
+.codeintel/
+gallery.sublime-project
+gallery.sublime-workspace

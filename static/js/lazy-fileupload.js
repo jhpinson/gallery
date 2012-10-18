@@ -64,7 +64,7 @@ $(window).load(function() {
 					
 					$('#thumbnails').fadeOut(200, function () {
 					 $('#thumbnails').load(url, function () {
-             $('img.thumbnail-pending').generateThumbnails()
+             //$('img.thumbnail-pending').generateThumbnails()
              $('#thumbnails').fadeIn(200);
             });
 					});

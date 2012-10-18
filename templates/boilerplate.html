@@ -21,17 +21,28 @@
     <![endif]-->
     
     <!--<script src="{{ STATIC_URL }}js/libs/modernizr-2.0.6.min.js"></script>-->
-    
+    <script type='text/javascript'>
+(function (d, t) {
+  var bh = d.createElement(t), s = d.getElementsByTagName(t)[0];
+  bh.type = 'text/javascript';
+  bh.src = '//www.bugherd.com/sidebarv2.js?apikey=xki6nf8qgbk836o05amfwq';
+  s.parentNode.insertBefore(bh, s);
+  })(document, 'script');
+</script>
   </head>
-  <body class="{% block "body-class" %}{% endblock %}" {% block "body-attributes" %}{% endblock %}>
+  <body class="{% block "body-class" %}{% endblock %}" {% block "body-attributes" %}{% endblock %} {% block "body-data" %}{%endblock%}>
       
       {% block "body" %}
       {% endblock %}
       
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+      
+      
       <script>
-        window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.7.2.min.js"><\/script>')
+        window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.8.2.js"><\/script>')
       </script>
+      
+      <script src="{{STATIC_URL}}js/libs/jquery-ui-1.9.0.custom.js"></script>
       
       {% compressed_js 'lazy' %} 
     

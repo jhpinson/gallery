@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
@@ -27,6 +27,7 @@ from urlparse import urlparse, parse_qs
 from django.utils.http import urlencode
 from helpers.ffmpeg import metadata
 from django.contrib.auth.models import User
+from ..forms import MoveForm
 
 MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
 
@@ -62,6 +63,16 @@ def construct_url(url, query_dict = None, clean=False):
         
     return "%s%s%s" % ( parse_result.path, "?%s" % query if query is not None else '', "#%s" % parse_result.fragment if len(parse_result.fragment) > 0 else '')
 
+class SearchAlbum(View):
+    
+    def get(self, request, *args, **kwargs):
+        res = []
+        query = request.GET.get('q')
+        for a in Album.objects.filter(name__istartswith=query):
+            res.append({'value' : a.pk, 'label' : a.name})
+        
+        return HttpResponse(simplejson.dumps(res), content_type='application/json')
+    
 class AlbumView(ListView):
     
     template_name = 'albums/album.html'
@@ -87,7 +98,7 @@ class AlbumView(ListView):
             new_video.name = name
             new_video.parent_album=self.get_album()
             new_video.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
-            new_video.file.save(
+            new_video.original_file.save(
                               filename
                               , file, save=True)
             
@@ -121,7 +132,7 @@ class AlbumView(ListView):
                 if new_image.date is None:
                     new_image.date= parse(request.POST.get(filename)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None)
                 
-                new_image.file.save(
+                new_image.original_file.save(
                               filename
                               , file, save=True)
                 
@@ -179,7 +190,6 @@ class AlbumView(ListView):
             qs = self.get_album().medias.models(Image, Video).select_subclasses().order_by('date').select_subclasses()
         else:
             qs = Album.objects.all().order_by('-date')
-        
         for facet, value in self.get_current_facets().iteritems():
              
             if facet in ['year', 'month', 'day']:
@@ -241,7 +251,7 @@ class AlbumView(ListView):
         facets = {}
         url = self.request.get_full_path()
         
-        
+        context['move_form'] = MoveForm
         
         cursor = connection.cursor()
         #cursor.execute("SELECT real_type_id, count(*) from medias_media where parent_album_id=%s group by real_type_id", [self.get_album().pk])
@@ -346,7 +356,7 @@ class AlbumView(ListView):
         if self.get_album() :
             context['breadcrumbs'] = self.get_album().get_ancestors()[1:] + [self.get_album()]
         
-            
+        
         return context
     
     

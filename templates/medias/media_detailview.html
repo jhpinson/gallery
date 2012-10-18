@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% load gallery_tags gallery_filters %}
 {% load url from future %}
-{% block "body-class" %}media image{% endblock %}
+{% block "body-class" %}media image thumb-container {{object.status}} {% endblock %}
+{% block "body-data" %} data-media-pk="{{object.pk}}"{% endblock %}
 
 {% block extra_lazy %}
 <script>
@@ -60,8 +61,20 @@
           <a href="" ><i class=" icon-download-alt"></i> télécharger</a>
         </li>
         
-        <li class="disabled">
-          <a href="" ><i class=" icon-trash"></i> supprimer</a>
+        <li class="deleted" >
+          <a  href="#" data-ops-target="media-{{object.pk}}" data-media-unremove data-media-pk="{{object.pk}}" ><i class=" icon-refresh"></i> publier</a>
+        </li>
+        
+        <li class="not-deleted" >
+          <a  href="#" data-ops-target="media-{{object.pk}}" data-media-remove data-media-pk="{{object.pk}}" ><i class=" icon-trash"></i> supprimer</a>
+        </li>
+        
+        <li class="not-deleted">
+          <a  href="#" data-image-rotate="90" data-media-pk="{{object.pk}}" data-ops-target="media-{{object.pk}}" data-image-size="medium"><i class=" icon-share-alt"></i> tourner à droite</a>
+        </li>
+        
+        <li class="not-deleted">
+          <a  href="#" data-image-rotate="-90" data-media-pk="{{object.pk}}"  data-ops-target="media-{{object.pk}}" data-image-size="medium" ><i class=" icon-share-alt"></i> tourner à gauche</a>
         </li>
         
         
@@ -93,11 +106,13 @@
   <article class="span10">
 
     {% ifequal object.real_type.model 'image' %}
-    <div class='image-wrapper'>
-      {% image_thumbnail object "medium" %}
+    <div class="image-wrapper">
+      {% thumb object "medium" as im %}
+        <img id="{{im.id}}"  src="{{im.src}}" width="{{im.width}}" height="{{im.width}}"  >
+        {% endthumb %}
     </div>
     {% else %}
-    <div class="video-wrapper">
+    <div class="video-wrapper " >
       <video width="1280" height="720" class="video-js vjs-default-skin" controls preload="auto" data-setup="{}">
         {% for version in object.video_versions.all %}
         <source src="{{version.file.url}}" type='{{version.get_type_display}}'>

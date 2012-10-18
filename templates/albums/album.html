@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load gallery_filters gallery_tags %}
+{% load gallery_filters gallery_tags bootstrap_toolkit %}
 {% load url from future %}
 
 {% block "body-class" %}{% if album %}fileupload{%endif%}{% endblock %}
@@ -78,10 +78,27 @@
             <li ><a  href="{% url 'album_create_view' %}" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
             {% endif %}
             
+            
+            
           </ul>
         </div>
         
-        
+        {% if album %}
+        <div class="sidebar-nav well well-small">
+          
+          <h5>Sélection</h5>
+          <ul class="nav">
+            <li class=" mass-media-action allow-for-all allow-empty hide" ><a  href="#" data-select-all ><i class="icon-plus"></i> tout séléctionner</a></li>
+            <li class=" mass-media-action allow-for-all hide" ><a  href="#" data-unselect-all ><i class="icon-plus"></i> tout déséléctionner</a></li>
+            <li class=" mass-media-action allow-for-all hide" ><a  href="#" data-revert-selection  ><i class="icon-plus"></i> inverser la sélection</a></li>
+            <li class=" mass-media-action allow-for-published hide" ><a  href="#modal-move" data-modal="modal"  data-width="400" ><i class="icon-plus"></i> déplacer</a></li>
+            <li class=" mass-media-action allow-for-published hide" ><a  href="#" data-image-rotate="-90"  data-image-size="small" ><i class="icon-plus"></i> tourner à gauche</a></li>
+            <li class=" mass-media-action allow-for-published hide" ><a  href="#" data-image-rotate="90"  data-image-size="small"  ><i class="icon-plus"></i> tourner à droite</a></li>
+            <li class=" mass-media-action allow-for-published hide" ><a  href="#" data-media-remove  ><i class="icon-trash"></i> supprimer</a></li>
+            <li class=" mass-media-action allow-for-deleted hide" ><a  href="#" data-media-unremove  ><i class="icon-trash"></i> restaurer</a></li>
+          </ul>
+        </div>
+        {% endif %}
         {%if current_facets %}
         <div class="sidebar-nav well well-small">
           <h5>Filtres actifs</h5>
@@ -173,7 +190,6 @@
         
         
     </div>
-    
     <div id="thumbnails" class=" span10">
       {% include "albums/_inc/thumbnails.html" %}
       {% if is_paginated %}
@@ -186,5 +202,41 @@
   </div>
 
 </section>
+
+<div id="modal-move" class="modal hide fade">
+  <form id="form-move">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Déplacer les éléments sélectionnés</h3>
+  </div>
+  
+  <div class="modal-body">
+    {{ move_form|as_bootstrap }}
+    {% csrf_token %}
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Fermer</a>
+    <button id="btn-move" type="submit" data-loading-text="Veuillez patienter..." class="btn btn-primary" >Déplacer</button>
+  </div>
+  
+</form>
+</div>
+
+<!--
+  <form >
+  <div class="modal-body">
+      <input class="span3" type="text" id="autocomplete-album" placeholder="Rechercher un album">
+      <label class="checkbox">
+         <input id="create-new-album" type="checkbox"> Cliquez ici pour créer un nouvel album
+      </label>
+  </div>
+  <input id="autocomplete-album-id" type="hidden">
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Annuler</a>
+    <button class="btn btn-primary" data-loading-text="Veuillez patienter..." id="btn-move">Déplacer</button>
+  </div>
+  </form>
+</div>
+-->
 
 {% endblock %}

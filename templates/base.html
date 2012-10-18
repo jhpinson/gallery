@@ -15,18 +15,9 @@
         <img src="{{im.url}}" width="{{im.width}}" height="{{im.height}}"/>
         {%endthumbnail%}
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" >
+          
           <li>
-            <a tabindex="-1" href="#">Dashboard</a>
-          </li>
-          <li>
-            <a tabindex="-1" href="{{request.user.get_profile.get_absolute_uri}}">Profile</a>
-          </li>
-          <li>
-            <a tabindex="-1" href="#">Inbox</a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a tabindex="-1" href="{%url "logout" %}?next={{request.META.PATH_INFO}}">Logout</a>
+            <a tabindex="-1" href="{%url "logout" %}?next={{request.get_full_path|urlencode}}">Logout</a>
           </li>
         </ul>
       </div>

@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from medias.views.medias import GenerateThumbnail, LazyThumbnail, MediaView,\
     ModalVideoView, AlbumMediaView
+from medias.views.albums import SearchAlbum
 
 
 urlpatterns = patterns('',
@@ -24,4 +25,6 @@ urlpatterns += patterns('',
      (r'^media/(?P<pk>\d+)/$', MediaView.as_view(), {}, "media_view"),
      (r'^album-media/(?P<pk>\d+)/$', AlbumMediaView.as_view(), {}, "album_media_view"),
      (r'^modal-video/(?P<pk>\d+)/$', ModalVideoView.as_view(), {}, "modal_video_view"),
+     (r'^autocomplete-album/$', SearchAlbum.as_view(), {}, "autocomplete_album_view"),
+     
 )

@@ -6,7 +6,7 @@
     {% ifequal media.real_type.name "image" %}
       {% include "albums/_inc/thumbnail_image.html" with media=media.cast %}
     {% else %}
-      {% ifequal media.real_type.name "album" %}
+      {% ifequal media.real_type.name "Album" %}
         {% include "albums/_inc/thumbnail_album.html" %}
       {% else %}
         {% include "albums/_inc/thumbnail_video.html" %}

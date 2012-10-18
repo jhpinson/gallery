@@ -1,4 +1,15 @@
+.deleted
+  .not-deleted
+    display none 
+      
+.published
+  .deleted
+    display none
+    
+  
 body
+  
+ 
   
   #nav-header
     height 48px
@@ -20,8 +31,19 @@ body
     margin-right auto
     margin-bottom 25px
   &.media
+  
+    &.deleted
+      .image-wrapper, .video-wrapper
+        background-image:url(img/deleted.png);
+        background-repeat:no-repeat;
+        background-position:50% 30%;        
+        img
+          opacity 0.5
+  
     .image-wrapper, .video-wrapper
-    
+      
+      
+      
       padding  4px
       border 1px solid #DDD
       -webkit-border-radius 4px
@@ -34,8 +56,14 @@ body
       img
         margin 0 auto
         display block
+
   
- 
+div.image-mask
+  background-color black
+  opacity .5
+  position absolute
+  
+  
 .fileinputs
   position relative
   overflow  hidden
@@ -138,6 +166,13 @@ body
   li
     .thumbnail
       
+      background-color whiteSmoke
+      &.deleted
+        background-image:url(img/deleted.png);
+        background-repeat:no-repeat;
+        background-position:50% 30%;        
+        img 
+          opacity 0.5      
       
       &.album
         height 200px
@@ -146,13 +181,44 @@ body
           width 150px
           height 115px
         
+        div.thumb-header
+          display inline-block
+          margin-top 5px
+          width 150px
+          a
+            float right
+          .label
+            float left
+        div.stats
+          float left
+          display block
+        div.actions
+          float right
+          display block
+      
+     
+              
       &.video, &.image
         height 160px
-    
+        position relative
+        
+        &.selected
+          background-color gainsboro
+        
+        .actions
+          //top 5px
+          position absolute    
+          width 100%    
+          background whiteSmoke
+          margin-left -4px
+          margin-top -4px
+          z-index 10
+          opacity 0.95
+          
       text-align  center
       .thumbnail-container
         display inline-block
-        
+        position relative
         h5, h6
           line-height 5px
           text-align  left
@@ -166,16 +232,8 @@ body
           width auto
           max-height 115px
           
-        div.actions
-          display inline-block
-          margin-top 5px
-          width 150px
-          a
-            float right
-          .label
-            float left
-        div.stats
-          text-align  left
+        
+          
   
 
   

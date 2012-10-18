@@ -3,12 +3,18 @@
 <li class= "span2">
   <div class="thumbnail album">
       <div class="thumbnail-container">
-        <div class="actions" >
-          <span class="label label-info">album</span>
-          <a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a>
-          {% if media.can_play_diaporama %}
-          <a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a>
-          {% endif %} 
+        <div class="thumb-header" >
+          <div class="stats">
+            {% if media.album_count  %}<span><i class="icon-folder-close"></i> {{media.album_count}}</span>{%endif%}
+            {% if media.image_count  %}<span><i class="icon-camera"></i> {{media.image_count}}</span>{%endif%}
+            {% if media.video_count  %}<span><i class="icon-film"></i> {{media.video_count}}</span>{%endif%}
+          </div>
+          <div class="actions">
+            <span><a href="{% url 'album_update_view' pk=media.pk %}" data-modal="modal"  ><i class="icon-edit "></i></a></span>
+            {% if media.can_play_diaporama %}
+            <span><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a></span>
+            {% endif %}
+          </div> 
         </div>
         <a  href="{{media.get_absolute_uri}}">
           {%if media.album_thumbnail %}
@@ -19,11 +25,7 @@
          </a>
         <h5>{{media.name|truncatechars:"18"}}</h5>
         <p class='date'>{{media.date|date:"j F Y"}}</p>
-        <div class="stats">
-          {% if media.album_count  %}<span><i class="icon-folder-close"></i> {{media.album_count}}</span>{%endif%}
-          {% if media.image_count  %}<span><i class="icon-camera"></i> {{media.image_count}}</span>{%endif%}
-          {% if media.video_count  %}<span><i class="icon-film"></i> {{media.video_count}}</span>{%endif%}
-        </div>
+        
       </div>
     </div>
 </li>

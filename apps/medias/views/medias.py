@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.generic.detail import DetailView
-from ..models import Media, Image, Video
+from ..models import Media, Image, Video, Thumbnail
 from django.core.urlresolvers import reverse
 from django.views.generic.list import ListView
 
@@ -77,8 +77,7 @@ class LazyThumbnail(View):
     
     def get(self, request, *args, **kwargs):
         
-        from medias.models.media import Thumbnail
-        from medias.models.media import Media
+        
         m = Media.objects.get(pk=kwargs.get('pk'))
         size = kwargs.get('size')
         

@@ -200,6 +200,7 @@ LOGGING = {
 }
 
 THUMBNAIL_SIZES = {'small' : {'width' : 150, 'height':120}, 'medium' : {'width' : 1024, 'height' : 768}, 'large' : {'width' : 2560, 'height':1920},}
+THUMBNAIL_ENGINE = 'sorl.thumbnail.engines.convert_engine.Engine'
 
 DAJAXICE_MEDIA_PREFIX = "dajaxice"
 DAJAXICE_XMLHTTPREQUEST_JS_IMPORT = False
