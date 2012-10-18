@@ -4,7 +4,7 @@ import os
 from django.db.utils import IntegrityError
 import datetime
 from middleware.request import set_current_user
-from helpers import create_media
+
 
 def get_jobs(last=0):
 
@@ -33,7 +33,7 @@ def get_jobs(last=0):
                 yield cat.pk, rep, image, user.pk
 
 def handle_job(data):
-    
+    from helpers import create_media
     album_pk, rep, name, user_pk = data
 
     set_current_user(User.objects.get(pk=user_pk))
