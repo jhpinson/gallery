@@ -13,14 +13,12 @@ from django.db.utils import IntegrityError
 from django.db import connection
 from django.utils.dateformat import format
 
-from PIL import Image as PILImage
-from PIL.ExifTags import TAGS
 
 from dateutil.parser import parse
 import datetime
 
 from ..forms import AlbumForm
-from ..models import Album, Video, Image
+from ..models import Album, Video, Image, create_media
 
 from django.contrib.contenttypes.models import ContentType
 from urlparse import urlparse, parse_qs
@@ -28,7 +26,6 @@ from django.utils.http import urlencode
 from helpers.ffmpeg import metadata
 from django.contrib.auth.models import User
 from ..forms import MoveForm
-from helpers import create_media
 
 #MONTH = ['Janvier', u'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', u'Août', 'Septembre', 'Octobre', 'novembre', u'Décembre']
 

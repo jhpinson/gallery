@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from medias.models import Album
+from medias.models import Album, create_media
 import os
 from django.db.utils import IntegrityError
 import datetime
@@ -33,7 +33,6 @@ def get_jobs(last=0):
                 yield cat.pk, rep, image, user.pk
 
 def handle_job(data):
-    from helpers import create_media
     album_pk, rep, name, user_pk = data
 
     set_current_user(User.objects.get(pk=user_pk))
