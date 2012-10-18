@@ -2,6 +2,7 @@ from .media import Media, Thumbnail
 from .image import Image
 from .videos import Video, VideoVersion
 from .album import Album
+from django.core.files.base import ContentFile
 
 __all__ = ['Media', 'Image', 'Thumbnail', 'Video', 'VideoVersion', 'Album', 'create_media']
 
@@ -23,7 +24,7 @@ def create_media(album, f, filename, created_at):
     media.file_creation_date = created_at
     media.original_file.save(
                       '%s.%s' % (uuid.uuid4(), file_ext)
-                      , f, save=False)
+                      , ContentFile(f.read()), save=False)
     
     
     media.save()
