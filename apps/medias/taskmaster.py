@@ -9,8 +9,11 @@ from middleware.request import set_current_user
 def get_jobs(last=0):
 
     import_path = "/home/virtualenv/photos-nastux/"
-
+    
+    
     user = User.objects.get(pk=1)
+    set_current_user(user)
+    
     root_category, _ = Album.objects.get_or_create( name="defaults", created_by=user)
 
     for rep, dirs, files in os.walk(import_path):
