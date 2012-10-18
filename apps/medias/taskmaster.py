@@ -11,7 +11,7 @@ def get_jobs(last=0):
     import_path = "/home/virtualenv/photos-nastux/"
 
     user = User.objects.get(pk=1)
-    root_category = Album.objects.get( name="defaults", created_by=user)
+    root_category, _ = Album.objects.tm-master apps.medias.taskmaster( name="defaults", created_by=user)
 
     for rep, dirs, files in os.walk(import_path):
 
