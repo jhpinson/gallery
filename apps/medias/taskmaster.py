@@ -11,7 +11,7 @@ def get_jobs(last=0):
     import_path = "/home/virtualenv/photos-nastux/"
 
     user = User.objects.get(pk=1)
-    root_category = Album.objects.get( parent_id = 1, created_by=user)
+    root_category = Album.objects.get( name="defaults", created_by=user)
 
     for rep, dirs, files in os.walk(import_path):
 
@@ -27,7 +27,7 @@ def get_jobs(last=0):
                 created = False
             else:
                 p = path.split('/')[-1]
-                cat, created = Album.objects.get_or_create(name=p, parent=root_category, created_by = user, modified_by=user)
+                cat, created = Album.objects.get_or_create(name=p, parent_album=None, created_by = user, modified_by=user)
 
             for image in images:
                 yield cat.pk, rep, image, user.pk
