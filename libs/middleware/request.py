@@ -15,7 +15,7 @@ def get_current_user():
         return getattr(_thread_locals, 'user', None)
     
     request = getattr(_thread_locals, 'request', None)
-    return None if request.user.is_anonymous() else request.user
+    return None if request is None or request.user.is_anonymous() else request.user
         
     
     
