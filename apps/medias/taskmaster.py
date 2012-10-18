@@ -7,6 +7,8 @@ from django.db.utils import IntegrityError
 from PIL.ExifTags import TAGS
 import datetime
 from django.core.files.base import ContentFile
+from middleware.request import set_current_user
+from helpers import create_media
 
 def get_jobs(last=0):
 
@@ -35,45 +37,19 @@ def get_jobs(last=0):
                 yield cat.pk, rep, image, user.pk
 
 def handle_job(data):
+    
     album_pk, rep, name, user_pk = data
+
+    set_current_user(User.objects.get(pk=user_pk))
 
     image_path = "%s/%s" % (rep, name)
 
     f = open(image_path, 'r')
-
-    if name.lower().split('.')[-1] in ['mpg', 'avi', 'mov']:
-        clazz = Video
-    else:
-        clazz = Image
-
-    obj =  clazz(created_by_id=user_pk, modified_by_id=user_pk, name=name, album_id=album_pk)
+    file_date = datetime.datetime.fromtimestamp(os.path.getmtime(image_path))
 
     try:
 
-        if clazz == Image:
-
-            img = PILImage.open(f)
-
-            exif = img._getexif()
-            if exif is not None:
-                for tag, value in exif.items():
-                    decoded = TAGS.get(tag, tag)
-                    if  decoded == 'DateTimeOriginal':
-                        obj.date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
-                        break
-
-
-
-
-        if obj.date is None:
-            obj.date= datetime.datetime.fromtimestamp(os.path.getmtime(image_path))
-
-        f.seek(0)
-        obj.file.save(
-                      name
-                      , ContentFile(f.read()), save=True)
-
-        obj.generate_thumbnails()
+        create_media(Album.objects.get(pk=album_pk), f,name, file_date)
 
     except IntegrityError,e:
         pass

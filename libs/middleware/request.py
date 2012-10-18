@@ -11,9 +11,13 @@ class ThreadRequestMiddleware(object):
 
 def get_current_user():
     
-    try:
-        request = getattr(_thread_locals, 'request', None)
-        return None if request.user.is_anonymous() else request.user
+    if getattr(_thread_locals, 'user', None) is not None:
+        return getattr(_thread_locals, 'user', None)
+    
+    request = getattr(_thread_locals, 'request', None)
+    return None if request.user.is_anonymous() else request.user
         
-    except:
-        return None
+    
+    
+def set_current_user(user):
+    setattr(_thread_locals, 'user', user)

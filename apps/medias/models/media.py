@@ -35,14 +35,13 @@ class Media(ChangeTrackMixin, models.Model):
 
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048, null=True, blank=True)
-    date = models.DateTimeField(default=datetime.now)
 
+    date = models.DateTimeField(default=datetime.now) # used date
+    file_creation_date = models.DateTimeField(null=True) # if self.file, the file creation date
+    meta_date = models.DateTimeField(null=True) # a computed date or exif date
+    
     original_file = FileHashField(upload_to=upload_path_original, hash_field='hash', max_length=1024, null=True)
     custom_file = FileField(upload_to= modified_upload_path, null=True)
-
-    @property
-    def file(self):
-        return self.custom_file or self.original_file
 
     hash = models.CharField(max_length=40, null=True)
 
@@ -53,7 +52,10 @@ class Media(ChangeTrackMixin, models.Model):
     is_an_album = models.PositiveSmallIntegerField()
 
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
-
+    
+    @property
+    def file(self):
+        return self.custom_file or self.original_file
 
     def get_position(self):
         from ..models import Image, Video
@@ -106,11 +108,18 @@ class Media(ChangeTrackMixin, models.Model):
             created = True
 
             self.is_an_album = 1 if self.real_type.model == 'album' else 0
-
+            
+        if self.meta_date is not None:
+            self.date = self.meta_date
+        elif self.file_creation_date is not None:
+            self.date = self.file_creation_date
+        else:
+            self.date = self.created_at
+            
         super(Media, self).save(*args, **kwargs)
 
         if created and self.parent_album is not None:
-                self.parent_album.consolidate_count()
+            self.parent_album.consolidate_count()
 
 
     def delete(self, *args, **kwargs):
@@ -133,7 +142,7 @@ class Media(ChangeTrackMixin, models.Model):
 
     class Meta:
         app_label = 'medias'
-        #unique_together=('hash', 'album')
+        unique_together=('hash', 'parent_album')
         ordering=['-is_an_album', 'date']
 
 class Thumbnail(models.Model):

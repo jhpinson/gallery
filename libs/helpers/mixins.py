@@ -3,6 +3,7 @@ from django.db import models
 from middleware.request import get_current_user
 
 class ChangeTrackMixin(models.Model):
+    
     created_at = AutoCreatedField('created')
     modified_at = AutoLastModifiedField('modified')
     

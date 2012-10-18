@@ -27,8 +27,11 @@ class Video(ThumbAccessors, Media):
     
     def save(self, *args, **kwargs):
         
+        if self._state.adding:
+            self.meta_date = getattr(metadata(self.file.path), 'date')
+        
         super(Video, self).save(*args, **kwargs)
-        #self.generate_versions()
+       
         
     def generate_thumbnails(self):
         try:

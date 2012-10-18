@@ -19,12 +19,10 @@ class Album(Media):
     
     end_date = models.DateTimeField(null=True)
     
-    album_count = models.PositiveIntegerField(default=0)
     image_count = models.PositiveIntegerField(default=0)
     video_count = models.PositiveIntegerField(default=0)
     
     objects = PassThroughManager.for_queryset_class(AlbumQuerySet)()
-    
     
     
     def get_ancestors(self):
@@ -79,14 +77,15 @@ class Album(Media):
         
     def consolidate_count(self):
         
-        self.album_count = Album.objects.filter(parent_album=self).count()
         self.image_count = Image.objects.filter(parent_album=self).count()
         self.video_count = Video.objects.filter(parent_album=self).count()
         
-        if self.album_count > 0 or self.image_count > 0 or self.video_count > 0:
-            self.start_date = Media.objects.filter(parent_album=self).order_by('date')[0].date
-            self.end_date = Media.objects.filter(parent_album=self).order_by('-date')[0].date
-        
+        if self.image_count > 0 or self.video_count > 0:
+            date = Media.objects.filter(parent_album=self).order_by('file_creation_date')[0].date
+            self.meta_date = date
+        else:
+            self.meta_date = None
+            self.end_date = None
         self.save()
         
         

@@ -8,6 +8,9 @@ from medias.models.mixins.manager import PermissionManager
 import subprocess
 from django.conf import settings
 from subprocess import CalledProcessError
+from PIL import Image as PILImage
+from PIL.ExifTags import TAGS
+import datetime
 
 class ImageQuerySet(PermissionManager, QuerySet):
     pass
@@ -15,6 +18,20 @@ class ImageQuerySet(PermissionManager, QuerySet):
 class Image(ThumbAccessors, Media):
     
     objects = PassThroughManager.for_queryset_class(ImageQuerySet)()
+        
+    def save(self, *args, **kwargs):
+        
+        if self._state.adding:
+            img = PILImage.open(self.file.path)
+            exif = img._getexif()
+            if exif is not None:
+                for tag, value in exif.items():
+                    decoded = TAGS.get(tag, tag)
+                    if  decoded == 'DateTimeOriginal':
+                        self.meta_date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                        break
+        
+        super(Image, self).save(*args, **kwargs)
         
     def generate_thumbnails(self):
         self.generate_thumbnail('small', self.file.file)
