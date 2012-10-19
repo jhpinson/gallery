@@ -12,6 +12,11 @@ from django.core.urlresolvers import reverse
 from django.views.generic.list import ListView
 
 class ModalVideoView(DetailView):
+    
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ModalVideoView, self).dispatch( request, *args, **kwargs)
+    
     model = Video
     template_name = 'medias/modal-video-player.html'
 
@@ -33,25 +38,17 @@ class AlbumMediaView(ListView):
     paginate_by = 1
     context_object_name = 'object'
     
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AlbumMediaView, self).dispatch( request, *args, **kwargs)
+    
     def get_queryset(self):
         return Media.objects.models(Image, Video).filter(parent_album_id=self.kwargs.get('pk')).select_subclasses()
     
     def get_context_data(self, **kwargs):
         context = super(AlbumMediaView, self).get_context_data(**kwargs)
         context['object'] = context['object'][0] 
-        """try:
-            context['next'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__gte=self.object.date).exclude(pk=self.object.pk).order_by('date')[0]
-        except Exception:
-            context['next'] = False
-            
-            
-        try:
-            context['prev'] = Media.objects.models(Image, Video).filter(parent_album=self.object.parent_album, date__lte=self.object.date).exclude(pk=self.object.pk).order_by('date').reverse()[0]
-        except Exception,e:
-            context['prev'] = False
-        
-        """
-        
+                
         context['breadcrumbs'] =  [ context['object'].parent_album, context['object']]
         
         return context
