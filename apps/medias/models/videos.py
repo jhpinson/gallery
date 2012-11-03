@@ -32,7 +32,22 @@ class Video(ThumbAccessors, Media):
         
         super(Video, self).save(*args, **kwargs)
        
+    
+    def toJSON(self):
         
+        return {
+                'id' : self.pk,
+                'name' : self.name,
+                'description' : self.description,
+                'date' : str(self.date),
+                'is_an_album' : self.is_an_album,
+                'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
+                'thumbnails' : {
+                                'small' : self.thumbnail_small(),
+                                'medium' : self.thumbnail_medium(),
+                                'large' : self.thumbnail_large()
+                                }}
+    
     def generate_thumbnails(self):
         try:
             retcode,tmp_file = thumbnail(self.file.path)

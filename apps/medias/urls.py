@@ -2,22 +2,29 @@ from django.conf.urls.defaults import patterns, include, url
 from medias.views.medias import GenerateThumbnail, LazyThumbnail, MediaView,\
     ModalVideoView, AlbumMediaView
 from medias.views.albums import SearchAlbum
+from medias.views.rest import RestMediaView
+from django.views.generic.base import TemplateView
 
 
 urlpatterns = patterns('',
-    (r'^thumbnail/generate/(?P<pk>\d+)/(?P<size>.+)/$', GenerateThumbnail.as_view(), {}, "generate_thumbnail_view"),
-    (r'^thumbnail/lazy/(?P<pk>\d+)/(?P<size>.+)/$', LazyThumbnail.as_view(), {}, "lazy_thumbnail_view"),
     
+    url(RestMediaView.make_url(), RestMediaView.as_view(), name='rest_media_view'),
+                       
+    (r'^p/thumbnail/generate/(?P<pk>\d+)/(?P<size>.+)/$', GenerateThumbnail.as_view(), {}, "generate_thumbnail_view"),
+    (r'^p/thumbnail/lazy/(?P<pk>\d+)/(?P<size>.+)/$', LazyThumbnail.as_view(), {}, "lazy_thumbnail_view"),
+    
+    (r'^album/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "album_view"),
+    (r'^media/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "media_view"),
 )
 
-
+"""
 from django.conf.urls.defaults import patterns
 from .views.albums import AlbumView, GalleryView, CreateAlbum, UpdateAlbum
 
 
 urlpatterns += patterns('',
     (r'^$', AlbumView.as_view(), {}, "home_view"),
-    (r'^(?P<pk>\d+)/$', AlbumView.as_view(), {}, "album_view"),
+    (r'^album/(?P<pk>\d+)/$', AlbumView.as_view(), {}, "album_view"),
      (r'^gallery/(?P<pk>\d+)/$', GalleryView.as_view(), {}, "gallery_view"),
      (r'^create-album/(?P<pk>\d+)/$', CreateAlbum.as_view(), {}, "album_create_view"),
      (r'^create-album/$', CreateAlbum.as_view(), {}, "album_create_view"),
@@ -27,4 +34,4 @@ urlpatterns += patterns('',
      (r'^modal-video/(?P<pk>\d+)/$', ModalVideoView.as_view(), {}, "modal_video_view"),
      (r'^autocomplete-album/$', SearchAlbum.as_view(), {}, "autocomplete_album_view"),
      
-)
+)"""

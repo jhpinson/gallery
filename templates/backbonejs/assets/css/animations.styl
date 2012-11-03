@@ -1,0 +1,125 @@
+@import "mixins"
+
+@keyframes anim-in-vertical-up
+  from
+    opacity 0
+    transform translateY(-100%)
+  to
+    opacity 1
+    transform translateY(0)
+
+@keyframes anim-out-vertical-up
+  from
+    opacity 0.6
+    transform translateY(0)
+  to
+    opacity 0
+    transform translateY(100%)
+
+@keyframes anim-in-vertical-down
+  from
+    opacity 0
+    transform translateY(100%)
+  to
+    opacity 1
+    transform translateY(0)
+
+@keyframes anim-out-vertical-down
+  from
+    opacity 0.6
+    transform translateY(0)
+  to
+    opacity 0
+    transform translateY(-100%)
+
+@keyframes anim-in-horizontal-left
+  from
+    opacity 0
+    transform translateX(-100%)
+  to
+    opacity 1
+    transform translateX(0)
+
+@keyframes anim-out-horizontal-left
+  from
+    opacity 0.6
+    transform translateX(0)
+  to
+    opacity 0
+    transform translateX(100%)
+
+@keyframes anim-in-horizontal-right
+  0%
+    opacity 0
+    transform translateX(100%)
+
+  100%
+    opacity 1
+    transform translateX(0)
+@keyframes anim-out-horizontal-right
+  0%
+    opacity 1
+    transform translateX(0)
+
+  100%
+    opacity 0
+    transform translateX(-100%)
+
+
+
+.in-vertical-up
+  animation-duration 0.5s
+  animation-fill-mode both
+  animation-name anim-in-vertical-up
+
+.out-vertical-up
+  animation-duration 0.5s
+  animation-fill-mode both
+  animation-name anim-out-vertical-up
+
+.offset-vertical-up
+  transform translateY(-100%)
+
+.in-vertical-down
+  animation-duration 0.5s
+  animation-fill-mode both
+  animation-name anim-in-vertical-down
+
+.out-vertical-down
+  animation-duration 0.5s
+  animation-fill-mode both
+  animation-name anim-out-vertical-down
+
+.offset-vertical-down
+  transform translateY(100%)
+
+
+.in-horizontal-left
+  animation-duration 0.7s
+  //transition-timing-function ease-in
+  animation-fill-mode both
+  animation-name anim-in-horizontal-left
+
+.out-horizontal-left
+  animation-duration 0.7s
+  //transition-timing-function ease-out
+  animation-fill-mode both
+  animation-name anim-out-horizontal-left
+
+.offset-horizontal-left
+  transform translateX(-100%)
+
+.in-horizontal-right
+  animation-duration 0.7s
+  //transition-timing-function ease-in
+  animation-fill-mode both
+  animation-name anim-in-horizontal-right
+
+.out-horizontal-right
+  animation-duration 0.7s
+  //transition-timing-function ease-out
+  animation-fill-mode both
+  animation-name anim-out-horizontal-right
+
+.offset-horizontal-right
+  transform translateX(100%)

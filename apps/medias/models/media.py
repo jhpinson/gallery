@@ -11,6 +11,7 @@ from django.conf import settings
 from sorl.thumbnail import delete
 from medias.models.mixins.manager import PermissionManager
 from django.db.models.fields.files import FileField
+from helpers.rest.models import AjaxModelHelper
 
 class MediaQuerySet(PermissionManager, InheritanceQuerySet):
 
@@ -20,7 +21,7 @@ class MediaQuerySet(PermissionManager, InheritanceQuerySet):
     def get_subclass(self, *args, **kwargs):
         return self.select_subclasses().get(*args, **kwargs)
 
-class Media(ChangeTrackMixin, models.Model):
+class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
 
     def upload_path_original(self, filename):
         path = "/".join([str(self.created_by.pk), str(self.date.year), "%02d" % self.date.month, "%02d" % self.date.day, filename])
@@ -52,6 +53,15 @@ class Media(ChangeTrackMixin, models.Model):
     is_an_album = models.PositiveSmallIntegerField()
 
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
+    
+    
+    def toJSON(self):
+        
+        data = self.cast().toJSON()
+        data['absolute_url'] = self.get_absolute_uri()
+        return data
+        
+        
     
     @property
     def file(self):
@@ -156,7 +166,13 @@ class Thumbnail(models.Model):
     url = models.CharField(max_length=1024)
     width = models.PositiveIntegerField()
     height = models.PositiveIntegerField()
-
+    
+    def toJSON(self):
+        return {'url' : self.url,
+                 'width' : self.width,
+                 'height' : self.height
+      }
+    
     class Meta:
         app_label = 'medias'
         unique_together=('media','size')

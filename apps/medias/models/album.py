@@ -24,6 +24,19 @@ class Album(Media):
     
     objects = PassThroughManager.for_queryset_class(AlbumQuerySet)()
     
+    def toJSON(self):
+        data = {
+                'id' : self.pk,
+                'name' : self.name,
+                'description' : self.description,
+                'date' : str(self.date),
+                'is_an_album' : self.is_an_album,
+                'image_count' : self.image_count,
+                'video_count' : self.video_count,
+                'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
+                'thumbnails' : {'small' : self.album_thumbnail.toJSON()}}
+            
+        return data
     
     def get_ancestors(self):
         
