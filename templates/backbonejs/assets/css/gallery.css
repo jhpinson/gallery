@@ -50,6 +50,7 @@ body.media .video-wrapper {
   -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.055);
   -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.055);
   box-shadow: 0 1px 3px rgba(0,0,0,0.055);
+  margin: 0 auto;
 }
 body.media .image-wrapper img,
 body.media .video-wrapper img {

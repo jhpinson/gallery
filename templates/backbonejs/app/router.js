@@ -353,7 +353,11 @@ function(app, Medias, Views, Paginator) {
             currentLayout.remove();
             layout.$el.show();
           }
+
         }
+
+        if (source) {$('body').removeClass(source.type );}
+        $('body').addClass(dest.type );
 
         // store new page description
         app.page = dest;
@@ -366,6 +370,7 @@ function(app, Medias, Views, Paginator) {
       }
       $('.main-container').append(layout.$el);
       layout.render();
+
     },
 
     _createAlbumLayout: function() {
