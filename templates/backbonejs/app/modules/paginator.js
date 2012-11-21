@@ -46,7 +46,10 @@ function(app) {
     _compute: function() {
       this.set("pages", parseInt((this._collection.length / this.get('limit'))) + ((this._collection.length % this.get('limit') > 0) ? 1 : 0));
       if(this.get('current') > this.get('pages')) {
-        console.debug('need change page');
+        var qs = document.location.search;
+        qs = qs.replace('page=' + this.get('current'), 'page=1');
+        app.router.navigate(document.location.pathname+qs, {trigger:true, replace:true});
+        return;
       }
       this.page.query({
         limit: this.get('limit'),
