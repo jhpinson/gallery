@@ -27,7 +27,8 @@ require.config({
     "plugins/backbone.layoutmanager": ["backbone"],
     "plugins/backbone.queryengine": ["backbone"],
     "plugins/backbone.routemanager": ["backbone"],
-    "vendor/bootstrap/js/bootstrap": ["jquery"]
+    "vendor/bootstrap/js/bootstrap": ["jquery"],
+    "plugins/date": ["jquery"],
   }
 
 });

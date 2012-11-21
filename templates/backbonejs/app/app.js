@@ -9,6 +9,8 @@ define([
   "plugins/backbone.layoutmanager",
   "plugins/backbone.routemanager",
 
+  "plugins/date",
+
   "vendor/bootstrap/js/bootstrap"
 ],
 
