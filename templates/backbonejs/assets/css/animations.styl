@@ -9,10 +9,12 @@
     transform translateY(0)
 
 @keyframes anim-out-vertical-up
-  from
-    opacity 0.6
+  0%
+    opacity 1.0
     transform translateY(0)
-  to
+  50%
+    opacity 1.0
+  100%
     opacity 0
     transform translateY(100%)
 
@@ -25,10 +27,13 @@
     transform translateY(0)
 
 @keyframes anim-out-vertical-down
-  from
-    opacity 0.6
+  0%
+    opacity 1.0
     transform translateY(0)
-  to
+  50%
+    opacity 1.0
+
+  100%
     opacity 0
     transform translateY(-100%)
 
@@ -41,10 +46,13 @@
     transform translateX(0)
 
 @keyframes anim-out-horizontal-left
-  from
-    opacity 0.6
+  0%
+    opacity 1.0
     transform translateX(0)
-  to
+  50%
+    opacity 1.0
+
+  100%
     opacity 0
     transform translateX(100%)
 
@@ -56,11 +64,13 @@
   100%
     opacity 1
     transform translateX(0)
+
 @keyframes anim-out-horizontal-right
   0%
-    opacity 1
+    opacity 1.0
     transform translateX(0)
-
+  50%
+    opacity 1.0
   100%
     opacity 0
     transform translateX(-100%)
@@ -68,12 +78,12 @@
 
 
 .in-vertical-up
-  animation-duration 0.5s
+  animation-duration 0.7s
   animation-fill-mode both
   animation-name anim-in-vertical-up
 
 .out-vertical-up
-  animation-duration 0.5s
+  animation-duration 0.7s
   animation-fill-mode both
   animation-name anim-out-vertical-up
 
@@ -81,12 +91,12 @@
   transform translateY(-100%)
 
 .in-vertical-down
-  animation-duration 0.5s
+  animation-duration 0.7s
   animation-fill-mode both
   animation-name anim-in-vertical-down
 
 .out-vertical-down
-  animation-duration 0.5s
+  animation-duration 0.7s
   animation-fill-mode both
   animation-name anim-out-vertical-down
 
