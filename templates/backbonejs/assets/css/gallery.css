@@ -17,6 +17,10 @@ body #nav-container {
   margin-top: 3px;
   vertical-align: middle;
 }
+body #nav-container .avatar img {
+  width: 42px;
+  height: auto;
+}
 body #main-container {
   width: 1170px;
   margin-left: auto;

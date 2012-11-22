@@ -23,14 +23,16 @@ class Image(ThumbAccessors, Media):
         
         if self._state.adding:
             img = PILImage.open(self.file.path)
-            exif = img._getexif()
-            if exif is not None:
-                for tag, value in exif.items():
-                    decoded = TAGS.get(tag, tag)
-                    if  decoded == 'DateTimeOriginal':
-                        self.meta_date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
-                        break
-        
+            try:
+                exif = img._getexif()
+                if exif is not None:
+                    for tag, value in exif.items():
+                        decoded = TAGS.get(tag, tag)
+                        if  decoded == 'DateTimeOriginal':
+                            self.meta_date = datetime.datetime.strptime(value, "%Y:%m:%d %H:%M:%S")
+                            break
+            except Exception,e:
+                pass
         super(Image, self).save(*args, **kwargs)
         
     def generate_thumbnails(self):
@@ -45,7 +47,6 @@ class Image(ThumbAccessors, Media):
                 'id' : self.pk,
                 'name' : self.name,
                 'description' : self.description,
-                'date' : str(self.date),
                 'is_an_album' : self.is_an_album,
                 'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
                 'thumbnails' : {

@@ -10,6 +10,11 @@
 
   <!-- Application styles. -->
   <link rel="stylesheet" href="/assets/css/index.css">
+
+  <script type="text/javascript">
+    var loggedUserId = {{request.user.get_profile.pk}};
+  </script>
+
 </head>
 
 <body>
@@ -22,15 +27,9 @@
           media-<i>fil.es</i>
         </span>
 
-        <div class="avatar pull-right">
+        <div class="avatar pull-right" id="logged-user">
 
-          <img src="" width="" height=""/>
 
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" >
-            <li>
-              <a tabindex="-1" href="">Logout</a>
-            </li>
-          </ul>
         </div>
 
       </div>

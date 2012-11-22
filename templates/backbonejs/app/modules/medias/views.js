@@ -51,7 +51,7 @@ function(app) {
   });
 
   Views.Detail = Backbone.View.extend({
-    template : 'medias/detail',
+    template: 'medias/detail',
     serialize: function() {
       return {
         object: this.model.toJSON()
@@ -61,8 +61,8 @@ function(app) {
 
   Views.Item = Backbone.View.extend({
 
-        tagName: "li",
-        className: "span2",
+    tagName: "li",
+    className: "span2",
 
     serialize: function() {
       return {
@@ -121,7 +121,7 @@ function(app) {
 
         }
         this.insertView(view);
-      },this));
+      }, this));
 
 
     }

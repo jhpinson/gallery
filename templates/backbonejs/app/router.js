@@ -1,8 +1,8 @@
 define([
 // Application.
-"app", "modules/medias", "modules/views", "modules/paginator"],
+"app", "modules/medias", "modules/users", "modules/views", "modules/paginator"],
 
-function(app, Medias, Views, Paginator) {
+function(app, Medias, Users, Views, Paginator) {
   document.app = app;
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.RouteManager.extend({

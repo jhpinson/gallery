@@ -20,7 +20,10 @@ except ImportError:
 
 
 urlpatterns += patterns('',
-                        
+    
+    # dajaxice
+    url(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
+    
      # generic confirmation
     url(r'gc/', include('generic_confirmation.urls')),
     
@@ -33,6 +36,8 @@ urlpatterns += patterns('',
     # medias
     url(r'', include('medias.urls')),
     
+    # users
+    url(r'', include('profiles.urls')),
    
 )
 urlpatterns += staticfiles_urlpatterns()
@@ -52,4 +57,7 @@ if settings.DEBUG:
                             )
     
 urlpatterns += patterns('',
-                         url('.*', MainView.as_view()),  )
+    
+    # others urls are handled by backbone                    
+    url('.*', MainView.as_view(), {}, 'home_view'),  
+)

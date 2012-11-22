@@ -16,10 +16,17 @@ function(app) {
 
     // Ensure that each todo created has `title`.
     initialize: function() {
-      var date = (/([0-9]{4})-([0-9]{2})-([0-9]{2})/).exec(this.get('date'));
-      this.set('year', date[1]);
-      this.set('month', date[2]);
-      this.set('day', date[3]);
+
+      var date = Date.parse(this.get('date'));
+
+      //var date = (/([0-9]{4})-([0-9]{2})-([0-9]{2})/).exec(this.get('date'));
+      this.set('year', date.getFullYear());
+      this.set('month', date.getMonth());
+      this.set('day', date.getDate());
+
+
+      this.set('full_date', date.toString('dddd d MMMM yyyy \à H:mm'));
+      this.set('short_date', date.toString('d MMM yyyy, H:mm'));
 
       this.set('absolute_uri', this.get_uri());
 

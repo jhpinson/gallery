@@ -39,7 +39,6 @@ class Video(ThumbAccessors, Media):
                 'id' : self.pk,
                 'name' : self.name,
                 'description' : self.description,
-                'date' : str(self.date),
                 'is_an_album' : self.is_an_album,
                 'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
                 'thumbnails' : {

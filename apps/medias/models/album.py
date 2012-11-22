@@ -29,7 +29,6 @@ class Album(Media):
                 'id' : self.pk,
                 'name' : self.name,
                 'description' : self.description,
-                'date' : str(self.date),
                 'is_an_album' : self.is_an_album,
                 'image_count' : self.image_count,
                 'video_count' : self.video_count,

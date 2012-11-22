@@ -4,6 +4,7 @@ from medias.views.medias import GenerateThumbnail, LazyThumbnail, MediaView,\
 from medias.views.albums import SearchAlbum
 from medias.views.rest import RestMediaView
 from django.views.generic.base import TemplateView
+from medias.views.upload import UploadView
 
 
 urlpatterns = patterns('',
@@ -13,8 +14,7 @@ urlpatterns = patterns('',
     (r'^p/thumbnail/generate/(?P<pk>\d+)/(?P<size>.+)/$', GenerateThumbnail.as_view(), {}, "generate_thumbnail_view"),
     (r'^p/thumbnail/lazy/(?P<pk>\d+)/(?P<size>.+)/$', LazyThumbnail.as_view(), {}, "lazy_thumbnail_view"),
     
-    #(r'^p/album/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "album_view"),
-    #(r'^p/media/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "media_view"),
+    (r'^p/upload/$', UploadView.as_view(), {}, "upload_view")
 )
 
 """

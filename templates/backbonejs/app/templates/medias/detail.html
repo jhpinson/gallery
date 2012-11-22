@@ -31,23 +31,6 @@
       </ul>
     </div>
 
-    <div class="sidebar-nav well well-small">
-      <p>
-        <abbr title="Titre de la photo">Titre</abbr> <span><%= object.name %></span>
-      </p>
-
-      <p>
-        <abbr title="Date">Date</abbr> <span>lalala</span>
-      </p>
-
-      <p>
-        <abbr title="Description">Descr.</abbr> <span contenteditable="true">lalaal</span>
-      </p>
-
-    </div>
-
-
-
   </div>
 
 
@@ -62,7 +45,7 @@
 
 
     <footer>
-      © created by
+      Par <%= object.owner.name %>, le <%=object.full_date %>
     </footer>
 
   </article>

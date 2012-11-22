@@ -29,6 +29,8 @@ require.config({
     "plugins/backbone.routemanager": ["backbone"],
     "vendor/bootstrap/js/bootstrap": ["jquery"],
     "plugins/date": ["jquery"],
+    "plugins/fileupload/jquery.fileupload": ["jquery"],
+    "plugins/fileupload/jquery.iframe-transport": ["jquery"],
   }
 
 });

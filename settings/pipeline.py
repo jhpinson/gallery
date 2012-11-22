@@ -31,6 +31,7 @@ PIPELINE_JS = {
             'dajaxice/dajaxice.core.js',
             'js/libs/jquery.easing.1.3.js',
             #'js/libs/jquery.ui.widget.js',
+            
             'js/libs/fileupload/jquery.iframe-transport.js',
             'js/libs/fileupload/jquery.fileupload.js',
             'js/libs/jquery.jgrowl.js',

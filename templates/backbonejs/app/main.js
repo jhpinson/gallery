@@ -3,10 +3,27 @@ require([
   "app",
 
   // Main Router.
-  "router"
+  "router",
+
+  "modules/users",
+  "modules/uploads",
 ],
 
-function(app, Router) {
+function(app, Router, Users, Uploads) {
+
+  Uploads.init();
+
+  // load logged user
+  app.loggedUser = new Users.Models.User({id:loggedUserId})
+
+  // set view for logged user
+  var loggedUserView = new Users.Views.Logged({model : app.loggedUser})
+  //.append(loggedUserView.$el);
+  //loggedUserView.render();
+  loggedUserView.setElement($('#logged-user'))
+  app.loggedUser.fetch().then(function () {
+    loggedUserView.render();
+  });
 
   // Define your master router on the application namespace and trigger all
   // navigation from this instance.

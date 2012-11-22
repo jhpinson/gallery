@@ -4,12 +4,16 @@ define([
   "lodash",
   "backbone",
 
+
+
   // Plugins.
   "plugins/backbone.queryengine",
   "plugins/backbone.layoutmanager",
   "plugins/backbone.routemanager",
 
   "plugins/date",
+  "plugins/fileupload/jquery.fileupload",
+  "plugins/fileupload/jquery.iframe-transport",
 
   "vendor/bootstrap/js/bootstrap"
 ],
@@ -25,8 +29,11 @@ function($, _, Backbone) {
     layout : null,
     breadcrumbs : new Backbone.Collection(),
     collections : {medias : null, mediasQuery : null},
-    supportEffects : true
+    supportEffects : true,
+    loggedUser : null,
+    currentAlbumId : 26
   };
+
 
   // Localize or create a new JavaScript Template object.
   var JST = window.JST = window.JST || {};
