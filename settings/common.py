@@ -216,7 +216,7 @@ AUTHENTICATION_BACKENDS = (
     'emailusernames.backends.EmailAuthBackend',
     'auth.backends.ForceAuthBackend',
 )
-LOGIN_URL = '/login/'
+LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']

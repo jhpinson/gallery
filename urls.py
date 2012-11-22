@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic.base import TemplateView
+from views import MainView
 admin.autodiscover()
 
 urlpatterns = patterns('')
@@ -18,12 +19,7 @@ except ImportError:
     pass
 
 
-
 urlpatterns += patterns('',
-                        
-    url('^$', TemplateView.as_view(template_name='backbonejs/index.html')),                     
-                        
-    #url(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
                         
      # generic confirmation
     url(r'gc/', include('generic_confirmation.urls')),
@@ -32,18 +28,12 @@ urlpatterns += patterns('',
     url(r'social-auth/', include('social_auth.urls')),
     
     # custom auth
-    #url(r'', include('auth.urls')),
-    
-    # albums
-    #url(r'', include('structures.urls')),
-    
-    
-    
+    url(r'auth/', include('auth.urls')),
+        
     # medias
     url(r'', include('medias.urls')),
     
-    #url(r'^grappelli/', include('grappelli.urls')),
-    #url(r'^admin/', include(admin.site.urls)),
+   
 )
 urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG: 
@@ -54,7 +44,12 @@ if settings.DEBUG:
                         )
         
     urlpatterns += patterns('', 
+                            url(r'^assets/(?P<path>.*)/?$', 'django.views.static.serve', { 'document_root': settings.PROJECT_ROOT / 'templates/backbonejs/assets',}),
+                            url(r'^app/(?P<path>.*)/?$', 'django.views.static.serve', { 'document_root': settings.PROJECT_ROOT / 'templates/backbonejs/app',}),
                             url(r'^%s/(?P<path>.*)/?$' % settings.MEDIA_URL[1:-1] , 'django.views.static.serve', { 'document_root': settings.MEDIA_ROOT,}),
                             (r'^404$', TemplateView.as_view(template_name="404.html")),
                             (r'^500$', TemplateView.as_view(template_name="500.html")), 
                             )
+    
+urlpatterns += patterns('',
+                         url('.*', MainView.as_view()),  )

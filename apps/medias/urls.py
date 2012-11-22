@@ -13,8 +13,8 @@ urlpatterns = patterns('',
     (r'^p/thumbnail/generate/(?P<pk>\d+)/(?P<size>.+)/$', GenerateThumbnail.as_view(), {}, "generate_thumbnail_view"),
     (r'^p/thumbnail/lazy/(?P<pk>\d+)/(?P<size>.+)/$', LazyThumbnail.as_view(), {}, "lazy_thumbnail_view"),
     
-    (r'^album/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "album_view"),
-    (r'^media/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "media_view"),
+    #(r'^p/album/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "album_view"),
+    #(r'^p/media/(?P<pk>\d+)/$', TemplateView.as_view(), {}, "media_view"),
 )
 
 """

@@ -58,7 +58,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     def toJSON(self):
         
         data = self.cast().toJSON()
-        data['absolute_url'] = self.get_absolute_uri()
+        #data['absolute_url'] = "/toto" #self.get_absolute_uri()
         return data
         
         
