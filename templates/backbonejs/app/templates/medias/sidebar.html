@@ -1,0 +1,47 @@
+<!-- Box actives facets-->
+
+<% if (facetting.currents.length > 0) { %>
+<div class="sidebar-nav well well-small">
+  <h5>Filtres actifs</h5>
+  <ul class="nav current-filters">
+    <%  _.each(facetting.currents, function (facet) { %>
+    <li><a href="<%= facet.url %>"><i class="icon-remove"></i> <%= facet.name %></a></li>
+    <% }); %>
+  </ul>
+</div>
+<% }  %>
+
+<!-- Box facetting -->
+
+<% if (typeof(facetting.facets.years) !== 'undefined' && facetting.facets.years.length > 0) { %>
+<div class="sidebar-nav well well-small">
+  <h5>Filtrer par année</h5>
+  <ul class="nav current-filters">
+    <%  _.each(facetting.facets.years, function (facet) { %>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <% }); %>
+  </ul>
+</div>
+<% }  %>
+
+<% if (typeof(facetting.facets.months) !== 'undefined' && facetting.facets.months.length > 0) { %>
+<div class="sidebar-nav well well-small">
+  <h5>Filtrer par mois</h5>
+  <ul class="nav current-filters">
+    <%  _.each(facetting.facets.months, function (facet) { %>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <% }); %>
+  </ul>
+</div>
+<% }  %>
+
+<% if (typeof(facetting.facets.days) !== 'undefined' && facetting.facets.days.length > 0) { %>
+<div class="sidebar-nav well well-small">
+  <h5>Filtrer par jour</h5>
+  <ul class="nav current-filters">
+    <%  _.each(facetting.facets.days, function (facet) { %>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <% }); %>
+  </ul>
+</div>
+<% }  %>

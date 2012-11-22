@@ -31,6 +31,25 @@ function(app) {
 
   });
 
+  Views.SideBar = Backbone.View.extend({
+    template: 'medias/sidebar',
+
+    _facetting: null,
+
+    initialize: function(options) {
+      this._facetting = options.facetting;
+    },
+
+    render: function(template, context) {
+      var context = context || {};
+      context = _.extend({}, context, {
+        facetting: this._facetting
+      });
+      return template(context);
+    }
+
+  });
+
   Views.Detail = Backbone.View.extend({
     template : 'medias/detail',
     serialize: function() {

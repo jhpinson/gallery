@@ -11,6 +11,7 @@ function(app, Medias, Views, Paginator) {
     before: {
 
       "": ["preloadMedias", "preloadBreadcrumbs"],
+      "?*qs": ["preloadMedias", "preloadBreadcrumbs"],
       "album/:id/*qs": ["preloadMedias", "preloadBreadcrumbs"],
       "media/:albumId/*qs": ['_preloadMediaDetail']
 
@@ -18,6 +19,7 @@ function(app, Medias, Views, Paginator) {
 
     routes: {
       "": "albums",
+      "?*qs": "albums",
       "album/:id/*qs": 'album',
       "media-redirect/:id/": 'mediaRedirect',
       "media/:albumId/*qs": 'mediaDetail',
@@ -37,6 +39,10 @@ function(app, Medias, Views, Paginator) {
     _isFirstMediaDisplay: function() {
       var params = this.router ? this.router.params : this.params
       return app.page === null || app.page.type !== 'album' || app.page.value !== params.id
+    },
+
+    _hasFacetsChanged : function () {
+      return app.page !== null && app.page.facetsQS !== this._getQueryVariable('facets')
     },
 
     _getQueryVariable: function(variable, defaut) {
@@ -83,7 +89,20 @@ function(app, Medias, Views, Paginator) {
             var cssClass = null;
             var source = app.page;
 
-            if(dest.type == 'album' && dest.value == null) {
+            if (dest.type == source.type && source.type == 'album' && dest.value == source.value ) {
+              var destFacetCount = 0, sourceFacetCount = 0;
+              if (dest.facetsQS !== null) {
+                destFacetCount = dest.facetsQS.split(/\s/).length
+              }
+              if (source.facetsQS !== null) {
+                sourceFacetCount = source.facetsQS.split(/\s/).length
+              }
+              if ( destFacetCount > sourceFacetCount) {
+                  cssClass = 'vertical-down';
+              } else {
+                cssClass = 'vertical-up';
+              }
+            } else if (dest.type == 'album' && dest.value == null) {
               cssClass = 'vertical-up';
             } else if(dest.type == 'media' && source.type == 'media' && source.value == dest.value) {
               if(dest.page < source.page) {
@@ -312,7 +331,6 @@ function(app, Medias, Views, Paginator) {
         }
       };
 
-      //var layoutoptions = this.router._createAlbumLayout();
       this.router._renderLayout(layoutoptions, {
         type: 'media',
         value: albumId,
@@ -333,7 +351,7 @@ function(app, Medias, Views, Paginator) {
     preloadMedias: function() {
 
       // if first load or facetting change
-      if(this.router._isFirstMediaDisplay()) {
+      if(this.router._isFirstMediaDisplay() || this.router._hasFacetsChanged()) {
 
 
         var id = this.router.params.id;
@@ -445,34 +463,6 @@ function(app, Medias, Views, Paginator) {
 
 
       }
-    },
-
-
-    _createAlbumLayout: function() {
-
-      var layoutoptions = {
-        template: 'layouts/medias',
-        views: {
-
-          // breadcrumb
-          "#main-header": new Medias.Views.Header({
-            breadcrumbs: app.breadcrumbs,
-            views: {
-              '.paginator': new Paginator.View({
-                model: app.paginator
-              })
-            }
-          }),
-
-          // list container
-          "#main-content": new Medias.Views.Items({
-            collection: app.paginator.page
-          })
-        }
-      };
-
-      return layoutoptions;
-
     },
 
     _getFacetUrl : function (facets, facetAdd, facetRemove) {
@@ -625,17 +615,43 @@ function(app, Medias, Views, Paginator) {
     },
 
     _album : function (id) {
-      // or facetting change
-      if(this._isFirstMediaDisplay()) {
+
+      if(this._isFirstMediaDisplay() || this._hasFacetsChanged()) {
 
         var facetting = this._computeFacetting();
         console.debug(facetting);
 
-        var layoutoptions = this._createAlbumLayout();
+
+        var layoutoptions = {
+          template: 'layouts/medias',
+          views: {
+
+            // breadcrumb
+            "#main-header": new Medias.Views.Header({
+              breadcrumbs: app.breadcrumbs,
+              views: {
+                '.paginator': new Paginator.View({
+                  model: app.paginator
+                })
+              }
+            }),
+
+            // list container
+            "#main-content": new Medias.Views.Items({
+              collection: app.paginator.page
+            }),
+
+            // side bar
+            "#main-aside-right" : new Medias.Views.SideBar({
+              facetting : facetting
+            })
+          }
+        };
+
         this._renderLayout(layoutoptions, {
           type: 'album',
           value: id,
-          facets : facetting.qs
+          facetsQS : facetting.qs
         });
       }
 
