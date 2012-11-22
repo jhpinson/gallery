@@ -20,9 +20,12 @@ function(app) {
       this.set('year', date[1]);
       this.set('month', date[2]);
       this.set('day', date[3]);
+
+      this.set('absolute_uri', this.get_uri());
+
     },
 
-    get_url : function () {
+    get_uri : function () {
       if (this.get('is_an_album') == 1) {
         return '/album/' + this.get('id') + '/';
       }
