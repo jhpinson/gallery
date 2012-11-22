@@ -43,6 +43,19 @@ function(app) {
       this._compute();
     },
 
+    _getPageUrl : function (page) {
+        var qs = document.location.search;
+        if (qs.indexOf('page=') !== -1) {
+          qs = qs.replace(/page=[0-9]+/, 'page=' + page);
+        } else if (qs.length > 1) {
+          qs += '&page=' + page;
+        } else {
+          qs = '?page=' + page;
+        }
+
+        return document.location.pathname + qs;
+    },
+
     _compute: function() {
       this.set("pages", parseInt((this._collection.length / this.get('limit'))) + ((this._collection.length % this.get('limit') > 0) ? 1 : 0));
       if(this.get('current') > this.get('pages')) {
@@ -57,18 +70,18 @@ function(app) {
       });
 
       if (this.hasNext()) {
-        this.set('next', document.location.pathname + '?page=' + (parseInt(this.get('current')) + 1));
+        //this.set('next', document.location.pathname + '?page=' + (parseInt(this.get('current')) + 1));
+        this.set('next', this._getPageUrl(parseInt(this.get('current')) + 1));
       } else {
         this.set('next', false);
       }
 
       if (this.hasPrev()) {
-        this.set('prev', document.location.pathname + '?page=' + (parseInt(this.get('current')) - 1));
+        this.set('prev', this._getPageUrl(parseInt(this.get('current')) - 1));
       } else {
         this.set('prev', false);
       }
     }
-
   });
   Paginator.View = Backbone.View.extend({
     tagName : 'span',
