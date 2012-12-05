@@ -28,6 +28,15 @@ body
         width 42px
         height auto
 
+    .uploads
+      width 30px
+      span
+        display block
+        width 100%
+        text-align  center
+        font-size 70%
+        margin-top  -8px
+
   //background url('img/body-bg.png')
   #main-container
     width 1170px
@@ -42,31 +51,6 @@ body
   #main-content
     position relative
 
-  &.media
-
-    &.deleted
-      .image-wrapper, .video-wrapper
-        background-image:url(img/deleted.png);
-        background-repeat:no-repeat;
-        background-position:50% 30%;
-        img
-          opacity 0.5
-
-    .image-wrapper, .video-wrapper
-
-      padding  4px
-      border 1px solid #DDD
-      -webkit-border-radius 4px
-      -moz-border-radius 4px
-      border-radius 4px
-      -webkit-box-shadow 0 1px 3px rgba(0, 0, 0, 0.055)
-      -moz-box-shadow 0 1px 3px rgba(0, 0, 0, 0.055)
-      box-shadow 0 1px 3px rgba(0, 0, 0, 0.055)
-      margin 0 auto
-
-      img
-        margin 0 auto
-        display block
 
 
 div.image-mask
@@ -173,9 +157,15 @@ div.image-mask
     top 10px
     right 15px
 
+article.deleted
+  .image-wrapper, .video-wrapper
+    background-image:url(img/deleted.png);
+    background-repeat:no-repeat;
+    background-position:50% 30%;
+    img
+      opacity 0.5
+
 .thumbnails
-
-
 
   li
     .thumbnail

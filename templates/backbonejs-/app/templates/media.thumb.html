@@ -1,0 +1,59 @@
+<% if (is_an_album) { %>
+<div class="thumbnail album">
+  <div class="thumbnail-container">
+    <div class="thumb-header" >
+      <div class="stats">
+        <% if (image_count > 0) { %><span><i class="icon-camera"></i> <%= image_count %></span><% }  %>
+        <% if (video_count > 0) { %> <span><i class="icon-film"></i> <%= video_count %></span><% }  %>
+      </div>
+      <div class="actions">
+        <span><a href="" data-modal="modal"  ><i class="icon-edit "></i></a></span>
+
+        <!-- @TODO if not empty -->
+        <span><a class="start-slides" href=""  data-url="{% url 'gallery_view' pk=media.pk %}" ><i class=" icon-play  "></i></a></span>
+
+      </div>
+    </div>
+    <a  href="<%= absolute_url %>"> <img src="<%= thumbnails.small.url %>"></a>
+    <h5><%= name %></h5>
+    <p class='date'>
+      <%= date %>
+    </p>
+
+  </div>
+</div>
+
+<% } else { %>
+
+<div class="thumbnail image thumb-container <%= status %>" data-media-pk="<%= id %>">
+
+  
+
+  <ul class="actions nav" style="display:none" >
+    <li class="media-select">
+      <input class="pull-left" type="checkbox">
+    </li>
+    <li class="not-deleted">
+      <a href="#" class="pull-left" data-ops-target="media-<%= id %>" data-media-remove data-media-pk="<%= id %>"  ><i class=" icon-trash"></i></a>
+    </li>
+    <li class="not-deleted">
+      <a href="#" class="pull-right" data-image-rotate="-90" data-media-pk="<%= id %>" data-ops-target="media-<%= id %>" data-image-size="small" ><i class="icon-share-alt "></i></a>
+    </li>
+    <li class="not-deleted" >
+      <a href="#" class="pull-right" data-image-rotate="90" data-media-pk="<%= id %>" data-ops-target="media-<%= id %>" data-image-size="small" ><i class="icon-share-alt "></i></a>
+    </li>
+    <li class="deleted">
+      <a href="#" class="pull-left" data-ops-target="media-<%= id %>" data-media-unremove data-media-pk="<%= id %>" ><i class=" icon-refresh"></i></a>
+    </li>
+  </ul>
+  <div class="thumbnail-container" >
+    <a href="<%= absolute_url %>">  <img id="media-<%= id %>" data-media-pk="<%= id %>" src="<%= thumbnails.small.url %>" width="<%= thumbnails.small.width %>" height="<%= thumbnails.small.height %>" >  </a>
+    <h6><%= name %></h6>
+    <p class='date'>
+      <%= date %>
+    </p>
+
+  </div>
+</div>
+
+<% }  %>

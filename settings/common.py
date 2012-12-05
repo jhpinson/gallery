@@ -99,7 +99,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'middleware.request.ThreadRequestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -247,3 +247,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.user.update_user_details',
     'auth.pipeline.update_profile',
 )
+
+
+SESSION_COOKIE_AGE = 24*3600
+SOCIAL_AUTH_SESSION_EXPIRATION = False

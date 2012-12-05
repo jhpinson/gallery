@@ -33,7 +33,13 @@ function(app) {
 
     initialize: function(attributes, collection) {
       this._collection = collection;
-      this.page = this._collection.createLiveChildCollection();
+      this.page = this._collection.createLiveChildCollection().setComparator(function(a,b) {
+        return Date.parse(a.get('date')) - Date.parse(b.get('date'))
+      });
+
+      //var comparator = queryEngine.generateComparator({date : 1})
+      //this.page.setComparator(comparator)
+      //this.page.sort()
 
       this._collection.bind('all', function() {
         this._compute();
@@ -64,6 +70,7 @@ function(app) {
         app.router.navigate(document.location.pathname+qs, {trigger:true, replace:true});
         return;
       }
+      this.page.sortCollection();
       this.page.query({
         limit: this.get('limit'),
         page: this.get('current')

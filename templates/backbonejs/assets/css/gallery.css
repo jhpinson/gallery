@@ -21,6 +21,16 @@ body #nav-container .avatar img {
   width: 42px;
   height: auto;
 }
+body #nav-container .uploads {
+  width: 30px;
+}
+body #nav-container .uploads span {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 70%;
+  margin-top: -8px;
+}
 body #main-container {
   width: 1170px;
   margin-left: auto;
@@ -33,33 +43,6 @@ body #main-container >div {
 }
 body #main-content {
   position: relative;
-}
-body.media.deleted .image-wrapper,
-body.media.deleted .video-wrapper {
-  background-image: url("img/deleted.png");
-  background-repeat: no-repeat;
-  background-position: 50% 30%;
-}
-body.media.deleted .image-wrapper img,
-body.media.deleted .video-wrapper img {
-  opacity: 0.5;
-}
-body.media .image-wrapper,
-body.media .video-wrapper {
-  padding: 4px;
-  border: 1px solid #ddd;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.055);
-  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.055);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.055);
-  margin: 0 auto;
-}
-body.media .image-wrapper img,
-body.media .video-wrapper img {
-  margin: 0 auto;
-  display: block;
 }
 div.image-mask {
   background-color: #000;
@@ -175,6 +158,16 @@ div.image-mask {
   position: absolute;
   top: 10px;
   right: 15px;
+}
+article.deleted .image-wrapper,
+article.deleted .video-wrapper {
+  background-image: url("img/deleted.png");
+  background-repeat: no-repeat;
+  background-position: 50% 30%;
+}
+article.deleted .image-wrapper img,
+article.deleted .video-wrapper img {
+  opacity: 0.5;
 }
 .thumbnails li .thumbnail {
   background-color: whiteSmoke;

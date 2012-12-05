@@ -15,8 +15,13 @@ class RestMediaView(BackboneView):
         while (ancestor is not None):
             ancestors.insert(0, ancestor.toJSON())
             ancestor = ancestor.parent_album
-        
         return json.dumps(ancestors)
+          
+    def put_rotate(self):
+        data = json.loads(self.request.raw_post_data)
+        image = self.model.objects.get(pk=self.kwargs.get('oid')).cast()
+        image.rotate(str(data['value']))
+        return json.dumps(image.toJSON())
             
     def get_filters(self):
         filter = {}

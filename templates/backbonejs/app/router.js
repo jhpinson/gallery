@@ -1,19 +1,18 @@
 define([
 // Application.
-"app", "modules/medias", "modules/users", "modules/views", "modules/paginator"],
+"app", "modules/medias", "modules/users", "modules/views", "modules/paginator", "modules/uploads"],
 
-function(app, Medias, Users, Views, Paginator) {
-  document.app = app;
+function(app, Medias, Users, Views, Paginator, Uploads) {
+
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.RouteManager.extend({
 
 
     before: {
-
-      "": ["preloadMedias", "preloadBreadcrumbs"],
-      "?*qs": ["preloadMedias", "preloadBreadcrumbs"],
-      "album/:id/*qs": ["preloadMedias", "preloadBreadcrumbs"],
-      "media/:albumId/*qs": ['_preloadMediaDetail']
+      "": ["_clean", "preloadMedias", "preloadBreadcrumbs"],
+      "?*qs": ["_clean", "preloadMedias", "preloadBreadcrumbs"],
+      "album/:id/*qs": ["_clean", "preloadMedias", "preloadBreadcrumbs"],
+      "media/:albumId/*qs": ["_clean", "_preloadMediaDetail"]
 
     },
 
@@ -32,6 +31,12 @@ function(app, Medias, Users, Views, Paginator) {
      * Utils
      * #########################################################################################
      */
+
+
+     _clean : function () {
+        Uploads.disable();
+        app.currentAlbumId = null;
+     },
 
     /*
      * Return true if this is the first time the album or its content is loaded
@@ -309,7 +314,9 @@ function(app, Medias, Users, Views, Paginator) {
      * Regular msingle media display
      */
     mediaDetail: function(albumId) {
-      // l'id est celui de l'abum
+
+      app.currentAlbumId = albumId;
+      Uploads.enable();
       var params = this.router ? this.router.params : this.params
       var layoutoptions = {
         template: 'layouts/media',
@@ -466,7 +473,7 @@ function(app, Medias, Users, Views, Paginator) {
     },
 
     _getFacetUrl : function (facets, facetAdd, facetRemove) {
-      var qs = document.location.search;
+      var qs = decodeURIComponent(document.location.search);
       if (qs == '') {
         qs = '?'
       }
@@ -486,6 +493,14 @@ function(app, Medias, Users, Views, Paginator) {
 
       if (typeof(facetRemove) !== 'undefined') {
         var _facets = facets.replace(facetRemove, '');
+        var name = facetRemove.split(':')[0];
+        if ( name == 'month' || name == "year") {
+          _facets = _facets.replace(/day:[0-9]{1,2}/, '');
+        }
+
+        if (name == "year") {
+         _facets = _facets.replace(/month:[0-9]{1,2}/, '');
+        }
 
         qs = qs.replace(facets, _facets);
         if (_facets.trim().length == 0) {
@@ -616,11 +631,14 @@ function(app, Medias, Users, Views, Paginator) {
 
     _album : function (id) {
 
+      app.currentAlbumId = id;
+      if (id !== null) {
+        Uploads.enable();
+      }
+
       if(this._isFirstMediaDisplay() || this._hasFacetsChanged()) {
 
         var facetting = this._computeFacetting();
-        console.debug(facetting);
-
 
         var layoutoptions = {
           template: 'layouts/medias',

@@ -1,8 +1,8 @@
-<div class="span2 pull-right">
+<div class="span2 pull-right <%= object.status %>">
     <div class="sidebar-nav well well-small">
 
       <ul class="nav">
-        <li >
+        <li class="disabled">
           <a class="start-slides" href=""  data-url="" ><i class=" icon-play"></i> diaporama</a>
         </li>
 
@@ -10,20 +10,20 @@
           <a href="" ><i class=" icon-download-alt"></i> télécharger</a>
         </li>
 
-        <li class="deleted" >
-          <a  href="#" data-ops-target="media-<%= object.id %>" data-media-unremove data-media-pk="<%= object.id %>" ><i class=" icon-refresh"></i> publier</a>
+        <li class="deleted restore" >
+          <a  href="#"  ><i class=" icon-refresh"></i> publier</a>
         </li>
 
-        <li class="not-deleted" >
-          <a  href="#" data-ops-target="media-<%= object.id %>" data-media-remove data-media-pk="<%= object.id %>" ><i class=" icon-trash"></i> supprimer</a>
+        <li class="not-deleted remove" >
+          <a  href="#" ><i class=" icon-trash"></i> supprimer</a>
         </li>
 
-        <li class="not-deleted">
-          <a  href="#" data-image-rotate="90" data-media-pk="<%= object.id %>" data-ops-target="media-<%= object.id %>" data-image-size="medium"><i class=" icon-share-alt"></i> tourner à droite</a>
+        <li class="not-deleted rotate">
+          <a  href="#" data-rotate="90" ><i class=" icon-share-alt"></i> tourner à droite</a>
         </li>
 
-        <li class="not-deleted">
-          <a  href="#" data-image-rotate="-90" data-media-pk="<%= object.id %>"  data-ops-target="media-<%= object.id %>" data-image-size="medium" ><i class=" icon-share-alt"></i> tourner à gauche</a>
+        <li class="not-deleted rotate">
+          <a  href="#" data-rotate="-90" ><i class=" icon-share-alt"></i> tourner à gauche</a>
         </li>
 
 
@@ -35,9 +35,9 @@
 
 
 
-  <article class="span10">
+  <article class="span10 <%= object.status %> thumb-container">
 
-    <div class="image-wrapper">
+    <div class="image-wrapper thumbnail-container">
         <img id="<%= object.id %>"  src="<%= object.thumbnails.medium.url %>"
           width="<%= object.thumbnails.medium.width %>"
           height="<%= object.thumbnails.medium.height %>"  >

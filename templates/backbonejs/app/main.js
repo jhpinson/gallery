@@ -10,7 +10,7 @@ require([
 ],
 
 function(app, Router, Users, Uploads) {
-
+  document.app = app;
   Uploads.init();
 
   // load logged user

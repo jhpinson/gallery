@@ -1,23 +1,23 @@
-<div class="thumbnail image thumb-container <%= object.status %>" data-media-pk="<%= object.id %>">
+<div class="thumbnail image thumb-container <%= object.status %> <%= object.selected ? 'selected' : '' %>" data-media-pk="<%= object.id %>">
   <ul class="actions nav" style="display:none" >
-    <li class="media-select">
-      <input class="pull-left" type="checkbox">
+    <li >
+      <a href="#" class="pull-left select"   ><i class="icon-<% if (object.selected) { %>minus<% } else { %>plus<% } %>-sign"></i></a>
     </li>
     <li class="not-deleted">
-      <a href="#" class="pull-left" data-ops-target="media-<%= object.id %>" data-media-remove data-media-pk="<%= object.id %>"  ><i class=" icon-trash"></i></a>
+      <a href="#" class="pull-left remove"   ><i class=" icon-trash"></i></a>
     </li>
     <li class="not-deleted">
-      <a href="#" class="pull-right" data-image-rotate="-90" data-media-pk="<%= object.id %>" data-ops-target="media-<%= object.id %>" data-image-size="small" ><i class="icon-share-alt "></i></a>
+      <a href="#" class="pull-right rotate" data-rotate="90" ><i class="icon-share-alt "></i></a>
     </li>
     <li class="not-deleted" >
-      <a href="#" class="pull-right" data-image-rotate="90" data-media-pk="<%= object.id %>" data-ops-target="media-<%= object.id %>" data-image-size="small" ><i class="icon-share-alt "></i></a>
+      <a href="#" class="pull-right rotate" data-rotate="-90" ><i class="icon-share-alt "></i></a>
     </li>
     <li class="deleted">
-      <a href="#" class="pull-left" data-ops-target="media-<%= object.id %>" data-media-unremove data-media-pk="<%= object.id %>" ><i class=" icon-refresh"></i></a>
+      <a href="#" class="pull-left restore"  ><i class=" icon-refresh"></i></a>
     </li>
   </ul>
   <div class="thumbnail-container" >
-    <a href="/media-redirect/<%= object.id %>/">  <img id="media-<%= object.id %>" data-media-pk="<%= object.id %>" src="<%= object.thumbnails.small.url %>" width="<%= object.thumbnails.small.width %>" height="<%= object.thumbnails.small.height %>" >  </a>
+    <a href="/media-redirect/<%= object.id %>/">  <img src="<%= object.thumbnails.small.url %>" width="<%= object.thumbnails.small.width %>" height="<%= object.thumbnails.small.height %>" >  </a>
     <h6><%= object.name %></h6>
     <p class='date'>
       <%= object.short_date %>

@@ -1,0 +1,27 @@
+<div class="sidebar-nav well well-small">
+  <h5>Sélection</h5>
+  <ul class="nav">
+    <li >
+      <% if (hasSelected) { %>
+      <a  href="#" class="unselect-all" ><i class="icon-plus"></i> tout déséléctionner</a>
+      <% } else  { %>
+      <a  href="#" class="select-all" ><i class="icon-plus"></i> tout séléctionner</a>
+      <% } %>
+    </li>
+
+    <% if (hasSelected) { %>
+    <li >
+      <a  href="#" class="revert-selection"  ><i class="icon-plus"></i> inverser la sélection</a>
+    </li>
+    <% } %>
+    <% if (hasSelected && !hasDeleted) { %>
+    <li ><a  href="#modal-move" data-modal="modal"  data-width="400" ><i class="icon-plus"></i> déplacer</a></li>
+    <li  ><a  href="#" data-image-rotate="-90"  data-image-size="small" ><i class="icon-plus"></i> tourner à gauche</a></li>
+    <li  ><a  href="#" data-image-rotate="90"  data-image-size="small"  ><i class="icon-plus"></i> tourner à droite</a></li>
+    <li ><a  href="#" data-media-remove  ><i class="icon-trash"></i> supprimer</a></li>
+    <% } %>
+    <% if (hasSelected && !hasPublished) { %>
+    <li class=" mass-media-action allow-for-deleted " ><a  href="#" data-media-unremove  ><i class="icon-trash"></i> restaurer</a></li>
+    <% } %>
+  </ul>
+</div>

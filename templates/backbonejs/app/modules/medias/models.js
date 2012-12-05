@@ -14,28 +14,58 @@ function(app) {
   Models.Media = Backbone.Model.extend({
     urlRoot: '/rest/medias',
 
+    defaults: {
+      "selected": false,
+
+    },
+
     // Ensure that each todo created has `title`.
     initialize: function() {
 
-      var date = Date.parse(this.get('date'));
-
-      //var date = (/([0-9]{4})-([0-9]{2})-([0-9]{2})/).exec(this.get('date'));
-      this.set('year', date.getFullYear());
-      this.set('month', date.getMonth());
-      this.set('day', date.getDate());
-
-
-      this.set('full_date', date.toString('dddd d MMMM yyyy \à H:mm'));
-      this.set('short_date', date.toString('d MMM yyyy, H:mm'));
-
+      this.compute_date();
+      this.on('change:date', _.bind(this.compute_date, this))
       this.set('absolute_uri', this.get_uri());
 
     },
 
-    get_uri : function () {
-      if (this.get('is_an_album') == 1) {
+    compute_date: function() {
+      if(this.get('date')) {
+        var date = Date.parse(this.get('date'));
+        this.set('year', date.getFullYear());
+        this.set('month', date.getMonth());
+        this.set('day', date.getDate());
+        this.set('full_date', date.toString('dddd d MMMM yyyy \à H:mm'));
+        this.set('short_date', date.toString('d MMM yyyy, H:mm'));
+      }
+    },
+
+    get_uri: function() {
+      if(this.get('is_an_album') == 1) {
         return '/album/' + this.get('id') + '/';
       }
+    },
+
+    rotate: function(value, callback) {
+
+      var url = this.url() + '/rotate';
+      $.ajax({
+        url: url,
+        type: 'PUT',
+        dataType: 'application/json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          value: value
+        }),
+        context: this,
+        'complete': function(xhr) {
+
+          if(typeof(callback) !== 'undefined') {
+            callback(JSON.parse(xhr.responseText));
+          }
+
+
+        }
+      });
     },
 
     clear: function() {

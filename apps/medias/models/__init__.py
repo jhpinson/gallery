@@ -29,5 +29,6 @@ def create_media(album, f, filename, created_at):
     
     media.save()
     media.generate_thumbnails()
-        
+    
+    return media
         

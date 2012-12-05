@@ -61,6 +61,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         #data['absolute_url'] = "/toto" #self.get_absolute_uri()
         data['owner'] = {'name' : self.created_by.get_full_name(), 'id' : self.created_by.get_profile().pk}
         data['date'] = self.date.strftime('%Y-%m-%dT%H:%M:%S')
+        data['status'] = self.status
         return data
         
         

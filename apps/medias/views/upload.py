@@ -24,11 +24,13 @@ class UploadView(View):
         f = request.FILES[u'files[]']
         wrapped_file = UploadedFile(f)
         
+        cid = request.POST.get('cid')
+        
         try:
-            create_media(Album.objects.get(pk=request.POST.get('album')), f, wrapped_file.name, parse(request.POST.get(wrapped_file.name)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None))
+            media = create_media(Album.objects.get(pk=request.POST.get('album')), f, wrapped_file.name, parse(request.POST.get(wrapped_file.name)).replace(tzinfo=utc).astimezone(get_current_timezone()).replace(tzinfo=None))
         except IntegrityError,e:
             print e
-            return HttpResponseServerError(u"Le fichier \"%s\" est déja présent dans cet album" % wrapped_file.name) 
+            return HttpResponse(simplejson.dumps({'cid' : cid, 'success' : False, 'error' : 'IntegrityError'}), content_type="application/json")
         
         
-        return HttpResponse(simplejson.dumps({'name' : request.FILES.items()[0][1].name}), content_type="application/json")
+        return HttpResponse(simplejson.dumps({'cid' : cid, 'id' : media.pk, 'success' : True, 'error' : None}), content_type="application/json")

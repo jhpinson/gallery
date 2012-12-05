@@ -1,22 +1,41 @@
 define([
 // Application.
-"app", ],
+"app", "modules/uploads/models","modules/uploads/views", "modules/medias"],
 
-function(app) {
+function(app, Models, Views, Medias) {
 
   // Create a new module.
   var Uploads = app.module();
 
-  var filesAdded = function(e, data) {
-    $.each(data.files, function(index, file) {
-      var li = $('<li id="' + fileToId(file) + '" ><h6>' + file.name + '</h6></li>')
-      $('#upload-details').append(li);
+  Uploads.Models = Models;
+  Uploads.Views = Views;
 
-    });
+  var filesAdded = function(e, data) {
+      $.each(data.files, function(index, file) {
+        var li = $('<li id="' + fileToId(file) + '" ><h6>' + file.name + '</h6></li>')
+        $('#upload-details').append(li);
+
+      });
+    };
+
+
+  Uploads.enable = function() {
+    $('body').fileupload('enable');
   };
+
+  Uploads.disable = function() {
+    $('body').fileupload('disable');
+  };
+
 
   Uploads.init = function() {
 
+    app.uploads = new Uploads.Models.Uploads();
+    app.globalUpload = new Uploads.Models.GlobalUpload();
+
+    var view = new Views.GlobalUpload({model : app.globalUpload });
+    view.setElement($('#uploads'));
+    view.render();
 
     $('body').fileupload({
       dataType: 'json',
@@ -25,72 +44,65 @@ function(app) {
       limitConcurrentUploads: 1,
       url: '/p/upload/',
 
-      //change : filesAdded,
-      //drop : filesAdded,
-      /*
-        done : function(e, data) {
-          setTimeout(function () {
-            var name = fileToId(data.files[0]);
-            $('#upload-manager #'+ name +' .progress').removeClass('active');
-            $('#upload-manager #'+ name +' .progress').addClass('progress-success');
-           $('#' + name).fadeOut(200, function() {
-           $(this).remove();
-          })}, 1000);
-        },*/
-      /*
-      fail: function(e, data) {
-        msgError(data.jqXHR.responseText);
-      },
-
+      // global start
       start: function(e, data) {
-        $('#upload-manager').show();
-
+        app.globalUpload.set('status', 'started');
+        app.globalUpload.set('progress', 0);
       },
 
-      send: function(e, data) {
-        $('#progressall').removeClass('progress-success');
-        var name = fileToId(data.files[0]);
-        //$('#' + name).append('<div  class="progress"  ><div  class="bar" style="width: 0;"></div></div>');
-        $('#upload-manager h5 span').text(data.files[0].name);
-      },
-
+      // global stop
       stop: function() {
-        var url = document.location.href.split('#')[0];
-        if(url.indexOf('?') !== -1) {
-          url += '&thumbnails'
-        } else {
-          url += '?thumbnails'
-        }
-
-        $('#upload-manager').fadeOut(200, function() {
-          $('#upload-manager').hide();
-          $('#upload-details').empty()
-        });
-
-        $('#thumbnails').fadeOut(200, function() {
-          $('#thumbnails').load(url, function() {
-            //$('img.thumbnail-pending').generateThumbnails()
-            $('#thumbnails').fadeIn(200);
-          });
-        });
-
-
-
+        app.globalUpload.set('status', 'stopped');
+        app.globalUpload.set('progress', 0);
       },
 
-      progress: function(e, data) {
-        var name = fileToId(data.files[0]);
-        var progress = parseInt(data.loaded / data.total * 100, 10);
-        if(progress == 100) {
-          $('#progressall').addClass('progress-success');
-        }
-
-      },
-
+      // global progress
       progressall: function(e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        $('#upload-manager #progressall .bar').css('width', progress + '%');
-      }*/
+        app.globalUpload.set('progress', progress);
+      },
+
+      // file done
+      done: function(e, data) {
+        var upload = app.uploads.getByCid(data.formData.cid);
+        upload.set("status", "success");
+
+        app.globalUpload.decrease();
+
+        if (upload.get('album') == app.currentAlbumId) {
+          var media = new Medias.Models.Media({id:data.result.id});
+          media.fetch().then(function () {
+            if (media.get('parent_album') == app.currentAlbumId) {
+              app.medias.add(media);
+            }
+          })
+        } else {
+          // @ todo remove from uploads
+        }
+
+      },
+
+      // file failed
+      fail: function(e, data) {
+        var upload = app.uploads.getByCid(data.formData.cid);
+        upload.set("status", "failed");
+        // @ todo remove from uploads
+        app.globalUpload.decrease();
+      },
+
+      // start file upload
+      send: function(e, data) {
+        var upload = app.uploads.getByCid(data.formData.cid);
+        upload.set("status", "uploading");
+      },
+
+      // file progress
+      progress: function(e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        var upload = app.uploads.getByCid(data.formData.cid);
+        upload.set("progress", progress);
+
+      }
     });
 
     $('body').bind('fileuploadsubmit', function(e, data) {
@@ -99,10 +111,19 @@ function(app) {
         data.formData = {};
       }
       data.formData.album = app.currentAlbumId;
-
       for(var i = 0, l = data.files.length; i < l; i++) {
+        var upload = new Models.Upload({
+          name: data.files[i].name,
+          size: data.files[i].size,
+          album: app.currentAlbumId
+        });
+        app.uploads.add(upload);
+        app.globalUpload.increase();
         data.formData[data.files[i].name] = data.files[i].lastModifiedDate.toJSON();
+        data.formData.cid = upload.cid;
       }
+
+
 
     });
   }
