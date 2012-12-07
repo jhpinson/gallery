@@ -15,13 +15,13 @@
     </li>
     <% } %>
     <% if (hasSelected && !hasDeleted) { %>
-    <li ><a  href="#modal-move" data-modal="modal"  data-width="400" ><i class="icon-plus"></i> déplacer</a></li>
-    <li  ><a  href="#" data-image-rotate="-90"  data-image-size="small" ><i class="icon-plus"></i> tourner à gauche</a></li>
-    <li  ><a  href="#" data-image-rotate="90"  data-image-size="small"  ><i class="icon-plus"></i> tourner à droite</a></li>
-    <li ><a  href="#" data-media-remove  ><i class="icon-trash"></i> supprimer</a></li>
+    <li ><a  href="#modal-move" -data-modal="modal"  data-width="400" class="move"><i class="icon-plus"></i> déplacer</a></li>
+    <li  ><a  href="#" data-rotate="-90"  data-thumb-size="small" class="rotate" ><i class="icon-plus"></i> tourner à gauche</a></li>
+    <li  ><a  href="#" data-rotate="90"  class="rotate" data-thumb-size="small" ><i class="icon-plus"></i> tourner à droite</a></li>
+    <li ><a  href="#" class="remove" ><i class="icon-trash"></i> supprimer</a></li>
     <% } %>
     <% if (hasSelected && !hasPublished) { %>
-    <li class=" mass-media-action allow-for-deleted " ><a  href="#" data-media-unremove  ><i class="icon-trash"></i> restaurer</a></li>
+    <li  ><a  href="#" class="restore"  ><i class="icon-trash"></i> restaurer</a></li>
     <% } %>
   </ul>
 </div>

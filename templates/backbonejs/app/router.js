@@ -656,12 +656,14 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
             // list container
             "#main-content": new Medias.Views.Items({
-              collection: app.paginator.page
+              collection: app.paginator.page,
+              paginator : app.paginator
             }),
 
             // side bar
             "#main-aside-right" : new Medias.Views.SideBar({
-              facetting : facetting
+              facetting : facetting,
+              collection : app.mediasQuery
             })
           }
         };
@@ -669,7 +671,8 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
         this._renderLayout(layoutoptions, {
           type: 'album',
           value: id,
-          facetsQS : facetting.qs
+          //facetsQS : facetting.qs
+           facetsQS : this._getQueryVariable('facets')
         });
       }
 

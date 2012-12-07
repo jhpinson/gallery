@@ -41,12 +41,24 @@ function(app) {
       //this.page.setComparator(comparator)
       //this.page.sort()
 
-      this._collection.bind('all', function() {
+      //this._collectionHash = this._getCollectionHash();
+
+      this._collection.bind('add remove reset', function() {
         this._compute();
       }, this);
+      this._compute();
       this.bind('change:current', this._compute, this);
       this.bind('change:limit', this._compute, this);
-      this._compute();
+
+
+    },
+
+    _getCollectionHash : function () {
+      var hash = [];
+      this._collection.each(function (obj) {
+        hash.push(obj.cid);
+      });
+      return hash.join('-');
     },
 
     _getPageUrl : function (page) {
@@ -88,6 +100,13 @@ function(app) {
       } else {
         this.set('prev', false);
       }
+
+      var newHash = this._getCollectionHash();
+      if (this._collectionHash != newHash) {
+        this._collectionHash = newHash;
+        this.page.trigger('haschange');
+      }
+
     }
   });
   Paginator.View = Backbone.View.extend({

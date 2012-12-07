@@ -17,7 +17,7 @@
     </li>
   </ul>
   <div class="thumbnail-container" >
-    <a href="/media-redirect/<%= object.id %>/">  <img src="<%= object.thumbnails.small.url %>" width="<%= object.thumbnails.small.width %>" height="<%= object.thumbnails.small.height %>" >  </a>
+    <a href="/media-redirect/<%= object.id %>/">  <img src="<%= object.thumbnails.small.url %>" width="<%= object.thumbnails.small.width %>" height="<%= object.thumbnails.small.height %>" data-media-pk="<%= object.id%>">  </a>
     <h6><%= object.name %></h6>
     <p class='date'>
       <%= object.short_date %>

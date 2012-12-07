@@ -16,7 +16,7 @@ function(app) {
 
     defaults: {
       "selected": false,
-
+      "running" : false
     },
 
     // Ensure that each todo created has `title`.
@@ -27,6 +27,9 @@ function(app) {
       this.set('absolute_uri', this.get_uri());
 
     },
+
+    startRunning : null,
+    stopRunning : null,
 
     compute_date: function() {
       if(this.get('date')) {

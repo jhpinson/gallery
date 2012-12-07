@@ -1,15 +1,14 @@
 define([
 // Application.
-"app", "plugins/spin",
+"app", "plugins/spin", "plugins/async"
 
 ],
 
 // Map dependencies from above array.
 
-function(app, Spinner) {
+function(app, Spinner, async) {
 
   var Views = {};
-
 
   Views.Header = Backbone.View.extend({
     template: 'medias/header',
@@ -34,52 +33,203 @@ function(app, Spinner) {
   Views.Selection = Backbone.View.extend({
     template: 'medias/selection',
 
-    events : {
-      "click .select-all" : "selectAll",
-      "click .unselect-all" : "unSelectAll",
-      "click .revert-selection" : "revertSelection"
+    events: {
+      "click .select-all": "selectAll",
+      "click .unselect-all": "unSelectAll",
+      "click .revert-selection": "revertSelection",
+      "click .remove": "mRemove",
+      "click .restore": "restore",
+      "click .rotate": "rotate",
+      "click .move": "move"
     },
 
-    selectAll : function (event) {
+    selectAll: function(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      app.paginator.page.each(function (o,id, col) {
+      app.paginator.page.each(function(o, id, col) {
         var silent = id < col.length - 1;
-        o.set({'selected' : true}, {silent : silent});
+        o.set({
+          'selected': true
+        }, {
+          silent: false
+        });
       })
     },
 
-    unSelectAll : function (event) {
+    unSelectAll: function(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      app.paginator.page.each(function (o,id, col) {
+      app.paginator.page.each(function(o, id, col) {
         var silent = id < col.length - 1;
-        o.set({'selected' : false}, {silent : silent});
+        o.set({
+          'selected': false
+        }, {
+          silent: false
+        });
       })
     },
 
-    revertSelection : function (event) {
+    revertSelection: function(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      app.paginator.page.each(function (o,id, col) {
+      app.paginator.page.each(function(o, id, col) {
         var silent = id < col.length - 1;
-        o.set({'selected' : !o.get('selected')}, {silent : silent});
+        o.set({
+          'selected': !o.get('selected')
+        }, {
+          silent: false
+        });
       })
     },
 
-    initialize : function () {
+    mRemove: function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      var methods = [];
+
+      this.collection.each(function(obj, id, col) {
+        obj.set('running', true);
+        methods.push(_.bind(function(callback) {
+
+          obj.set({
+            status: 'deleted'
+          }, {
+            silent: true
+          });
+
+          obj.save().then(function() {
+            obj.set({
+              running: false
+            });
+            callback(null, obj);
+          });
+        }, this))
+
+
+      });
+      async.series(methods, function(err, results) {
+        app.medias.remove(results);
+      });
+    },
+
+
+    restore: function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      var methods = [];
+
+      this.collection.each(function(obj, id, col) {
+        obj.set('running', true);
+        methods.push(_.bind(function(callback) {
+
+          obj.set({
+            status: 'published'
+          }, {
+            silent: true
+          });
+
+
+          obj.save().then(function() {
+            obj.set({
+              running: false
+            });
+            callback(null)
+          });
+        }, this))
+
+
+      });
+
+      async.series(methods, function(err, results) {
+        //alert('done')
+      });
+
+    },
+
+    rotate: function(event) {
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      var value = $(event.currentTarget).attr('data-rotate') || $(event.originalEvent.srcElement).attr('data-rotate');
+      var thumb_size = $(event.currentTarget).attr('data-thumb-size') || $(event.originalEvent.srcElement).attr('data-thumb-size');
+      var methods =[];
+      this.collection.each(function(obj, id, col) {
+        obj.set('running', true);
+        methods.push(_.bind(function(callback) {
+          obj.rotate(value, _.bind(function(response) {
+            var $img = $('.thumbnail-container img[data-media-pk="' + obj.get('id') + '"]');
+            $img.fadeOut(200, _.bind(function() {
+              response.thumbnails[thumb_size].url += '?' + Math.random();
+              $img.attr('src', response.thumbnails[thumb_size].url);
+              $img.attr('width', response.thumbnails[thumb_size].width);
+              $img.attr('height', response.thumbnails[thumb_size].height);
+              $img.fadeIn(200);
+
+              obj.set(response, {
+                silent: true
+              });
+              obj.set({
+                running: false
+              });
+              callback(null);
+            }, this));
+
+          }, this));
+        }, this))
+
+
+      });
+
+      async.series(methods, function(err, results) {
+        //alert('done')
+      });
+
+    },
+
+    move: function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      var methods = [];
+
+      this.collection.each(function(obj, id, col) {
+        obj.set('running', true);
+        methods.push(_.bind(function(callback) {
+          setTimeout(_.bind(function () {
+            obj.set('running', false);
+            callback(null, obj);
+          },this),200)
+
+
+        }, this));
+
+      });
+      async.series(methods, _.bind(function(err, results) {
+        app.medias.remove(results);
+      },this));
+    },
+
+    initialize: function() {
       this.collection.bind('all', this.render, this);
 
     },
 
-    render: function (template, context) {
+    render: function(template, context) {
 
-      context = {hasSelected : this.collection.length > 0}
-      context.hasDeleted = this.collection.where({status : 'deleted'}).length > 0;
-      context.hasPublished = this.collection.where({status : 'published'}).length > 0
+      context = {
+        hasSelected: this.collection.length > 0
+      }
+      context.hasDeleted = this.collection.where({
+        status: 'deleted'
+      }).length > 0;
+      context.hasPublished = this.collection.where({
+        status: 'published'
+      }).length > 0
 
       return template(context);
     }
@@ -90,7 +240,7 @@ function(app, Spinner) {
     template: 'medias/sidebar',
 
     _facetting: null,
-    _selectionView : null,
+    _selectionView: null,
     initialize: function(options) {
       this._facetting = options.facetting;
 
@@ -113,16 +263,20 @@ function(app, Spinner) {
 
     _resetSelectionView: function() {
       // if there is no album display currently
-      if (app.page.value === null) {
+      if(app.page.value === null) {
         return;
       }
 
-      if (this._selectionView !== null) {
+      if(this._selectionView !== null) {
         this._selectionView.remove();
         this._selectionView = null;
 
-        app.paginator.page.each(function (o, id, col) {
-          o.set({'selected': false}, {silent : id < col.length -1 });
+        app.paginator.page.each(function(o, id, col) {
+          o.set({
+            'selected': false
+          }, {
+            silent: id < col.length - 1
+          });
         });
       }
 
@@ -136,7 +290,7 @@ function(app, Spinner) {
           }
         }).setSearchString('selected:true').query()
       });
-      this._selectionView  = selectionView;
+      this._selectionView = selectionView;
       this.$el.append(selectionView.$el);
       selectionView.render();
     }
@@ -151,21 +305,26 @@ function(app, Spinner) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      this._applyMask();
+      this.model.set({
+        running: true
+      });
 
       var value = $(event.currentTarget).attr('data-rotate') || $(event.originalEvent.srcElement).attr('data-rotate');
 
       this.model.rotate(value, _.bind(function(response) {
         var $img = this.$el.find('.thumbnail-container img');
         $img.fadeOut(200, _.bind(function() {
-          $img.attr('src', response.thumbnails[this.thumb_size].url + '?' + Math.random());
+          response.thumbnails[this.thumb_size].url += '?' + Math.random();
+          $img.attr('src', response.thumbnails[this.thumb_size].url);
           $img.attr('width', response.thumbnails[this.thumb_size].width);
           $img.attr('height', response.thumbnails[this.thumb_size].height);
           $img.fadeIn(200);
-          this._removeMask();
 
           this.model.set(response, {
             silent: true
+          });
+          this.model.set({
+            running: false
           });
 
         }, this));
@@ -181,16 +340,28 @@ function(app, Spinner) {
     mRemove: function(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
-
-      this._applyMask();
-      this._applyStatus('deleted', _.bind(this._removeMask, this));
+      this.model.set({
+        running: true
+      });
+      //this._applyMask();
+      this._applyStatus('deleted', _.bind(function() {
+        this.model.set({
+          running: false
+        });
+      }, this));
     },
 
     restore: function(event) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      this._applyMask();
-      this._applyStatus('published', _.bind(this._removeMask, this));
+      this.model.set({
+        running: true
+      });
+      this._applyStatus('published', _.bind(function() {
+        this.model.set({
+          running: false
+        });
+      }, this));
     },
 
     toggleSelect: function(event) {
@@ -229,10 +400,20 @@ function(app, Spinner) {
     _removeMask: function() {
       var $mask = $("#mask-" + this.model.cid)
       $mask.fadeOut(200, _.bind(function() {
-        this.mask.stop();
+        if(this.mask !== null) {
+          this.mask.stop();
+        }
         $mask.remove();
         this.mask = null;
       }, this));
+    },
+
+    _onChangeRunning: function() {
+      if(this.model.get('running') == true) {
+        this._applyMask();
+      } else {
+        this._removeMask();
+      }
     },
 
     _createSpin: function(targetId) {
@@ -285,6 +466,7 @@ function(app, Spinner) {
 
     initialize: function() {
       this.model.bind('all', this.render, this);
+      this.model.bind('change:running', this._onChangeRunning, this);
     },
 
     serialize: function() {
@@ -310,6 +492,13 @@ function(app, Spinner) {
       "click .restore": "restore",
       "click .rotate": "rotate",
       "click .select": "toggleSelect",
+    },
+
+    initialize: function() {
+
+      this.model.bind('change', this.render, this);
+      this.model.bind('change:running', this._onChangeRunning, this);
+
     },
 
     serialize: function() {
@@ -355,8 +544,12 @@ function(app, Spinner) {
 
   Views.Items = Backbone.View.extend({
 
-    initialize: function() {
-      this.collection.bind('all', this.render, this);
+    _length : null,
+
+    initialize: function(options) {
+      //options.paginator.bind('change:current', this.render, this);
+      this.collection.bind('haschange', this.render, this);
+
     },
 
     tagName: "ul",
@@ -380,9 +573,8 @@ function(app, Spinner) {
 
         }
         this.insertView(view);
+
       }, this));
-
-
     }
   });
 
