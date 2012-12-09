@@ -13,6 +13,15 @@
 
 <!-- Box facetting -->
 
+<% if (typeof(facetting.facets.deleted) !== 'undefined' && facetting.facets.deleted.value > 0) { %>
+<div class="sidebar-nav well well-small">
+  <h5>bla bla</h5>
+  <ul class="nav current-filters">
+    <li><a href="<%= facetting.facets.deleted.url%>"><i class="icon-arrow-right"></i> <%= facetting.facets.deleted.name %> <span class="muted pull-right"><%= facetting.facets.deleted.value %></span></a></li>
+  </ul>
+</div>
+<% }  %>
+
 <% if (typeof(facetting.facets.years) !== 'undefined' && facetting.facets.years.length > 0) { %>
 <div class="sidebar-nav well well-small">
   <h5>Filtrer par année</h5>

@@ -416,8 +416,29 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
           }
         });
 
+        mediasQuery = mediasQuery.setPill('status', {
+          prefixes: ['status:'],
+          callback: function(model, value) {
+            if (value !== 'all') {
+              return model.get('status') == value;
+            } else {
+              return true;
+            }
+          }
+        });
+
+        // status:published by default
+        var facets = this.router._getQueryVariable('facets');
+        if (facets == null) {
+          facets = 'status:published';
+        } else {
+          if (facets.indexOf('status:') === -1) {
+            facets = +' status:published';
+          }
+        }
+
         // apply facetting
-        mediasQuery.setSearchString(this.router._getQueryVariable('facets')).query();
+        mediasQuery.setSearchString(facets).query();
 
         var paginator = new Paginator.Paginator({
           current: this.router._getQueryVariable('page', 1)
@@ -472,153 +493,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
       }
     },
 
-    _getFacetUrl : function (facets, facetAdd, facetRemove) {
-      var qs = decodeURIComponent(document.location.search);
-      if (qs == '') {
-        qs = '?'
-      }
 
-      if (facetAdd !== null) {
-        if (facets == null) {
-          facets = 'facets=' + facetAdd;
-          if (qs == '?') {
-            qs += facets;
-          } else {
-            qs += '&' + facets;
-          }
-        } else {
-          qs = qs.replace(facets, facets + ' ' + facetAdd);
-        }
-      }
-
-      if (typeof(facetRemove) !== 'undefined') {
-        var _facets = facets.replace(facetRemove, '');
-        var name = facetRemove.split(':')[0];
-        if ( name == 'month' || name == "year") {
-          _facets = _facets.replace(/day:[0-9]{1,2}/, '');
-        }
-
-        if (name == "year") {
-         _facets = _facets.replace(/month:[0-9]{1,2}/, '');
-        }
-
-        qs = qs.replace(facets, _facets);
-        if (_facets.trim().length == 0) {
-          qs = qs.replace('facets=', '');
-        }
-      }
-
-
-      // clean qs
-      qs = qs.replace('&&', '&');
-      qs = qs.replace(/&$/, '');
-      qs = qs.replace('?&', '?');
-      if (qs.trim() == '?') {
-        qs ='';
-      }
-
-      return document.location.pathname + qs;
-    },
-
-
-    _getDate : function (year, month, day) {
-      var d = new Date();
-      d.setFullYear(year);
-
-      if (typeof(month) !== 'undefined') {
-        d.setMonth(month);
-      }
-
-      if (typeof(day) !== 'undefined') {
-       d.setDate(day);
-      }
-
-      return d;
-    },
-
-    _computeFacetting : function () {
-
-      var facetsQs = this._getQueryVariable('facets');
-
-      var facetting = {years : {}, months : {}, days :{}};
-
-      app.mediasQuery.forEach(function(media) {
-
-        // years
-        if (typeof(facetting.years[media.get('year')]) !== 'undefined') {
-            facetting.years[media.get('year')]++;
-        } else {
-            facetting.years[media.get('year')] = 1;
-        }
-
-        // years
-        if (typeof(facetting.months[media.get('month')]) !== 'undefined') {
-            facetting.months[media.get('month')]++;
-        } else {
-            facetting.months[media.get('month')] = 1;
-        }
-
-        // years
-        if (typeof(facetting.days[media.get('day')]) !== 'undefined') {
-            facetting.days[media.get('day')]++;
-        } else {
-            facetting.days[media.get('day')] = 1;
-        }
-
-      }, this);
-
-      var facets = {};
-
-      // dealing with dates
-      var d = new Date();
-
-      var years = _.keys(facetting.years);
-      if (years.length > 1 ) {
-        facets.years = [];
-        _.each(years, function (year) {
-          facets.years.push({name : year, url : this._getFacetUrl(facetsQs, 'year:' + year), value : facetting.years[year]})
-        },this);
-      } else {
-        d.setFullYear(years[0]);
-        // month
-        var months = _.keys(facetting.months);
-        if (months.length > 1 ) {
-          facets.months = [];
-          _.each(months, function (month) {
-            facets.months.push({name : this._getDate(years[0], month).toString('MMMM yyyy'), url : this._getFacetUrl(facetsQs, 'month:' + month), value : facetting.months[month]})
-          },this);
-        } else {
-          // days
-          var days = _.keys(facetting.days);
-          if (days.length > 1 ) {
-            facets.days = [];
-            _.each(days, function (day) {
-              facets.days.push({name : this._getDate(years[0], months[0], day).toString('ddd d MMMM yyyy'), url : this._getFacetUrl(facetsQs, 'day:' + day), value : facetting.days[day]})
-            },this);
-          }
-        }
-      }
-
-      var currents = [];
-      // active facets
-      if (facetsQs !== null) {
-
-        _.each(facetsQs.split(/\s+/), function (facet) {
-          var split = facet.split(':');
-          var name = split[1];
-          if (split[0] == 'month') {
-            name = this._getDate(years[0], split[1]).toString('MMMM yyyy');
-          } else if (split[0] == 'day') {
-            name = this._getDate(years[0], months[0], split[1]).toString('ddd d MMMM yyyy')
-          }
-          currents.push({name : name, url : this._getFacetUrl(facetsQs, null, facet)});
-        }, this);
-      }
-
-
-      return {currents : currents, facets : facets, qs : facetsQs};
-
-    },
 
 
     albums: function() {
@@ -638,7 +513,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
       if(this._isFirstMediaDisplay() || this._hasFacetsChanged()) {
 
-        var facetting = this._computeFacetting();
+        //var facetting = this._computeFacetting();
 
         var layoutoptions = {
           template: 'layouts/medias',
@@ -662,7 +537,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
             // side bar
             "#main-aside-right" : new Medias.Views.SideBar({
-              facetting : facetting,
+              //facetting : facetting,
               collection : app.mediasQuery
             })
           }

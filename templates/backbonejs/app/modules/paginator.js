@@ -43,21 +43,20 @@ function(app) {
 
       //this._collectionHash = this._getCollectionHash();
 
-      this._collection.bind('add remove reset', function() {
-        this._compute();
-      }, this);
-      this._compute();
+      this._collection.bind('add remove reset', this._compute, this);
+
       this.bind('change:current', this._compute, this);
       this.bind('change:limit', this._compute, this);
-
+      this._compute();
 
     },
 
     _getCollectionHash : function () {
       var hash = [];
-      this._collection.each(function (obj) {
+      this.page.each(function (obj) {
         hash.push(obj.cid);
       });
+
       return hash.join('-');
     },
 
@@ -82,12 +81,12 @@ function(app) {
         app.router.navigate(document.location.pathname+qs, {trigger:true, replace:true});
         return;
       }
+
       this.page.sortCollection();
       this.page.query({
         limit: this.get('limit'),
         page: this.get('current')
       });
-
       if (this.hasNext()) {
         //this.set('next', document.location.pathname + '?page=' + (parseInt(this.get('current')) + 1));
         this.set('next', this._getPageUrl(parseInt(this.get('current')) + 1));
@@ -102,8 +101,10 @@ function(app) {
       }
 
       var newHash = this._getCollectionHash();
+      console.debug('_compute pagination', newHash, this._collectionHash)
       if (this._collectionHash != newHash) {
         this._collectionHash = newHash;
+        console.debug('trigger')
         this.page.trigger('haschange');
       }
 
