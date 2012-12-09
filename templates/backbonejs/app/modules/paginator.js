@@ -101,10 +101,8 @@ function(app) {
       }
 
       var newHash = this._getCollectionHash();
-      console.debug('_compute pagination', newHash, this._collectionHash)
       if (this._collectionHash != newHash) {
         this._collectionHash = newHash;
-        console.debug('trigger')
         this.page.trigger('haschange');
       }
 

@@ -43,7 +43,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
      */
     _isFirstMediaDisplay: function() {
       var params = this.router ? this.router.params : this.params
-      return app.page === null || app.page.type !== 'album' || app.page.value !== params.id
+      return app.page === null || app.page.type !== 'album' || app.page.value !== ( typeof(params.id) === 'undefined' ? null : params.id)
     },
 
     _hasFacetsChanged : function () {
@@ -356,7 +356,6 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
     _cleanHtmlTimer: null,
     preloadMedias: function() {
-
       // if first load or facetting change
       if(this.router._isFirstMediaDisplay() || this.router._hasFacetsChanged()) {
 
@@ -433,10 +432,9 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
           facets = 'status:published';
         } else {
           if (facets.indexOf('status:') === -1) {
-            facets = +' status:published';
+            facets += ' status:published';
           }
         }
-
         // apply facetting
         mediasQuery.setSearchString(facets).query();
 
