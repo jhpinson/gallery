@@ -170,7 +170,7 @@ article.deleted
   li
     .thumbnail
 
-      background-color whiteSmoke
+      background-color transparent
       &.deleted
         background-image:url(img/deleted.png);
         background-repeat:no-repeat;
@@ -205,6 +205,29 @@ article.deleted
       &.video, &.image
         height 160px
         position relative
+        padding 0
+        border none
+
+
+        .action
+          position absolute
+          top 2px
+          display none
+          z-index 20
+          &.persist
+            display block
+
+          &.rotate-left
+            right 5px
+
+          &.rotate-right
+            right 20px
+
+          &.remove, &.restore
+            left 20px
+
+          &.select
+            left 5px
 
         &.selected
           background-color gainsboro
@@ -237,6 +260,14 @@ article.deleted
           max-height 115px
 
 
-
+.running, .deleted
+  position absolute
+  background-color black
+  opacity 0.5
+  z-index 10
+  top 0
+  left 0
+  bottom 0
+  right 0
 
 

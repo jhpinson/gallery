@@ -170,7 +170,7 @@ article.deleted .video-wrapper img {
   opacity: 0.5;
 }
 .thumbnails li .thumbnail {
-  background-color: whiteSmoke;
+  background-color: transparent;
   text-align: center;
 }
 .thumbnails li .thumbnail.deleted {
@@ -212,6 +212,37 @@ article.deleted .video-wrapper img {
 .thumbnails li .thumbnail.image {
   height: 160px;
   position: relative;
+  padding: 0;
+  border: none;
+}
+.thumbnails li .thumbnail.video .action,
+.thumbnails li .thumbnail.image .action {
+  position: absolute;
+  top: 2px;
+  display: none;
+  z-index: 20;
+}
+.thumbnails li .thumbnail.video .action.persist,
+.thumbnails li .thumbnail.image .action.persist {
+  display: block;
+}
+.thumbnails li .thumbnail.video .action.rotate-left,
+.thumbnails li .thumbnail.image .action.rotate-left {
+  right: 5px;
+}
+.thumbnails li .thumbnail.video .action.rotate-right,
+.thumbnails li .thumbnail.image .action.rotate-right {
+  right: 20px;
+}
+.thumbnails li .thumbnail.video .action.remove,
+.thumbnails li .thumbnail.image .action.remove,
+.thumbnails li .thumbnail.video .action.restore,
+.thumbnails li .thumbnail.image .action.restore {
+  left: 20px;
+}
+.thumbnails li .thumbnail.video .action.select,
+.thumbnails li .thumbnail.image .action.select {
+  left: 5px;
 }
 .thumbnails li .thumbnail.video.selected,
 .thumbnails li .thumbnail.image.selected {
@@ -245,4 +276,15 @@ article.deleted .video-wrapper img {
 .thumbnails li .thumbnail .thumbnail-container img {
   width: auto;
   max-height: 115px;
+}
+.running,
+.deleted {
+  position: absolute;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }

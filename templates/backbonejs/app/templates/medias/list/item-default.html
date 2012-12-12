@@ -1,26 +1,18 @@
 <div class="thumbnail image thumb-container <%= object.status %> <%= object.selected ? 'selected' : '' %>" data-media-pk="<%= object.id %>">
-  <ul class="actions nav" style="display:none" >
-    <li >
-      <a href="#" class="pull-left select"   ><i class="icon-<% if (object.selected) { %>minus<% } else { %>plus<% } %>-sign"></i></a>
-    </li>
-    <li class="not-deleted">
-      <a href="#" class="pull-left remove"   ><i class=" icon-trash"></i></a>
-    </li>
-    <li class="not-deleted">
-      <a href="#" class="pull-right rotate" data-rotate="90" ><i class="icon-share-alt "></i></a>
-    </li>
-    <li class="not-deleted" >
-      <a href="#" class="pull-right rotate" data-rotate="-90" ><i class="icon-share-alt "></i></a>
-    </li>
-    <li class="deleted">
-      <a href="#" class="pull-left restore"  ><i class=" icon-refresh"></i></a>
-    </li>
-  </ul>
-  <div class="thumbnail-container" >
-    <a href="/media-redirect/<%= object.id %>/">  <img src="<%= object.thumbnails.small.url %>" width="<%= object.thumbnails.small.width %>" height="<%= object.thumbnails.small.height %>" data-media-pk="<%= object.id%>">  </a>
-    <h6><%= object.name %></h6>
-    <p class='date'>
-      <%= object.short_date %>
-    </p>
-  </div>
+    <% if (object.running == false) { %>
+      <a href="#" class="pull-left action select <% if (object.selected) {%>persist<% } %> "   ><i class="icon-<% if (object.selected) { %>minus<% } else { %>plus<% } %>-sign"></i></a>
+      <% if (object.status == 'deleted') { %>
+        <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
+      <% } else { %>
+        <a href="#" class="pull-left action remove"   ><i class=" icon-trash"></i></a>
+        <a href="#" class="pull-right action rotate rotate-left" data-rotate="90" ><i class="icon-share-alt "></i></a>
+        <a href="#" class="pull-right action rotate rotate-right" data-rotate="-90" ><i class="icon-share-alt "></i></a>
+      <% } %>
+    <% } %>
+    <a href="/media-redirect/<%= object.id %>/">
+      <img src="<%= object.url_small %>" width="<%= object.width_small %>" height="<%= object.height_small %>" data-media-pk="<%= object.id%>">
+    </a>
+    <% if (object.running) { %>
+    <div class="running"></div>
+    <% } %>
 </div>

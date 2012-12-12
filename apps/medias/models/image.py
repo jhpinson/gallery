@@ -39,21 +39,8 @@ class Image(ThumbAccessors, Media):
         self.generate_thumbnail('small', self.file.file)
         self.generate_thumbnail('medium', self.file.file)
         self.generate_thumbnail('large', self.file.file)
-    
-    
-    def toJSON(self):
         
-        return {
-                'id' : self.pk,
-                'name' : self.name,
-                'description' : self.description,
-                'is_an_album' : self.is_an_album,
-                'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
-                'thumbnails' : {
-                                'small' : self.thumbnail_small(),
-                                'medium' : self.thumbnail_medium(),
-                                'large' : self.thumbnail_large()
-                                }}
+    
      
             
     @permalink

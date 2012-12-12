@@ -8,7 +8,6 @@ class RestMediaView(BackboneView):
     
     
     def get_ancestors(self):
-        
         ancestors = []
         
         ancestor = self.model.objects.get(pk=self.kwargs.get('oid'))
@@ -18,6 +17,7 @@ class RestMediaView(BackboneView):
         return json.dumps(ancestors)
           
     def put_rotate(self):
+        import pdb; pdb.set_trace()
         data = json.loads(self.request.raw_post_data)
         image = self.model.objects.get(pk=self.kwargs.get('oid')).cast()
         image.rotate(str(data['value']))

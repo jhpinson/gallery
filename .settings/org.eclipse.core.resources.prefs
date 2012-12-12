@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//apps/medias/ajax.py=utf-8
+encoding//apps/medias/migrations/0003_thumbs.py=utf-8
 encoding//apps/medias/models/videos.py=utf-8
 encoding//apps/medias/views/albums.py=utf-8
 encoding//apps/medias/views/upload.py=utf-8

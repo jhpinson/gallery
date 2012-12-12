@@ -6,7 +6,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.generate('small')
         #self.generate('small')
-        self.generate('large')
+        #self.generate('large')
         
     def generate(self, size):
         

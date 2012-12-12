@@ -51,17 +51,48 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     parent_album = models.ForeignKey('medias.Album', related_name='medias', null=True, blank=True)
 
     is_an_album = models.PositiveSmallIntegerField()
-
+    
+    url_small = models.CharField(max_length=1024, null=True)
+    width_small = models.PositiveIntegerField(null=True)
+    height_small = models.PositiveIntegerField(null=True)
+    
+    url_medium = models.CharField(max_length=1024, null=True)
+    width_medium = models.PositiveIntegerField(null=True)
+    height_medium = models.PositiveIntegerField(null=True)
+    
+    url_large = models.CharField(max_length=1024, null=True)
+    width_large = models.PositiveIntegerField(null=True)
+    height_large = models.PositiveIntegerField(null=True)
+    
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
     
     def toJSON(self):
         
-        data = self.cast().toJSON()
+        data = {
+                'id' : self.pk,
+                'name' : self.name,
+                'description' : self.description,
+                'is_an_album' : self.is_an_album,
+                'parent_album' : self.parent_album.pk if self.parent_album is not None else None}
         #data['absolute_url'] = "/toto" #self.get_absolute_uri()
         data['owner'] = {'name' : self.created_by.get_full_name(), 'id' : self.created_by.get_profile().pk}
         data['date'] = self.date.strftime('%Y-%m-%dT%H:%M:%S')
         data['status'] = self.status
+        data['url_small'] = self.url_small
+        data['width_small'] = self.width_small
+        data['height_small'] = self.height_small
+        data['url_medium'] = self.url_medium
+        data['width_medium'] = self.width_medium
+        data['height_medium'] = self.height_medium
+        data['url_large'] = self.url_large
+        data['width_large'] = self.width_large
+        data['height_large'] = self.height_large
+        
+        if self.is_an_album:
+            album = self.cast()
+            data['image_count'] = album.image_count
+            data['video_count'] = album.video_count
         return data
         
         
@@ -83,7 +114,12 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         return self.created_by
 
     def clean_thumbnails(self):
-        Thumbnail.objects.filter(media=self).delete()
+        for size in ['small', 'medium', 'large']:
+            setattr(self, 'url_%s' % size, None)
+            setattr(self, 'width_%s' % size, None)
+            setattr(self, 'height_%s' % size, None)
+            
+        
         try:
             delete(self.original_file.file, delete_file=False)
         except (IOError, ValueError):
@@ -102,16 +138,16 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
 
         if f is None:
             f = self.file.file
+        
+        if getattr(self, 'url_%s' %size, None) is None:
+            options = settings.THUMBNAIL_SIZES[size].get('options', {})
+            
+            image = get_thumbnail(f, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), **options)
 
-        image = get_thumbnail(f, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), upscale=True)
-
-        data = {'url' : image.url, 'width':image.width, 'height':image.height}
-
-        if not Thumbnail.objects.filter(media=self, size=size).exists():
-            thumb = Thumbnail(media=self, size=size, **data)
-            thumb.save()
-
-        return data
+            setattr(self, 'url_%s' % size, image.url)
+            setattr(self, 'width_%s' % size, image.width)
+            setattr(self, 'height_%s' % size, image.height)
+           
 
     def save(self, *args, **kwargs):
 

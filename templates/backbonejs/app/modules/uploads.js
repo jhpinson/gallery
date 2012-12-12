@@ -106,7 +106,7 @@ function(app, Models, Views, Medias) {
     });
 
     $('body').bind('fileuploadsubmit', function(e, data) {
-
+      console.debug('lalalala')
       if(typeof(data.formData) === 'undefined') {
         data.formData = {};
       }

@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import UploadedFile
 from ..models import create_media, Album
 from _mysql_exceptions import IntegrityError
-from django.http import HttpResponseServerError, HttpResponse
+from django.http import  HttpResponse
 from django.utils import simplejson
 from django.utils.timezone import utc, get_current_timezone
 from dateutil.parser import parse

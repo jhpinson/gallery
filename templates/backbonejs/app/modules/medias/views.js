@@ -1,12 +1,12 @@
 define([
 // Application.
-"app", "plugins/spin", "plugins/async"
+"app", "plugins/async"
 
 ],
 
 // Map dependencies from above array.
 
-function(app, Spinner, async) {
+function(app, async) {
 
   var Views = {};
 
@@ -51,8 +51,6 @@ function(app, Spinner, async) {
         var silent = id < col.length - 1;
         o.set({
           'selected': true
-        }, {
-          silent: false
         });
       })
     },
@@ -65,8 +63,6 @@ function(app, Spinner, async) {
         var silent = id < col.length - 1;
         o.set({
           'selected': false
-        }, {
-          silent: false
         });
       })
     },
@@ -79,8 +75,6 @@ function(app, Spinner, async) {
         var silent = id < col.length - 1;
         o.set({
           'selected': !o.get('selected')
-        }, {
-          silent: false
         });
       })
     },
@@ -102,9 +96,10 @@ function(app, Spinner, async) {
           });
 
           obj.save().then(function() {
-            obj.set({
+            /*obj.set({
               running: false
-            });
+            });*/
+            obj.set('running', false);
             callback(null, obj);
           });
         }, this))
@@ -135,9 +130,7 @@ function(app, Spinner, async) {
 
 
           obj.save().then(function() {
-            obj.set({
-              running: false
-            });
+            obj.set('running', false);
             callback(null)
           });
         }, this))
@@ -157,25 +150,23 @@ function(app, Spinner, async) {
       event.stopImmediatePropagation();
       var value = $(event.currentTarget).attr('data-rotate') || $(event.originalEvent.srcElement).attr('data-rotate');
       var thumb_size = $(event.currentTarget).attr('data-thumb-size') || $(event.originalEvent.srcElement).attr('data-thumb-size');
-      var methods =[];
+      var methods = [];
       this.collection.each(function(obj, id, col) {
         obj.set('running', true);
         methods.push(_.bind(function(callback) {
           obj.rotate(value, _.bind(function(response) {
-            var $img = $('.thumbnail-container img[data-media-pk="' + obj.get('id') + '"]');
+            var $img = $('img[data-media-pk="' + obj.get('id') + '"]');
             $img.fadeOut(200, _.bind(function() {
-              response.thumbnails[thumb_size].url += '?' + Math.random();
-              $img.attr('src', response.thumbnails[thumb_size].url);
-              $img.attr('width', response.thumbnails[thumb_size].width);
-              $img.attr('height', response.thumbnails[thumb_size].height);
+              response['url_' + this.thumb_size] += '?' + Math.random();
+              $img.attr('src', response['url_' + this.thumb_size]);
+              $img.attr('width', response['width_' + this.thumb_size]);
+              $img.attr('height', response[+'height_' + this.thumb_size]);
               $img.fadeIn(200);
 
               obj.set(response, {
                 silent: true
               });
-              obj.set({
-                running: false
-              });
+              obj.set('running', false);
               callback(null);
             }, this));
 
@@ -200,10 +191,10 @@ function(app, Spinner, async) {
       this.collection.each(function(obj, id, col) {
         obj.set('running', true);
         methods.push(_.bind(function(callback) {
-          setTimeout(_.bind(function () {
+          setTimeout(_.bind(function() {
             obj.set('running', false);
             callback(null, obj);
-          },this),200)
+          }, this), 200)
 
 
         }, this));
@@ -211,7 +202,7 @@ function(app, Spinner, async) {
       });
       async.series(methods, _.bind(function(err, results) {
         app.medias.remove(results);
-      },this));
+      }, this));
     },
 
     initialize: function() {
@@ -249,12 +240,12 @@ function(app, Spinner, async) {
 
       // reset
       this.paginator = app.paginator;
-      this.paginator.bind('change:current', this._resetSelectionView, this);
+      this.paginator.bind('change:current', this.resetSelectionView, this);
     },
 
-    onCollectionChange : function () {
+    onCollectionChange: function() {
       var facetting = this._computeFacetting();
-      if (JSON.stringify(this._facetting) != JSON.stringify(facetting)) {
+      if(JSON.stringify(this._facetting) != JSON.stringify(facetting)) {
         this._facetting = facetting;
         this.render();
       }
@@ -272,16 +263,16 @@ function(app, Spinner, async) {
       return defaut || null;
     },
 
-    _getFacetUrl : function (facets, facetAdd, facetRemove) {
+    _getFacetUrl: function(facets, facetAdd, facetRemove) {
       var qs = decodeURIComponent(document.location.search);
-      if (qs == '') {
+      if(qs == '') {
         qs = '?'
       }
 
-      if (facetAdd !== null) {
-        if (facets == null) {
+      if(facetAdd !== null) {
+        if(facets == null) {
           facets = 'facets=' + facetAdd;
-          if (qs == '?') {
+          if(qs == '?') {
             qs += facets;
           } else {
             qs += '&' + facets;
@@ -291,19 +282,19 @@ function(app, Spinner, async) {
         }
       }
 
-      if (typeof(facetRemove) !== 'undefined') {
+      if(typeof(facetRemove) !== 'undefined') {
         var _facets = facets.replace(facetRemove, '');
         var name = facetRemove.split(':')[0];
-        if ( name == 'month' || name == "year") {
+        if(name == 'month' || name == "year") {
           _facets = _facets.replace(/day:[0-9]{1,2}/, '');
         }
 
-        if (name == "year") {
-         _facets = _facets.replace(/month:[0-9]{1,2}/, '');
+        if(name == "year") {
+          _facets = _facets.replace(/month:[0-9]{1,2}/, '');
         }
 
         qs = qs.replace(facets, _facets);
-        if (_facets.trim().length == 0) {
+        if(_facets.trim().length == 0) {
           qs = qs.replace('facets=', '');
         }
       }
@@ -313,37 +304,42 @@ function(app, Spinner, async) {
       qs = qs.replace('&&', '&');
       qs = qs.replace(/&$/, '');
       qs = qs.replace('?&', '?');
-      if (qs.trim() == '?') {
-        qs ='';
+      if(qs.trim() == '?') {
+        qs = '';
       }
 
       return document.location.pathname + qs;
     },
 
 
-    _getDate : function (year, month, day) {
+    _getDate: function(year, month, day) {
       var d = new Date();
       d.setFullYear(year);
 
-      if (typeof(month) !== 'undefined') {
+      if(typeof(month) !== 'undefined') {
         d.setMonth(month);
       }
 
-      if (typeof(day) !== 'undefined') {
-       d.setDate(day);
+      if(typeof(day) !== 'undefined') {
+        d.setDate(day);
       }
 
       return d;
     },
 
-    _computeFacetting : function () {
+    _computeFacetting: function() {
 
       var facetsQs = this._getQueryVariable('facets');
 
-      var facetting = {years : {}, months : {}, days :{}, deleted : 0};
+      var facetting = {
+        years: {},
+        months: {},
+        days: {},
+        deleted: 0
+      };
 
-      this._collection.getParentCollection().forEach(function (media) {
-        if (media.get('status') == 'deleted') {
+      this._collection.getParentCollection().forEach(function(media) {
+        if(media.get('status') == 'deleted') {
           facetting.deleted++;
         }
       }, this);
@@ -351,24 +347,24 @@ function(app, Spinner, async) {
       this._collection.forEach(function(media) {
 
         // years
-        if (typeof(facetting.years[media.get('year')]) !== 'undefined') {
-            facetting.years[media.get('year')]++;
+        if(typeof(facetting.years[media.get('year')]) !== 'undefined') {
+          facetting.years[media.get('year')]++;
         } else {
-            facetting.years[media.get('year')] = 1;
+          facetting.years[media.get('year')] = 1;
         }
 
         // month
-        if (typeof(facetting.months[media.get('month')]) !== 'undefined') {
-            facetting.months[media.get('month')]++;
+        if(typeof(facetting.months[media.get('month')]) !== 'undefined') {
+          facetting.months[media.get('month')]++;
         } else {
-            facetting.months[media.get('month')] = 1;
+          facetting.months[media.get('month')] = 1;
         }
 
         // day
-        if (typeof(facetting.days[media.get('day')]) !== 'undefined') {
-            facetting.days[media.get('day')]++;
+        if(typeof(facetting.days[media.get('day')]) !== 'undefined') {
+          facetting.days[media.get('day')]++;
         } else {
-            facetting.days[media.get('day')] = 1;
+          facetting.days[media.get('day')] = 1;
         }
       }, this);
 
@@ -377,55 +373,79 @@ function(app, Spinner, async) {
       // dealing with dates
       var d = new Date();
 
-      facets.deleted = {name : 'supprimé', url : this._getFacetUrl(facetsQs, 'status:all' ), value : facetting.deleted}
+      facets.deleted = {
+        name: 'supprimé',
+        url: this._getFacetUrl(facetsQs, 'status:all'),
+        value: facetting.deleted
+      }
 
       var years = _.keys(facetting.years);
-      if (years.length > 1 ) {
+      if(years.length > 1) {
         facets.years = [];
-        _.each(years, function (year) {
-          facets.years.push({name : year, url : this._getFacetUrl(facetsQs, 'year:' + year), value : facetting.years[year]})
-        },this);
+        _.each(years, function(year) {
+          facets.years.push({
+            name: year,
+            url: this._getFacetUrl(facetsQs, 'year:' + year),
+            value: facetting.years[year]
+          })
+        }, this);
       } else {
         d.setFullYear(years[0]);
         // month
         var months = _.keys(facetting.months);
-        if (months.length > 1 ) {
+        if(months.length > 1) {
           facets.months = [];
-          _.each(months, function (month) {
-            facets.months.push({name : this._getDate(years[0], month).toString('MMMM yyyy'), url : this._getFacetUrl(facetsQs, 'month:' + month), value : facetting.months[month]})
-          },this);
+          _.each(months, function(month) {
+            facets.months.push({
+              name: this._getDate(years[0], month).toString('MMMM yyyy'),
+              url: this._getFacetUrl(facetsQs, 'month:' + month),
+              value: facetting.months[month]
+            })
+          }, this);
         } else {
           // days
           var days = _.keys(facetting.days);
-          if (days.length > 1 ) {
+          if(days.length > 1) {
             facets.days = [];
-            _.each(days, function (day) {
-              facets.days.push({name : this._getDate(years[0], months[0], day).toString('ddd d MMMM yyyy'), url : this._getFacetUrl(facetsQs, 'day:' + day), value : facetting.days[day]})
-            },this);
+            _.each(days, function(day) {
+              facets.days.push({
+                name: this._getDate(years[0], months[0], day).toString('ddd d MMMM yyyy'),
+                url: this._getFacetUrl(facetsQs, 'day:' + day),
+                value: facetting.days[day]
+              })
+            }, this);
           }
         }
       }
 
       var currents = [];
       // active facets
-      if (facetsQs !== null) {
+      if(facetsQs !== null) {
 
-        _.each(facetsQs.split(/\s+/), function (facet) {
+        _.each(facetsQs.split(/\s+/), function(facet) {
           var split = facet.split(':');
           var name = split[1];
-          if (split[0] == 'status' && name == 'all') {
+          if(split[0] == 'status' && name == 'all') {
             name = 'éléments supprimés';
             delete facets.deleted;
-          } if (split[0] == 'month') {
+          }
+          if(split[0] == 'month') {
             name = this._getDate(years[0], split[1]).toString('MMMM yyyy');
-          } else if (split[0] == 'day') {
+          } else if(split[0] == 'day') {
             name = this._getDate(years[0], months[0], split[1]).toString('ddd d MMMM yyyy')
           }
-          currents.push({name : name, url : this._getFacetUrl(facetsQs, null, facet)});
+          currents.push({
+            name: name,
+            url: this._getFacetUrl(facetsQs, null, facet)
+          });
         }, this);
       }
 
-      return {currents : currents, facets : facets, qs : facetsQs};
+      return {
+        currents: currents,
+        facets: facets,
+        qs: facetsQs
+      };
 
     },
 
@@ -438,10 +458,10 @@ function(app, Spinner, async) {
     },
 
     afterRender: function() {
-      this._resetSelectionView();
+      this.resetSelectionView();
     },
 
-    _resetSelectionView: function() {
+    resetSelectionView: function() {
       // if there is no album display currently
       if(app.page.value === null) {
         return;
@@ -454,8 +474,6 @@ function(app, Spinner, async) {
         app.paginator.page.each(function(o, id, col) {
           o.set({
             'selected': false
-          }, {
-            silent: id < col.length - 1
           });
         });
       }
@@ -490,20 +508,19 @@ function(app, Spinner, async) {
       var value = $(event.currentTarget).attr('data-rotate') || $(event.originalEvent.srcElement).attr('data-rotate');
 
       this.model.rotate(value, _.bind(function(response) {
-        var $img = this.$el.find('.thumbnail-container img');
+        var $img = this.$el.find('img[data-media-pk]');
         $img.fadeOut(200, _.bind(function() {
-          response.thumbnails[this.thumb_size].url += '?' + Math.random();
-          $img.attr('src', response.thumbnails[this.thumb_size].url);
-          $img.attr('width', response.thumbnails[this.thumb_size].width);
-          $img.attr('height', response.thumbnails[this.thumb_size].height);
+
+          response['url_' + this.thumb_size] += '?' + Math.random();
+          $img.attr('src', response['url_' + this.thumb_size]);
+          $img.attr('width', response['width_' + this.thumb_size]);
+          $img.attr('height', response[+'height_' + this.thumb_size]);
           $img.fadeIn(200);
 
           this.model.set(response, {
             silent: true
           });
-          this.model.set({
-            running: false
-          });
+          this.model.set('running', false);
 
         }, this));
 
@@ -511,7 +528,11 @@ function(app, Spinner, async) {
     },
 
     _applyStatus: function(status, callback) {
-      this.model.set({'status': status}, {silent : true});
+      this.model.set({
+        'status': status
+      }, {
+        silent: true
+      });
       this.model.save().then(callback);
     },
 
@@ -523,9 +544,7 @@ function(app, Spinner, async) {
       });
       //this._applyMask();
       this._applyStatus('deleted', _.bind(function() {
-        this.model.set({
-          running: false
-        });
+        this.model.set('running', false);
       }, this));
     },
 
@@ -536,9 +555,7 @@ function(app, Spinner, async) {
         running: true
       });
       this._applyStatus('published', _.bind(function() {
-        this.model.set({
-          running: false
-        });
+        this.model.set('running', false);
       }, this));
     },
 
@@ -546,91 +563,8 @@ function(app, Spinner, async) {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.model.set('selected', !this.model.get('selected'));
-    },
-
-
-    _applyMask: function() {
-      if(this.mask !== null) {
-        return false;
-      }
-      var $thumb = this.$el.find('.thumb-container');
-      var offset = $thumb.offset();
-
-      var width = $thumb.width() + parseInt($thumb.css('padding')) * 2 + parseInt($thumb.css('border-width')) * 2;
-      var height = $thumb.height() + parseInt($thumb.css('padding')) * 2 + parseInt($thumb.css('border-width')) * 2;
-      var $mask = $('<div id="mask-' + this.model.cid + '" class="image-mask" style="display:none"></div>')
-      $('body').append($mask);
-      $mask.css({
-        top: offset.top + 'px',
-        left: offset.left + 'px',
-        height: height + 'px',
-        width: width + 'px'
-      })
-
-      $mask.fadeIn(50, _.bind(function() {
-        this.mask = this._createSpin($mask.attr('id'));
-      }, this));
-      $thumb.find('.actions').fadeOut(50);
-
-      return true;
-    },
-
-    _removeMask: function() {
-      var $mask = $("#mask-" + this.model.cid)
-      $mask.fadeOut(200, _.bind(function() {
-        if(this.mask !== null) {
-          this.mask.stop();
-        }
-        $mask.remove();
-        this.mask = null;
-      }, this));
-    },
-
-    _onChangeRunning: function() {
-      console.debug('_onChangeRunning', this.model.get('running'));
-      if(this.model.get('running') == true) {
-        this._applyMask();
-      } else {
-
-        this._removeMask();
-      }
-    },
-
-    _createSpin: function(targetId) {
-      var opts = {
-        lines: 17,
-        // The number of lines to draw
-        length: 11,
-        // The length of each line
-        width: 4,
-        // The line thickness
-        radius: 13,
-        // The radius of the inner circle
-        corners: 1,
-        // Corner roundness (0..1)
-        rotate: 0,
-        // The rotation offset
-        color: '#DDD',
-        // #rgb or #rrggbb
-        speed: 1,
-        // Rounds per second
-        trail: 100,
-        // Afterglow percentage
-        shadow: false,
-        // Whether to render a shadow
-        hwaccel: false,
-        // Whether to use hardware acceleration
-        className: 'spinner',
-        // The CSS class to assign to the spinner
-        zIndex: 2e9,
-        // The z-index (defaults to 2000000000),
-        top: 'auto',
-        left: 'auto'
-      };
-
-      var target = document.getElementById(targetId);
-      return new Spinner(opts).spin(target);
     }
+
   };
 
   Views.Detail = Backbone.View.extend(_.extend({
@@ -646,7 +580,6 @@ function(app, Spinner, async) {
 
     initialize: function() {
       this.model.bind('all', this.render, this);
-      this.model.bind('running-has-change', this._onChangeRunning, this);
     },
 
     serialize: function() {
@@ -677,8 +610,6 @@ function(app, Spinner, async) {
     initialize: function() {
 
       this.model.bind('change', this.render, this);
-      this.model.bind('running-has-change', this._onChangeRunning, this);
-
     },
 
     serialize: function() {
@@ -690,12 +621,11 @@ function(app, Spinner, async) {
     displayImageActions: null,
 
 
-
     show: function() {
       if(this.model.get('is_an_album') == 1 || this.mask !== null) {
         return;
       }
-      this.$el.find('.actions').slideDown(200);
+      this.$el.find('.action:not(.persist)').fadeIn(200);
 
       if(this.displayImageActions !== null) {
         clearTimeout(this.displayImageActions);
@@ -715,7 +645,7 @@ function(app, Spinner, async) {
       }
 
       this.displayImageActions = setTimeout(_.bind(function() {
-        this.$el.find('.actions').fadeOut(200);
+        this.$el.find('.action:not(.persist)').fadeOut(200);
       }, this), 400)
     }
   }, ImageOps));
@@ -724,12 +654,11 @@ function(app, Spinner, async) {
 
   Views.Items = Backbone.View.extend({
 
-    _length : null,
+    _length: null,
 
     initialize: function(options) {
       //options.paginator.bind('change:current', this.render, this);
-      this.collection.bind('haschange', function () {
-        console.debug('lalalala');
+      this.collection.bind('haschange', function() {
         this.render();
       }, this);
 
@@ -740,6 +669,13 @@ function(app, Spinner, async) {
 
 
     beforeRender: function() {
+
+      app.medias.each(function(o, id, col) {
+        o.set({
+          'selected': false
+        });
+      });
+
       this.collection.each(_.bind(function(model, pos) {
         if(model.get('is_an_album') === 1) {
           view = new Views.Item({

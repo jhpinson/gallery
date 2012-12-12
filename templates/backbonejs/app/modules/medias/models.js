@@ -22,10 +22,6 @@ function(app) {
     // Ensure that each todo created has `title`.
     initialize: function() {
 
-      this.on('change:running', function () {
-        this.trigger('running-has-change');
-      }, this);
-
       this.compute_date();
       this.on('change:date', _.bind(this.compute_date, this))
       this.set('absolute_uri', this.get_uri());

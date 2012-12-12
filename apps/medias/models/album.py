@@ -24,18 +24,6 @@ class Album(Media):
     
     objects = PassThroughManager.for_queryset_class(AlbumQuerySet)()
     
-    def toJSON(self):
-        data = {
-                'id' : self.pk,
-                'name' : self.name,
-                'description' : self.description,
-                'is_an_album' : self.is_an_album,
-                'image_count' : self.image_count,
-                'video_count' : self.video_count,
-                'parent_album' : self.parent_album.pk if self.parent_album is not None else None,
-                'thumbnails' : {'small' : self.album_thumbnail.toJSON()}}
-            
-        return data
     
     def get_ancestors(self):
         
@@ -52,33 +40,12 @@ class Album(Media):
         
         return self.medias
     
-    @property
-    def album_thumbnail(self):
-        
-        if self._cached_album_thumbnail is None:
-            try:
-                self._cached_album_thumbnail =  Thumbnail.objects.get(media_id=self.get_children().models(Image, Video)[0], size='small')
-            except Exception:
-                self._cached_album_thumbnail = False
-        
-        return self._cached_album_thumbnail
+    
             
     @property
     def can_play_diaporama(self):
         return self.medias.models(Image, Video).exists()
-            
-    """
-    @property
-    def display_name(self):
-        if self.is_user_root is True:
-            
-            if self.owner == get_current_user():
-                return 'Mes albums'
-            else:
-                return self.owner.get_full_name()
-        else:
-            return self.name
-    """
+           
     
     
     
