@@ -14,3 +14,7 @@ django-dajax==0.8.4
 git+https://github.com/dabapps/django-email-as-username.git#egg=emailusernames
 python-dateutil==2.1
 -e git+https://github.com/omab/django-social-auth.git#egg=django-social-auth
+django-cacheops
+hiredis==0.1.1
+-e git+https://github.com/niwibe/django-redis.git@529ba8b6255bd30a589e39796ff39fa97118c551#egg=django_redis-dev
+django-redisession==0.3.1

@@ -1,3 +1,4 @@
+from cache import *
 from common import *
 from pipeline import *
 from subprocess import Popen, PIPE

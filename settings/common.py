@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'generic_confirmation',
     'social_auth',
     'profiles',
+    'cacheutils',
 )
 
 GRAPPELLI_INDEX_DASHBOARD = PROJECT_NAME+'.dashboard.CustomIndexDashboard'
