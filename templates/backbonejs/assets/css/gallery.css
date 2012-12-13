@@ -171,7 +171,6 @@ article.deleted .video-wrapper img {
 }
 .thumbnails li .thumbnail {
   background-color: transparent;
-  text-align: center;
 }
 .thumbnails li .thumbnail.deleted {
   background-image: url("img/deleted.png");
@@ -214,6 +213,26 @@ article.deleted .video-wrapper img {
   position: relative;
   padding: 0;
   border: none;
+}
+.thumbnails li .thumbnail.video .legend,
+.thumbnails li .thumbnail.image .legend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  righ: 0;
+  padding: 3px 0 3px 5px;
+  color: #000;
+  display: none;
+  background-color: #fff;
+  opacity: 0.9;
+  width: 165px;
+}
+.thumbnails li .thumbnail.video .legend p,
+.thumbnails li .thumbnail.image .legend p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 11px;
+  height: 12px;
 }
 .thumbnails li .thumbnail.video .action,
 .thumbnails li .thumbnail.image .action {

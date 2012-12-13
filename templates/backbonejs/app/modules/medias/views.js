@@ -625,7 +625,7 @@ function(app, async) {
       if(this.model.get('is_an_album') == 1 || this.mask !== null) {
         return;
       }
-      this.$el.find('.action:not(.persist)').fadeIn(200);
+      this.$el.find('.action:not(.persist), .legend').fadeIn(200);
 
       if(this.displayImageActions !== null) {
         clearTimeout(this.displayImageActions);
@@ -645,7 +645,7 @@ function(app, async) {
       }
 
       this.displayImageActions = setTimeout(_.bind(function() {
-        this.$el.find('.action:not(.persist)').fadeOut(200);
+        this.$el.find('.action:not(.persist), .legend').fadeOut(200);
       }, this), 400)
     }
   }, ImageOps));

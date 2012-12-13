@@ -10,7 +10,7 @@ class Command(BaseCommand):
         
     def generate(self, size):
         
-        images = Image.objects.all().exclude(thumbnails__size=size)
+        images = Image.objects.all()
         i = 0
         total = images.count()
         for image in images:

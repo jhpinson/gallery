@@ -12,6 +12,12 @@
     <a href="/media-redirect/<%= object.id %>/">
       <img src="<%= object.url_small %>" width="<%= object.width_small %>" height="<%= object.height_small %>" data-media-pk="<%= object.id%>">
     </a>
+
+    <div class="legend">
+      <p class="name"><%= object.name%></p>
+      <p class="date"><%= object.short_date %></p>
+    </div>
+
     <% if (object.running) { %>
     <div class="running"></div>
     <% } %>
