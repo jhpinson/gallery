@@ -3,7 +3,7 @@ import json
 
 from django.views.generic.base import View
 from django.http import HttpResponse
-
+from cacheops.query import cached_as
 
 logger = logging.getLogger(__name__)
 
@@ -75,12 +75,16 @@ class BackboneView(View):
     def get(self):
         """ Retrieves an object, or a list of objects.
         """
-        oid = self.kwargs.get('oid')
-        if oid:
-            out = self.model.objects.get(pk=oid).toJSON()
-        else:
-            out = [o.toJSON() for o in self.model.objects.filter(**self.get_filters())]
-        return json.dumps(out)
+        filters = self.get_filters()
+        @cached_as(self.model.objects.filter(**filters))
+        def _get():
+            oid = self.kwargs.get('oid')
+            if oid:
+                out = self.model.objects.get(pk=oid).toJSON()
+            else:
+                out = [o.toJSON() for o in self.model.objects.filter(**filters)]
+            return json.dumps(out)
+        return _get()
 
     def post(self):
         """ Inserts a new object.

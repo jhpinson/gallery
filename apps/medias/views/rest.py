@@ -2,6 +2,7 @@ from helpers.rest.views import BackboneView
 from ..models import Media
 import json
 
+
 class RestMediaView(BackboneView):
     model = Media
     url_root = "rest/medias"
