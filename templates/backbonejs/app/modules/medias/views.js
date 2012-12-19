@@ -161,20 +161,22 @@ function(app, async) {
               $img.attr('src', response['url_' + this.thumb_size]);
               $img.attr('width', response['width_' + this.thumb_size]);
               $img.attr('height', response[+'height_' + this.thumb_size]);
-              $img.fadeIn(200);
+              $img.fadeIn(200, _.bind(function() {
+                obj.set(response, {
+                  silent: true
+                });
+                obj.set('running', false);
+                callback(null);
+              }, this));
 
-              obj.set(response, {
-                silent: true
-              });
-              obj.set('running', false);
-              callback(null);
+
             }, this));
 
           }, this));
         }, this))
 
 
-      });
+      },this);
 
       async.series(methods, function(err, results) {
         //alert('done')
@@ -575,7 +577,9 @@ function(app, async) {
     events: {
       "click .remove": "mRemove",
       "click .restore": "restore",
-      "click .rotate": "rotate"
+      "click .rotate": "rotate",
+      "mouseover" : "show",
+      "mouseout" : "hide",
     },
 
     initialize: function() {
@@ -588,6 +592,43 @@ function(app, async) {
       };
     },
 
+    render : function (template, context) {
+      var context = context || {};
+      context = _.extend({}, context, {
+        paginator: this.paginator
+      });
+      return template(context);
+    },
+
+    displayOnMouseOver: null,
+    show: function() {
+
+      this.$el.find('.appear-on-mouseover:not(.persist)').fadeIn(200);
+
+      if(this.displayOnMouseOver !== null) {
+        clearTimeout(this.displayOnMouseOver);
+        this.displayOnMouseOver = null;
+      }
+    },
+
+    hide: function() {
+
+
+      if(this.displayOnMouseOver !== null) {
+        clearTimeout(this.displayOnMouseOver);
+        this.displayOnMouseOver = null;
+      }
+
+      this.displayOnMouseOver = setTimeout(_.bind(function() {
+        this.$el.find('.appear-on-mouseover:not(.persist)').fadeOut(200);
+      }, this), 200)
+    }
+
+    /*afterRender: function() {
+      $('.image-wrapper').css({
+        height: ($(window).height() - 124) + 'px'
+      });
+    }*/
 
   }, ImageOps));
 
@@ -619,8 +660,6 @@ function(app, async) {
     },
 
     displayImageActions: null,
-
-
     show: function() {
       if(this.model.get('is_an_album') == 1 || this.mask !== null) {
         return;
@@ -646,7 +685,7 @@ function(app, async) {
 
       this.displayImageActions = setTimeout(_.bind(function() {
         this.$el.find('.action:not(.persist), .legend').fadeOut(200);
-      }, this), 400)
+      }, this), 200)
     }
   }, ImageOps));
 

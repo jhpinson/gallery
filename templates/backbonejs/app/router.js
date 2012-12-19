@@ -333,7 +333,8 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
           }),
           // list container
           "#main-content": new Medias.Views.Detail({
-            model: app.paginator.page.at(0)
+            model: app.paginator.page.at(0),
+            paginator : app.paginator
           })
         }
       };

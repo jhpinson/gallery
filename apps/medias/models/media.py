@@ -12,6 +12,7 @@ from sorl.thumbnail import delete
 from medias.models.mixins.manager import PermissionManager
 from django.db.models.fields.files import FileField
 from helpers.rest.models import AjaxModelHelper
+from cacheops.invalidation import invalidate_obj, invalidate_all
 
 class MediaQuerySet(PermissionManager, InheritanceQuerySet):
 
@@ -150,7 +151,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
            
 
     def save(self, *args, **kwargs):
-
+        
         created = False
         if self._state.adding:
             self.real_type = self._get_real_type()
@@ -166,7 +167,8 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             self.date = self.created_at
             
         super(Media, self).save(*args, **kwargs)
-
+        invalidate_obj(self)
+        invalidate_obj(Media.objects.get(pk=self.pk))
         if created and self.parent_album is not None:
             self.parent_album.consolidate_count()
 

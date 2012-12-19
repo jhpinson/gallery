@@ -4,6 +4,8 @@ import json
 from django.views.generic.base import View
 from django.http import HttpResponse
 from cacheops.query import cached_as
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +35,7 @@ class BackboneView(View):
     @classmethod
     def make_url(kls):
         return r'^%s(?:/(?P<oid>\d+))?(?:/(?P<extra>.+))?$' % (kls.url_root,)
-
+    @never_cache
     def dispatch(self, request, *args, **kwargs):
         self.request = request
         self.args = args
@@ -76,6 +78,7 @@ class BackboneView(View):
         """ Retrieves an object, or a list of objects.
         """
         filters = self.get_filters()
+    
         @cached_as(self.model.objects.filter(**filters))
         def _get():
             oid = self.kwargs.get('oid')

@@ -1,10 +1,3 @@
-.deleted
-  .not-deleted
-    display none
-
-.published
-  .deleted
-    display none
 
 
 body
@@ -157,57 +150,95 @@ div.image-mask
     top 10px
     right 15px
 
-article.deleted
-  .image-wrapper, .video-wrapper
-    background-image:url(img/deleted.png);
-    background-repeat:no-repeat;
-    background-position:50% 30%;
-    img
-      opacity 0.5
+.media-detail
+  text-align center
+  position relative
+
+  .image-wrapper
+    display inline-block
+    position relative
+
+    .next, .previous
+      z-index 15
+      position absolute
+      top 50%
+      &.next
+        right 0
+
+    img[data-media-pk]
+      //height 100%
+      width auto
+
+    footer
+      position absolute
+      bottom 0
+      right 0
+      left 0
+      width 100%
+      background white
+      opacity .8
+      text-align left
+      padding 3px 5px
+      margin 0
+      font-size 11px
+      line-height 11px
+      height 12px
+
+.appear-on-mouseover
+  display none
 
 .thumbnails
 
   li
     .thumbnail
 
+      position relative
       background-color transparent
-      &.deleted
-        background-image:url(img/deleted.png);
-        background-repeat:no-repeat;
-        background-position:50% 30%;
-        img
-          opacity 0.5
+      padding 0
+      border none
+
+
 
       &.album
-        height 200px
-        span.img
-          display inline-block
-          width 150px
-          height 115px
+        height 160px
+
+        div.thumb-footer
+          background-color white
+          opacity 0.8
+          padding 2px 5px 2px
+          position absolute
+          bottom 0
+          left 0
+          right 0
+          p, h5
+            margin 0
+            font-size 11px
+            line-height 11px
+            height 12px
 
         div.thumb-header
-          display inline-block
-          margin-top 5px
-          width 150px
+          padding 0 5px
+          position absolute
+          top 0
+          left 0
+          right 0
+
+
           a
             float right
           .label
             float left
-        div.stats
-          float left
-          display block
-        div.actions
-          float right
-          display block
+          div.stats
+            float left
+            display block
+          div.actions
+            float right
+            display block
 
 
 
       &.video, &.image
         height 160px
-        position relative
-        padding 0
-        border none
-
         .legend
           position absolute
           bottom: 0
@@ -256,25 +287,11 @@ article.deleted
           background whiteSmoke
           margin-left -4px
           margin-top -4px
-          z-index 10
+          z-index 15
           opacity 0.95
 
 
-      .thumbnail-container
-        display inline-block
-        position relative
-        h5, h6
-          line-height 5px
-          text-align  left
-        p.date
-          line-height 10px
-          font-size 12px
-          margin  0
-          text-align  left
 
-        img
-          width auto
-          max-height 115px
 
 
 .running, .deleted
@@ -287,4 +304,6 @@ article.deleted
   bottom 0
   right 0
 
+  &.deleted
+    background-color red
 

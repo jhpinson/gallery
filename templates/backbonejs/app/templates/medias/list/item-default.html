@@ -14,11 +14,16 @@
     </a>
 
     <div class="legend">
-      <p class="name"><%= object.name%></p>
+      <% if (object.description !== null && object.description.trim().length > 0) { %>
+      <p class="name"><%= object.description%></p>
+      <% } %>
       <p class="date"><%= object.short_date %></p>
     </div>
 
     <% if (object.running) { %>
     <div class="running"></div>
+    <% } %>
+    <% if (object.status == 'deleted') { %>
+    <div class="deleted"></div>
     <% } %>
 </div>

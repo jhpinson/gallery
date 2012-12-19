@@ -1,51 +1,65 @@
-<div class="span2 pull-right <%= object.status %>">
-    <div class="sidebar-nav well well-small">
+<div class="span2 pull-right">
+  <div class="sidebar-nav well well-small">
 
-      <ul class="nav">
-        <li class="disabled">
-          <a class="start-slides" href=""  data-url="" ><i class=" icon-play"></i> diaporama</a>
-        </li>
+    <ul class="nav">
+      <li class="disabled">
+        <a class="start-slides" href=""  data-url="" ><i class=" icon-play"></i> diaporama</a>
+      </li>
 
-        <li class="disabled">
-          <a href="" ><i class=" icon-download-alt"></i> télécharger</a>
-        </li>
+      <li class="disabled">
+        <a href="" ><i class=" icon-download-alt"></i> télécharger</a>
+      </li>
 
-        <li class="deleted restore" >
+      <% if (object.status == 'deleted') { %>
+        <li class="restore" >
           <a  href="#"  ><i class=" icon-refresh"></i> publier</a>
         </li>
+      <% } %>
 
-        <li class="not-deleted remove" >
+      <% if (object.status != 'deleted') { %>
+        <li class="remove" >
           <a  href="#" ><i class=" icon-trash"></i> supprimer</a>
         </li>
 
-        <li class="not-deleted rotate">
+        <li class="rotate">
           <a  href="#" data-rotate="90" ><i class=" icon-share-alt"></i> tourner à droite</a>
         </li>
 
-        <li class="not-deleted rotate">
+        <li class="rotate">
           <a  href="#" data-rotate="-90" ><i class=" icon-share-alt"></i> tourner à gauche</a>
         </li>
-
-
-
-      </ul>
-    </div>
-
+      <% } %>
+    </ul>
   </div>
+</div>
 
 
 
-  <article class="span10 <%= object.status %> thumb-container">
 
-    <div class="image-wrapper thumbnail-container">
-        <img id="<%= object.id %>"  src="<%= object.url_medium %>"
-          width="<%= object.width_medium %>"
-          height="<%= object.height_medium %>"  >
-    </div>
+<div class="media-detail thumbnail-container span10 thumb-container">
+  <div class="image-wrapper">
+    <img id="<%= object.id %>"  src="<%= object.url_medium %>"
+      width="<%= object.width_medium %>"
+      height="<%= object.height_medium %>"  data-media-pk="<%= object.id%>" >
+      <footer class="appear-on-mouseover">
+        Par <%= object.owner.name %>, le <%=object.full_date %>
+      </footer>
+      <% if (paginator.get('next')) { %>
+      <div class="next appear-on-mouseover"><a href="<%= paginator.get('next') %>">suivant<a></div>
+      <% } %>
+      <% if (paginator.get('prev')) { %>
+      <div class="previous appear-on-mouseover "><a href="<%= paginator.get('prev') %>">precedent</a></div>
+       <% } %>
+  <div>
+      <% if (object.running) { %>
+        <div class="running"></div>
+        <% } %>
+
+      <% if (object.status == 'deleted') { %>
+      <div class="deleted"></div>
+      <% } %>
+</div>
 
 
-    <footer>
-      Par <%= object.owner.name %>, le <%=object.full_date %>
-    </footer>
 
-  </article>
+

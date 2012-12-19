@@ -1,5 +1,4 @@
 <div class="thumbnail album" data-media-pk="<%= object.id %>">
-  <div class="thumbnail-container">
     <div class="thumb-header" >
       <div class="stats">
         <% if (object.image_count > 0) { %><span><i class="icon-camera"></i> <%= object.image_count %></span><% }  %>
@@ -14,10 +13,10 @@
       </div>
     </div>
     <a  href="<%= object.absolute_uri %>"> <img src="<%= object.url_small %>"></a>
-    <h5><%= object.name %></h5>
-    <p class='date'>
-      <%= object.date %>
-    </p>
-
-  </div>
+    <div class="thumb-footer">
+      <h5><%= object.name %></h5>
+      <p class='date'>
+        <%= object.short_date %>
+      </p>
+   </div>
 </div>
