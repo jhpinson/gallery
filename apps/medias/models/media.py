@@ -168,7 +168,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         super(Media, self).save(*args, **kwargs)
         invalidate_obj(self)
         invalidate_obj(Media.objects.get(pk=self.pk))
-        if created and self.parent_album is not None:
+        if self.parent_album is not None:
             self.parent_album.consolidate_count()
 
 
@@ -178,9 +178,12 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         self.original_file.delete(save=False)
         if self.custom_file:
             self.custom_file.delete(save=False)
-
+        
         super(Media, self).delete(*args, **kwargs)
-
+        
+        if self.parent_album is not None:
+            self.parent_album.consolidate_count()
+        
     def cast(self):
         return self.real_type.get_object_for_this_type(pk=self.pk)
 
