@@ -139,16 +139,15 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
 
         if f is None:
             f = self.file.file
-        
+
         if getattr(self, 'url_%s' %size, None) is None:
             options = settings.THUMBNAIL_SIZES[size].get('options', {})
             
             image = get_thumbnail(f, "%sx%s" % (settings.THUMBNAIL_SIZES[size]['width'], settings.THUMBNAIL_SIZES[size]['height']), **options)
-
             setattr(self, 'url_%s' % size, image.url)
             setattr(self, 'width_%s' % size, image.width)
             setattr(self, 'height_%s' % size, image.height)
-           
+        f.close()
 
     def save(self, *args, **kwargs):
         
