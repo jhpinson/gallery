@@ -176,7 +176,7 @@ function(app, async) {
         }, this))
 
 
-      },this);
+      }, this);
 
       async.series(methods, function(err, results) {
         //alert('done')
@@ -454,13 +454,32 @@ function(app, async) {
     render: function(template, context) {
       var context = context || {};
       context = _.extend({}, context, {
-        facetting: this._facetting
+        facetting: this._facetting,
+        is_an_album: app.currentAlbumId !== null
       });
       return template(context);
     },
 
     afterRender: function() {
       this.resetSelectionView();
+
+      this.$el.find('.fileinputs').each(function(id, el) {
+        var $el = $(el);
+        var $input = $el.find('input[type=file]');
+        var $target = $el.find('.fakefile');
+        $input.mouseover(function(e) {
+          $target.addClass('hover');
+        });
+
+        $input.mouseout(function(e) {
+          $target.removeClass('hover')
+        });
+      });
+
+      if (app.Uploads.isEnabled) {
+        $('body').fileupload('option', 'fileInput', this.$el.find('.fileinputs'));
+      }
+
     },
 
     resetSelectionView: function() {
@@ -578,8 +597,8 @@ function(app, async) {
       "click .remove": "mRemove",
       "click .restore": "restore",
       "click .rotate": "rotate",
-      "mouseover" : "show",
-      "mouseout" : "hide",
+      "mouseover": "show",
+      "mouseout": "hide",
     },
 
     initialize: function() {
@@ -592,7 +611,7 @@ function(app, async) {
       };
     },
 
-    render : function (template, context) {
+    render: function(template, context) {
       var context = context || {};
       context = _.extend({}, context, {
         paginator: this.paginator

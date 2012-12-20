@@ -6,6 +6,7 @@ function(app, Models, Views, Medias) {
 
   // Create a new module.
   var Uploads = app.module();
+  app.Uploads = Uploads;
 
   Uploads.Models = Models;
   Uploads.Views = Views;
@@ -19,13 +20,19 @@ function(app, Models, Views, Medias) {
     };
 
 
+  Uploads.isEnabled = false;
+
   Uploads.enable = function() {
     $('body').fileupload('enable');
+    Uploads.isEnabled = true;
   };
 
   Uploads.disable = function() {
-    $('body').fileupload('disable');
+    //$('body').fileupload('disable');
+    Uploads.isEnabled = false;
   };
+
+
 
 
   Uploads.init = function() {
@@ -39,7 +46,7 @@ function(app, Models, Views, Medias) {
 
     $('body').fileupload({
       dataType: 'json',
-      fileInput: $('#fileUploadInput'),
+      //fileInput: $('#fileUploadInput'),
       sequentialUploads: true,
       limitConcurrentUploads: 1,
       url: '/p/upload/',
@@ -106,7 +113,11 @@ function(app, Models, Views, Medias) {
     });
 
     $('body').bind('fileuploadsubmit', function(e, data) {
-      console.debug('lalalala')
+
+      if (Uploads.isEnabled === false) {
+        return false
+      }
+
       if(typeof(data.formData) === 'undefined') {
         data.formData = {};
       }

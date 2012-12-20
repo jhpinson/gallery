@@ -1,3 +1,26 @@
+
+
+<!-- Box options-->
+<div class="sidebar-nav well well-small">
+  <h5>Options</h5>
+  <ul class="nav">
+    <% if (is_an_album) { %>
+    <li  ><a class="start-slides" href=""  data-url="" ><i class=" icon-play"></i> diaporama</a></li>
+    <li ><a href="" data-modal="modal"  ><i class="icon-edit"></i> edit</a></li>
+    <li >
+      <div class="fileinputs">
+        <a class="fakefile"><i class="icon-plus"></i> ajouter des photos</a>
+        <input   id="fileUploadInput"  type="file" name="files[]"  multiple >
+      </div>
+    </li>
+    <% } else { %>
+    <li ><a  href="" data-modal="modal"  ><i class="icon-plus"></i> nouvel album</a></li>
+    <% } %>
+  </ul>
+</div>
+
+
+
 <!-- Box actives facets-->
 
 <% if (facetting.currents.length > 0) { %>

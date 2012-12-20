@@ -13,6 +13,7 @@ function(app, Router, Users, Uploads) {
   document.app = app;
   Uploads.init();
 
+
   // load logged user
   app.loggedUser = new Users.Models.User({id:loggedUserId})
 
