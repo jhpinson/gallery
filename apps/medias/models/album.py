@@ -66,7 +66,7 @@ class Album(Media):
             self.meta_date = None
             self.end_date = None
         
-        thumb_media = Media.objects.models(IMage, Video).filter(parent_album=self, status=Media.STATUSES.published).exclude(url_small=None)[0]
+        thumb_media = Media.objects.models(Image, Video).filter(parent_album=self, status=Media.STATUSES.published).exclude(url_small=None)[0]
         self.url_small = thumb_media.url_small
         self.width_small = thumb_media.width_small
         self.height_small = thumb_media.height_small

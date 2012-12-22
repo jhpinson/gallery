@@ -15,17 +15,14 @@ class Command(BaseCommand):
         total = images.count()
         for image in images:
             i += 1
-            #try:
-            if True:
+            try:
                 image.url_small = None
                 image.generate_thumbnail(size)
                 image.save()
-            """    
             except IOError,e:
                 print "IOERROR deleting file", image.pk, image.file.url
                 
                 
             except Exception,e:
                 print e, image.pk, image.file.url
-            """
             print "%s %s / %s" % (size, i, total), image.pk
