@@ -1,12 +1,12 @@
 define([
 // Application.
-"app", "plugins/async"
+"app", "modules/medias/models", "plugins/async"
 
 ],
 
 // Map dependencies from above array.
 
-function(app, async) {
+function(app, Models, async) {
 
   var Views = {};
 
@@ -16,6 +16,7 @@ function(app, async) {
     _breadcrumbs: null,
 
     initialize: function(options) {
+
       this._breadcrumbs = options.breadcrumbs;
       this._breadcrumbs.bind('reset', this.render, this);
     },
@@ -232,6 +233,10 @@ function(app, async) {
   Views.SideBar = Backbone.View.extend({
     template: 'medias/sidebar',
 
+    events : {
+      "click .album-add" : "addAlbum"
+    },
+
     _facetting: null,
     _selectionView: null,
     initialize: function(options) {
@@ -243,6 +248,28 @@ function(app, async) {
       // reset
       this.paginator = app.paginator;
       this.paginator.bind('change:current', this.resetSelectionView, this);
+    },
+
+    addAlbum : function (event) {
+      event.preventDefault();
+
+
+      var album = new Models.Media();
+
+      var form = new Backbone.Form({
+
+          //Data to populate the form with
+          model : album,
+
+          //Schema
+          schema: {
+              id:         'Number',
+              name:       'Text'
+          }
+      });
+      form.render();
+      console.debug(form.el)
+
     },
 
     onCollectionChange: function() {

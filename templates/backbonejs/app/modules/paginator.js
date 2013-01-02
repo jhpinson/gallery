@@ -109,6 +109,8 @@ function(app) {
     }
   });
   Paginator.View = Backbone.View.extend({
+
+
     tagName : 'span',
     template : 'pagination',
 

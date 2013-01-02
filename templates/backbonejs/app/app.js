@@ -16,6 +16,7 @@ define([
   "plugins/fileupload/jquery.iframe-transport",
 
   "vendor/bootstrap/js/bootstrap"
+
 ],
 
 function($, _, Backbone) {
@@ -46,6 +47,7 @@ function($, _, Backbone) {
     prefix: "app/templates/",
 
     fetch: function(path) {
+
       // Concatenate the file extension.
       path = path + ".html";
 

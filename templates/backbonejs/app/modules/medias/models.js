@@ -81,6 +81,8 @@ function(app) {
     url: '/rest/medias',
     // Reference to this collection's model.
     model: Models.Media
+
+
   });
 
   // Return the module for AMD compliance.

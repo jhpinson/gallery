@@ -13,7 +13,7 @@ require.config({
     // Libraries.
     jquery: "../assets/js/libs/jquery",
     lodash: "../assets/js/libs/lodash",
-    backbone: "../assets/js/libs/backbone"
+    backbone: "../assets/js/libs/backbone",
   },
 
   shim: {
@@ -31,7 +31,7 @@ require.config({
     "plugins/date": ["jquery"],
     "plugins/spin": ["jquery"],
     "plugins/fileupload/jquery.fileupload": ["jquery"],
-    "plugins/fileupload/jquery.iframe-transport": ["jquery"],
+    "plugins/fileupload/jquery.iframe-transport": ["jquery"]
   }
 
 });
