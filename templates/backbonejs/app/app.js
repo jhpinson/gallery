@@ -10,12 +10,14 @@ define([
   "plugins/backbone.queryengine",
   "plugins/backbone.layoutmanager",
   "plugins/backbone.routemanager",
+  "plugins/backbone.forms",
 
   "plugins/date",
   "plugins/fileupload/jquery.fileupload",
   "plugins/fileupload/jquery.iframe-transport",
 
   "vendor/bootstrap/js/bootstrap"
+
 
 ],
 

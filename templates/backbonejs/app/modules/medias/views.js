@@ -6,7 +6,7 @@ define([
 
 // Map dependencies from above array.
 
-function(app, Models, async) {
+function(app, Models,  async) {
 
   var Views = {};
 
@@ -253,22 +253,15 @@ function(app, Models, async) {
     addAlbum : function (event) {
       event.preventDefault();
 
-
       var album = new Models.Media();
 
-      var form = new Backbone.Form({
+      var form = new Backbone.ModalForm({
+        template : 'medias/forms/album',
+        title : 'Nouvel album',
+        model : album
+      })
 
-          //Data to populate the form with
-          model : album,
-
-          //Schema
-          schema: {
-              id:         'Number',
-              name:       'Text'
-          }
-      });
       form.render();
-      console.debug(form.el)
 
     },
 
@@ -692,6 +685,7 @@ function(app, Models, async) {
       "click .restore": "restore",
       "click .rotate": "rotate",
       "click .select": "toggleSelect",
+      "click .edit" : 'edit'
     },
 
     initialize: function() {
@@ -703,6 +697,18 @@ function(app, Models, async) {
       return {
         object: this.model.toJSON()
       };
+    },
+
+    edit : function (event) {
+
+      var form = new Backbone.ModalForm({
+        template : 'medias/forms/album',
+        title : 'Modifier cet album',
+        model : this.model
+      })
+
+      form.render();
+
     },
 
     displayImageActions: null,

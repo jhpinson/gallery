@@ -13,7 +13,7 @@ require.config({
     // Libraries.
     jquery: "../assets/js/libs/jquery",
     lodash: "../assets/js/libs/lodash",
-    backbone: "../assets/js/libs/backbone",
+    backbone: "../assets/js/libs/backbone"
   },
 
   shim: {
@@ -27,6 +27,7 @@ require.config({
     "plugins/backbone.layoutmanager": ["backbone"],
     "plugins/backbone.queryengine": ["backbone"],
     "plugins/backbone.routemanager": ["backbone"],
+    "plugins/backbone.forms": ["backbone"],
     "vendor/bootstrap/js/bootstrap": ["jquery"],
     "plugins/date": ["jquery"],
     "plugins/spin": ["jquery"],

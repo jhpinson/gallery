@@ -71,7 +71,7 @@ function(app, Models, Views, Medias) {
 
       // file done
       done: function(e, data) {
-        var upload = app.uploads.getByCid(data.formData.cid);
+        var upload = app.uploads.get(data.formData.cid);
         upload.set("status", "success");
 
         app.globalUpload.decrease();
@@ -91,7 +91,7 @@ function(app, Models, Views, Medias) {
 
       // file failed
       fail: function(e, data) {
-        var upload = app.uploads.getByCid(data.formData.cid);
+        var upload = app.uploads.get(data.formData.cid);
         upload.set("status", "failed");
         // @ todo remove from uploads
         app.globalUpload.decrease();
@@ -99,14 +99,14 @@ function(app, Models, Views, Medias) {
 
       // start file upload
       send: function(e, data) {
-        var upload = app.uploads.getByCid(data.formData.cid);
+        var upload = app.uploads.get(data.formData.cid);
         upload.set("status", "uploading");
       },
 
       // file progress
       progress: function(e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
-        var upload = app.uploads.getByCid(data.formData.cid);
+        var upload = app.uploads.get(data.formData.cid);
         upload.set("progress", progress);
 
       }
