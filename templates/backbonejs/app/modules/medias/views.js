@@ -158,7 +158,7 @@ function(app, Models,  async) {
           obj.rotate(value, _.bind(function(response) {
             var $img = $('img[data-media-pk="' + obj.get('id') + '"]');
             $img.fadeOut(200, _.bind(function() {
-              response['url_' + this.thumb_size] += '?' + Math.random();
+              //response['url_' + this.thumb_size] += '?' + Math.random();
               $img.attr('src', response['url_' + this.thumb_size]);
               $img.attr('width', response['width_' + this.thumb_size]);
               $img.attr('height', response[+'height_' + this.thumb_size]);
@@ -566,7 +566,7 @@ function(app, Models,  async) {
         var $img = this.$el.find('img[data-media-pk]');
         $img.fadeOut(200, _.bind(function() {
 
-          response['url_' + this.thumb_size] += '?' + Math.random();
+          //response['url_' + this.thumb_size] += '?' + Math.random();
           $img.attr('src', response['url_' + this.thumb_size]);
           $img.attr('width', response['width_' + this.thumb_size]);
           $img.attr('height', response[+'height_' + this.thumb_size]);
