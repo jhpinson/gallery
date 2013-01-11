@@ -1,5 +1,5 @@
 from helpers.rest.views import BackboneView
-from ..models import Media
+from ..models import Media, Album
 import json
 
 
@@ -7,6 +7,11 @@ class RestMediaView(BackboneView):
     model = Media
     url_root = "rest/medias"
     
+    def post(self):
+        
+        data = json.loads(self.request.raw_post_data)
+        object = Album.objects.create(**data)
+        return json.dumps(object.toJSON())
     
     def get_ancestors(self):
         ancestors = []
