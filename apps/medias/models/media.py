@@ -12,7 +12,7 @@ from sorl.thumbnail import delete
 from medias.models.mixins.manager import PermissionManager
 from django.db.models.fields.files import FileField
 from helpers.rest.models import AjaxModelHelper
-from cacheops.invalidation import invalidate_obj, invalidate_all
+#from cacheops.invalidation import invalidate_obj, invalidate_all
 
 class MediaQuerySet(PermissionManager, InheritanceQuerySet):
 
@@ -68,6 +68,10 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
     
+    def __init__(self, *args, **kwargs):
+        super(Media, self).__init__(*args, **kwargs)
+        self._keep_init = {'parent_album_id' : self.__dict__.get('parent_album_id')}
+        
     def toJSON(self):
         
         data = {
@@ -147,10 +151,11 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             setattr(self, 'url_%s' % size, image.url)
             setattr(self, 'width_%s' % size, image.width)
             setattr(self, 'height_%s' % size, image.height)
-        f.close()
+            
+        if not isinstance(f, basestring):
+            f.close()
 
     def save(self, *args, **kwargs):
-        
         created = False
         if self._state.adding:
             self.real_type = self._get_real_type()
@@ -166,8 +171,12 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             self.date = self.created_at
             
         super(Media, self).save(*args, **kwargs)
-        invalidate_obj(self)
-        invalidate_obj(Media.objects.get(pk=self.pk))
+        #invalidate_obj(self)
+        #invalidate_obj(Media.objects.get(pk=self.pk))
+        
+        if self._keep_init.get('parent_album_id', None) is not None:
+            Media.objects.get(pk=self._keep_init.get('parent_album_id')).cast().consolidate_count()
+        
         if self.parent_album is not None:
             self.parent_album.consolidate_count()
 
