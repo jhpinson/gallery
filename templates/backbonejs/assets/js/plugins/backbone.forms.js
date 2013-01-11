@@ -2,18 +2,47 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
 
   var ModalForm = Backbone.View.extend({
 
-    initialize : function (options) {
+    initialize: function(options) {
 
       this.title = options.title;
 
       var $modal = $('#modal').clone();
-      $modal.find('.btn-primary').click(_.bind(this.save, this));
+      this.$modal = $modal;
+      this.configureModal();
 
+      $modal.find('.btn-primary').click(_.bind(this.save, this));
 
       var $body = $modal.find('.modal-body');
       this.setElement($body);
-      this.$modal = $modal;
 
+
+    },
+
+    configureModal : function () {
+      this.$modal.find('.btn-primary').text(this.options.okLabel || 'ok')
+    },
+
+    afterRender: function() {
+
+      this.$modal.find('h3').text(this.title);
+
+      this.$modal.modal('show');
+    },
+
+    save: function(event) {
+        event.preventDefault();
+        this.options.onOk(this.$modal.find('form').serializeObject());
+        return false;
+    }
+
+  });
+
+  Backbone.ModalForm = ModalForm;
+
+  var ModalModelForm = ModalForm.extend({
+    initialize : function (options) {
+      this.options.okLabel = 'Enregistrer';
+      ModalForm.prototype.initialize.apply(this, arguments);
     },
 
     serialize: function() {
@@ -22,20 +51,15 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
       };
     },
 
-    afterRender : function () {
-
-      this.$modal.find('h3').text(this.title);
-
-      this.$modal.modal('show');
-    },
-
-    save : function () {
-      console.debug(this.$modal.find('form').serialize());
+    save: function() {
+      this.options.model.set(this.$modal.find('form').serializeObject());
+      this.options.model.save().then(_.bind(function() {
+        this.$modal.modal('hide');
+        this.options.onOk(this.options.model)
+      }, this))
     }
-
   });
-
-  Backbone.ModalForm = ModalForm;
+  Backbone.ModalModelForm = ModalModelForm;
   return ModalForm;
 
 });

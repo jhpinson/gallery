@@ -1416,7 +1416,6 @@
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
-
     // Default options, unless specified.
     _.defaults(options || (options = {}), {
       emulateHTTP: Backbone.emulateHTTP,
@@ -1434,7 +1433,15 @@
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      params.data = options.attrs || model.toJSON(options);
+
+      if (typeof(model.localAttributes) !== 'undefined' && model.localAttributes !== null) {
+        _.each(model.localAttributes, function (attribute) {
+          delete params.data[attribute];
+        })
+      }
+
+      params.data = JSON.stringify(params.data);
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.

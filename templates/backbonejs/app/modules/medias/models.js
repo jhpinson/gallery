@@ -14,6 +14,8 @@ function(app) {
   Models.Media = Backbone.Model.extend({
     urlRoot: '/rest/medias',
 
+    localAttributes : ["selected", "running", "year", "month", "day", "full_date", "short_date", "absolute_uri"],
+
     defaults: {
       "selected": false,
       "running" : false
@@ -24,12 +26,17 @@ function(app) {
 
       this.compute_date();
       this.on('change:date', _.bind(this.compute_date, this))
-      this.set('absolute_uri', this.get_uri());
+      this.on('sync', _.bind(this.compute_absolute_uri, this))
 
+      this.compute_absolute_uri()
     },
 
     startRunning : null,
     stopRunning : null,
+
+    compute_absolute_uri : function () {
+      this.set('absolute_uri', this.get_uri());
+    },
 
     compute_date: function() {
       if(this.get('date')) {

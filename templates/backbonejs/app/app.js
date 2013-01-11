@@ -15,7 +15,7 @@ define([
   "plugins/date",
   "plugins/fileupload/jquery.fileupload",
   "plugins/fileupload/jquery.iframe-transport",
-
+  "plugins/jquery.serializeObject",
   "vendor/bootstrap/js/bootstrap"
 
 

@@ -31,6 +31,7 @@ require.config({
     "vendor/bootstrap/js/bootstrap": ["jquery"],
     "plugins/date": ["jquery"],
     "plugins/spin": ["jquery"],
+    "plugins/jquery.serializeObject" : ["jquery"],
     "plugins/fileupload/jquery.fileupload": ["jquery"],
     "plugins/fileupload/jquery.iframe-transport": ["jquery"]
   }

@@ -189,28 +189,39 @@ function(app, Models,  async) {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      var methods = [];
+      var form = new Backbone.ModalForm({
+        template : 'medias/forms/album-select',
+        title : 'Selectionner un album',
+        onOk : _.bind(function (data) {
+          var album = new Models.Media();
+          album.set(data);
+          album.save().then(_.bind(function() {
 
-      this.collection.each(function(obj, id, col) {
-        obj.set('running', true);
-        methods.push(_.bind(function(callback) {
-          setTimeout(_.bind(function() {
-            obj.set('running', false);
-            callback(null, obj);
-          }, this), 200)
+            var methods = [];
 
+            this.collection.each(function(obj, id, col) {
+              obj.set('running', true);
+              methods.push(_.bind(function(callback) {
+                obj.set({parent_album_id : album.get('id')});
+                obj.save().then(function () {
+                  callback(null);
+                });
+              }, this));
 
-        }, this));
+            });
+            async.series(methods, _.bind(function(err, results) {
+              form.$modal.hide();
+              app.router.navigate(album.get('absolute_uri'), {trigger : true});
+            }, this));
+          }, this))
+        }, this)
+      })
 
-      });
-      async.series(methods, _.bind(function(err, results) {
-        app.medias.remove(results);
-      }, this));
+      form.render();
     },
 
     initialize: function() {
       this.collection.bind('all', this.render, this);
-
     },
 
     render: function(template, context) {
@@ -255,10 +266,13 @@ function(app, Models,  async) {
 
       var album = new Models.Media();
 
-      var form = new Backbone.ModalForm({
+      var form = new Backbone.ModalModelForm({
         template : 'medias/forms/album',
         title : 'Nouvel album',
-        model : album
+        model : album,
+        onOk : function (album) {
+          app.router.navigate(album.get('absolute_uri'), {trigger : true});
+        }
       })
 
       form.render();
@@ -701,10 +715,13 @@ function(app, Models,  async) {
 
     edit : function (event) {
 
-      var form = new Backbone.ModalForm({
+      var form = new Backbone.ModalModelForm({
         template : 'medias/forms/album',
         title : 'Modifier cet album',
-        model : this.model
+        model : this.model,
+        onOk : function (album) {
+
+        }
       })
 
       form.render();
