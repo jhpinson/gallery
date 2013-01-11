@@ -10,7 +10,6 @@ __all__ = ['Media', 'Image', 'Thumbnail', 'Video', 'VideoVersion', 'Album', 'cre
 import uuid
 
 def create_media(album, f, filename, created_at):
-    
     filename = filename.lower()
     file_ext = filename.split('.')[-1]
     
@@ -28,7 +27,7 @@ def create_media(album, f, filename, created_at):
     
     
     media.save()
-    media.generate_thumbnails()
-    media.save()
+    #media.generate_thumbnails()
+    #media.save()
     return media
         
