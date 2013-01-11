@@ -28,8 +28,10 @@ class Video(ThumbAccessors, Media):
     def save(self, *args, **kwargs):
         
         if self._state.adding:
-            self.meta_date = getattr(metadata(self.file.path), 'date')
-        
+            print metadata(self.file.path)
+            self.meta_date = metadata(self.file.path).get('date')
+            self.generate_thumbnails()
+            
         super(Video, self).save(*args, **kwargs)
        
     
@@ -40,7 +42,7 @@ class Video(ThumbAccessors, Media):
             retcode,tmp_file = thumbnail(self.file.path)
         except Exception:
             self.status = Media.STATUSES.failed
-            self.save()
+            #self.save()
             return
         
         if retcode == 0:

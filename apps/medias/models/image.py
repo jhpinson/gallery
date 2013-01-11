@@ -33,6 +33,9 @@ class Image(ThumbAccessors, Media):
                             break
             except Exception,e:
                 pass
+            
+            self.generate_thumbnails()
+            
         super(Image, self).save(*args, **kwargs)
         
     def generate_thumbnails(self):
