@@ -60,16 +60,22 @@ class Album(Media):
         self.video_count = Video.objects.filter(parent_album=self, status=Media.STATUSES.published).count()
         
         if self.image_count > 0 or self.video_count > 0:
-            date = Media.objects.filter(parent_album=self, status=Media.STATUSES.published).order_by('file_creation_date')[0].date
-            self.date = date
+            date = Media.objects.filter(parent_album=self, status=Media.STATUSES.published).order_by('date')[0].date
+            self.meta_date = date
         else:
             self.meta_date = None
             self.end_date = None
         
-        thumb_media = Media.objects.models(Image, Video).filter(parent_album=self, status=Media.STATUSES.published).exclude(url_small=None)[0]
-        self.url_small = thumb_media.url_small
-        self.width_small = thumb_media.width_small
-        self.height_small = thumb_media.height_small
+        thumb_media_qs = Media.objects.models(Image, Video).filter(parent_album=self, status=Media.STATUSES.published).exclude(url_small=None)
+        if thumb_media_qs.count() > 0:
+            thumb_media = Media.objects.models(Image, Video).filter(parent_album=self, status=Media.STATUSES.published).exclude(url_small=None)[0]
+            self.url_small = thumb_media.url_small
+            self.width_small = thumb_media.width_small
+            self.height_small = thumb_media.height_small
+        else:
+            self.url_small = None
+            self.width_small = None
+            self.height_small = None
         
         self.save()
         
