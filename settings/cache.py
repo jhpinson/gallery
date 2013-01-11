@@ -6,7 +6,7 @@ from os import environ
 
 
 # cacheops
-common.INSTALLED_APPS += (
+"""common.INSTALLED_APPS += (
     'cacheops',    
 )
 
@@ -20,7 +20,7 @@ common.CACHEOPS_REDIS = {
     'db': 1,                    
     'socket_timeout': 4,
 }
-
+"""
 cache_manager.register('cacheops', 'redis', {
     'host' : environ.get('REDIS_HOST', '127.0.0.1') ,
     'port': 6379,

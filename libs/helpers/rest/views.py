@@ -3,7 +3,7 @@ import json
 
 from django.views.generic.base import View
 from django.http import HttpResponse
-from cacheops.query import cached_as
+#from cacheops.query import cached_as
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 
@@ -79,7 +79,7 @@ class BackboneView(View):
         """
         filters = self.get_filters()
     
-        @cached_as(self.model.objects.filter(**filters))
+        #@cached_as(self.model.objects.filter(**filters))
         def _get():
             oid = self.kwargs.get('oid')
             if oid:
