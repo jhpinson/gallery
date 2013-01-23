@@ -32,6 +32,7 @@ require.config({
     "plugins/date": ["jquery"],
     "plugins/spin": ["jquery"],
     "plugins/jquery.serializeObject" : ["jquery"],
+    "plugins/jquery.typeahead" : ["jquery"],
     "plugins/fileupload/jquery.fileupload": ["jquery"],
     "plugins/fileupload/jquery.iframe-transport": ["jquery"]
   }

@@ -16,7 +16,8 @@ define([
   "plugins/fileupload/jquery.fileupload",
   "plugins/fileupload/jquery.iframe-transport",
   "plugins/jquery.serializeObject",
-  "vendor/bootstrap/js/bootstrap"
+  "vendor/bootstrap/js/bootstrap",
+  "plugins/jquery.typeahead",
 
 
 ],

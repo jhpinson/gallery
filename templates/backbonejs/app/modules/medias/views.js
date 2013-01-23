@@ -6,7 +6,7 @@ define([
 
 // Map dependencies from above array.
 
-function(app, Models,  async) {
+function(app, Models, async) {
 
   var Views = {};
 
@@ -190,30 +190,110 @@ function(app, Models,  async) {
       event.stopImmediatePropagation();
 
       var form = new Backbone.ModalForm({
-        template : 'medias/forms/album-select',
-        title : 'Selectionner un album',
-        onOk : _.bind(function (data) {
-          var album = new Models.Media();
-          album.set(data);
-          album.save().then(_.bind(function() {
+        template: 'medias/forms/album-select',
+        title: 'Déplacer les éléments sélectionnés',
+        onShow: _.bind(function() {
 
-            var methods = [];
+          form.$modal.find('#search').typeahead({
+            matcher: function(item) {
+              return true
+            },
+            sorter: function(items) {
+              return items;
+            },
+            updater: function(item) {
+              form.$modal.find('#album-id').val(item.id);
+              return item.name;
+            },
+            source: function(query, process) {
+              $.ajax({
+                url: '/rest/medias/search?q=' + query,
+                type: 'GET',
+                dataType: 'application/json',
+                contentType: 'application/json',
+                context: this,
+                'complete': function(xhr) {
 
-            this.collection.each(function(obj, id, col) {
-              obj.set('running', true);
-              methods.push(_.bind(function(callback) {
-                obj.set({parent_album_id : album.get('id')});
-                obj.save().then(function () {
-                  callback(null);
-                });
-              }, this));
+                  process(JSON.parse(xhr.responseText));
 
+
+                }
+              });
+            }
+          })
+
+          form.$modal.find('#myTab a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+            return false;
+          })
+        }, this),
+        onOk: _.bind(function(data) {
+
+          var op, album, follow = typeof(data.goto) !== 'undefined';
+
+          form.$modal.find('.control-group').removeClass('error');
+          form.$modal.find('span.error').remove();
+
+          if (form.$modal.find('.active [href=#existent]').length == 1) {
+
+            if (data['album-id'] == '') {
+              form.$modal.find('#album-id').parent().append('<span class="help-inline error">Veuillez remplir ce champ</span>');
+              form.$modal.find('#album-id').parents('.control-group').addClass('error');
+              return false;
+            }
+
+            album = new Models.Media({id:data['album-id']});
+            op = album.fetch;
+          } else {
+
+            if (data['album-name'] == '') {
+              form.$modal.find('#album-name').parent().append('<span class="help-inline error">Veuillez remplir ce champ</span>');
+              form.$modal.find('#album-name').parents('.control-group').addClass('error');
+              return false;
+            }
+
+            album = new Models.Media();
+            album.set({
+              name: data['album-name']
             });
-            async.series(methods, _.bind(function(err, results) {
-              form.$modal.hide();
-              app.router.navigate(album.get('absolute_uri'), {trigger : true});
-            }, this));
-          }, this))
+            op = album.save;
+          }
+
+          op.call(album).then(_.bind(function() {
+
+              var methods = [];
+
+              this.collection.each(function(obj, id, col) {
+                obj.set('running', true);
+                methods.push(_.bind(function(callback) {
+                  obj.set({
+                    parent_album_id: album.get('id')
+                  });
+                  obj.save().then(function() {
+                    obj.set({
+                      'running': false
+                    }, {
+                      silent: true
+                    });
+                    callback(null, obj);
+                  });
+                }, this));
+
+              });
+              async.series(methods, _.bind(function(err, results) {
+
+                form.$modal.modal('hide');
+                if (follow) {
+                  app.router.navigate(album.get('absolute_uri'), {
+                    trigger: true
+                  });
+                } else {
+                  app.medias.remove(results)
+                }
+              }, this));
+            }, this))
+
         }, this)
       })
 
@@ -244,8 +324,8 @@ function(app, Models,  async) {
   Views.SideBar = Backbone.View.extend({
     template: 'medias/sidebar',
 
-    events : {
-      "click .album-add" : "addAlbum"
+    events: {
+      "click .album-add": "addAlbum"
     },
 
     _facetting: null,
@@ -261,17 +341,19 @@ function(app, Models,  async) {
       this.paginator.bind('change:current', this.resetSelectionView, this);
     },
 
-    addAlbum : function (event) {
+    addAlbum: function(event) {
       event.preventDefault();
 
       var album = new Models.Media();
 
       var form = new Backbone.ModalModelForm({
-        template : 'medias/forms/album',
-        title : 'Nouvel album',
-        model : album,
-        onOk : function (album) {
-          app.router.navigate(album.get('absolute_uri'), {trigger : true});
+        template: 'medias/forms/album',
+        title: 'Nouvel album',
+        model: album,
+        onOk: function(album) {
+          app.router.navigate(album.get('absolute_uri'), {
+            trigger: true
+          });
         }
       })
 
@@ -510,7 +592,7 @@ function(app, Models,  async) {
         });
       });
 
-      if (app.Uploads.isEnabled) {
+      if(app.Uploads.isEnabled) {
         $('body').fileupload('option', 'fileInput', this.$el.find('.fileinputs'));
       }
 
@@ -699,7 +781,7 @@ function(app, Models,  async) {
       "click .restore": "restore",
       "click .rotate": "rotate",
       "click .select": "toggleSelect",
-      "click .edit" : 'edit'
+      "click .edit": 'edit'
     },
 
     initialize: function() {
@@ -713,13 +795,13 @@ function(app, Models,  async) {
       };
     },
 
-    edit : function (event) {
+    edit: function(event) {
 
       var form = new Backbone.ModalModelForm({
-        template : 'medias/forms/album',
-        title : 'Modifier cet album',
-        model : this.model,
-        onOk : function (album) {
+        template: 'medias/forms/album',
+        title: 'Modifier cet album',
+        model: this.model,
+        onOk: function(album) {
 
         }
       })

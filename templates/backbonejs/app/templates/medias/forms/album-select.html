@@ -1,8 +1,37 @@
 <form>
-  <div class="control-group ">
-    <label class="control-label" for="name">Nom de l'album</label>
-    <div class="controls">
-      <input type="text" id="name" name="name" value=''>
+  <ul class="nav nav-tabs" id="myTab">
+    <li class="active"><a href="#existent">Rechercher un album</a></li>
+    <li><a href="#new">Créer un nouvel album</a></li>
+  </ul>
+
+  <div class="tab-content" >
+    <div class="tab-pane active" id="existent">
+      <div class="control-group ">
+        <label class="control-label" for="name">Album existant</label>
+        <div class="controls">
+          <input type="text" id="search" name="search" value=''>
+          <input type="hidden" id="album-id" name="album-id">
+        </div>
+      </div>
+
+    </div>
+    <div class="tab-pane" id="new">
+      <div class="control-group ">
+        <label class="control-label" for="album-name">Nouvel album</label>
+        <div class="controls">
+          <input type="text" id="album-name" name="album-name" value=''>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="control-group ">
+    <label class="checkbox" for="goto">
+      <input type="checkbox" id="goto" name="goto" value='on'> Afficher le nouvel emplacement
+    </label>
+  </div>
+
 <form>
+
+
+

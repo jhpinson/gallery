@@ -1,3 +1,6 @@
+body ul.typeahead {
+  z-index: 2000;
+}
 body #nav-header {
   height: 48px;
 }

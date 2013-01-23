@@ -25,8 +25,10 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
     afterRender: function() {
 
       this.$modal.find('h3').text(this.title);
-
       this.$modal.modal('show');
+      if (this.options.onShow) {
+        this.options.onShow();
+      }
     },
 
     save: function(event) {
