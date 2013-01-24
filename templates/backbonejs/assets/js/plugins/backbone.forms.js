@@ -54,7 +54,13 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
     },
 
     save: function() {
-      this.options.model.set(this.$modal.find('form').serializeObject());
+      var data = this.$modal.find('form').serializeObject();
+
+      if (typeof(this.options.validate) !== 'undefined' && this.options.validate(data) === false)  {
+        return false;
+      }
+
+      this.options.model.set(data);
       this.options.model.save().then(_.bind(function() {
         this.$modal.modal('hide');
         this.options.onOk(this.options.model)

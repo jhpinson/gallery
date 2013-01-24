@@ -354,6 +354,16 @@ function(app, Models, async) {
           app.router.navigate(album.get('absolute_uri'), {
             trigger: true
           });
+        },
+        validate : function (data) {
+          form.$modal.find('.control-group').removeClass('error');
+          form.$modal.find('.error').remove();
+          if (data.name.trim().length == 0) {
+            form.$modal.find('#name').parent().append("<span class='help-inline error'>Ce champ est requis</span>");
+            form.$modal.find('#name').parents('.control-group').addClass('error');
+            return false
+          }
+          return true;
         }
       })
 
@@ -803,6 +813,19 @@ function(app, Models, async) {
         model: this.model,
         onOk: function(album) {
 
+        },
+
+        validate : function (data) {
+
+          form.$modal.find('.control-group').removeClass('error');
+          form.$modal.find('.error').remove();
+
+          if (data.name.trim().length == 0) {
+            form.$modal.find('#name').parent().append("<span class='help-inline error'>Ce champ est requis</span>");
+            form.$modal.find('#name').parents('.control-group').addClass('error');
+            return false
+          }
+          return true;
         }
       })
 
