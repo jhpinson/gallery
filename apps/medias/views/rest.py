@@ -28,6 +28,15 @@ class RestMediaView(BackboneView):
         image.rotate(str(data['value']))
         return json.dumps(image.toJSON())
             
+    def get_search(self):
+        search = self.request.GET.get('q', None)
+        if search is not None:
+            qs = Album.objects.filter(name__icontains=search)
+        
+            return json.dumps([o.toJSON() for o in qs])
+        else:
+            return json.dumps([])
+    
     def get_filters(self):
         filter = {}
         
