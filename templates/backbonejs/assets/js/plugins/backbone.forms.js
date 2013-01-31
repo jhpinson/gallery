@@ -26,6 +26,9 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
 
       this.$modal.find('h3').text(this.title);
       this.$modal.modal('show');
+      this.$modal.find('form').submit(function (event) {
+        event.preventDefault();
+      });
       if (this.options.onShow) {
         this.options.onShow();
       }
@@ -44,6 +47,7 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
   var ModalModelForm = ModalForm.extend({
     initialize : function (options) {
       this.options.okLabel = 'Enregistrer';
+
       ModalForm.prototype.initialize.apply(this, arguments);
     },
 
@@ -52,6 +56,8 @@ define(['jquery', 'lodash', 'backbone'], function($, _, Backbone) {
         object: this.model.toJSON()
       };
     },
+
+
 
     save: function() {
       var data = this.$modal.find('form').serializeObject();

@@ -811,6 +811,7 @@ function(app, Models, async) {
         template: 'medias/forms/album',
         title: 'Modifier cet album',
         model: this.model,
+
         onOk: function(album) {
 
         },

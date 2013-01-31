@@ -101,6 +101,7 @@ function(app) {
       }
 
       var newHash = this._getCollectionHash();
+      console.debug(newHash, this._collectionHash)
       if (this._collectionHash != newHash) {
         this._collectionHash = newHash;
         this.page.trigger('haschange');
