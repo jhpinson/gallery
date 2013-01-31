@@ -19,7 +19,13 @@ class VideoQuerySet(PermissionManager, QuerySet):
 
 class Video(ThumbAccessors, Media):
     
+    VIDEO_STATUSES = Choices('done', 'pending', 'failed')
+    
+    video_status = models.CharField(max_length=20, choices=VIDEO_STATUSES, default=VIDEO_STATUSES.pending)
+    
     objects = PassThroughManager.for_queryset_class(VideoQuerySet)()
+    
+    
     
     @permalink
     def get_absolute_uri(self):

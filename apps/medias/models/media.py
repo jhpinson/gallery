@@ -73,7 +73,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         self._keep_init = {'parent_album_id' : self.__dict__.get('parent_album_id')}
         
     def toJSON(self):
-        
+        from medias.models import Video
         data = {
                 'id' : self.pk,
                 'name' : self.name,
@@ -98,6 +98,13 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             album = self.cast()
             data['image_count'] = album.image_count
             data['video_count'] = album.video_count
+            
+        if self.real_type.model == 'video':
+            
+            video = self.cast()
+            if video.video_status == Video.VIDEO_STATUSES.done:
+                data['versions'] = {'webm' : video.video_versions.all()[0].file.url} 
+            
         return data
         
         

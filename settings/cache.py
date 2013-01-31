@@ -76,4 +76,5 @@ cache_manager.register('sessions', 'redis', {
     'db': 4
     })
 
-common.SESSION_ENGINE='jsonsessions.backends.redis'
+#common.SESSION_ENGINE='jsonsessions.backends.redis'
+common.SESSION_ENGINE='redisession.backend'
