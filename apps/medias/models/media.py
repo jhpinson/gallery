@@ -12,6 +12,7 @@ from sorl.thumbnail import delete
 from medias.models.mixins.manager import PermissionManager
 from django.db.models.fields.files import FileField
 from helpers.rest.models import AjaxModelHelper
+from jsonfield.fields import JSONField
 #from cacheops.invalidation import invalidate_obj, invalidate_all
 
 class MediaQuerySet(PermissionManager, InheritanceQuerySet):
@@ -65,6 +66,8 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     width_large = models.PositiveIntegerField(null=True)
     height_large = models.PositiveIntegerField(null=True)
     
+    data = JSONField(null=True)
+    
     objects = PassThroughManager.for_queryset_class(MediaQuerySet)()
     
     
@@ -98,12 +101,11 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             album = self.cast()
             data['image_count'] = album.image_count
             data['video_count'] = album.video_count
-            
+          
         if self.real_type.model == 'video':
             
-            video = self.cast()
-            if video.video_status == Video.VIDEO_STATUSES.done:
-                data['versions'] = {'webm' : video.video_versions.all()[0].file.url} 
+            if self.video_status == Video.VIDEO_STATUSES.done:
+                data['versions'] = {'webm' : self.video_versions.all()[0].file.url} 
             
         return data
         
@@ -163,6 +165,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             f.close()
 
     def save(self, *args, **kwargs):
+        
         created = False
         if self._state.adding:
             self.real_type = self._get_real_type()
@@ -176,7 +179,9 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             self.date = self.file_creation_date
         else:
             self.date = self.created_at
-            
+        
+        self.data = self.toJSON()
+         
         super(Media, self).save(*args, **kwargs)
         #invalidate_obj(self)
         #invalidate_obj(Media.objects.get(pk=self.pk))

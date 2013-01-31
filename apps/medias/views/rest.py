@@ -7,6 +7,20 @@ class RestMediaView(BackboneView):
     model = Media
     url_root = "rest/medias"
     
+    def get(self):
+        """ Retrieves an object, or a list of objects.
+        """
+        filters = self.get_filters()
+        #@cached_as(self.model.objects.filter(**filters))
+        def _get():
+            oid = self.kwargs.get('oid')
+            if oid:
+                out = self.model.objects.get(pk=oid).toJSON()
+            else:
+                out = [o.toJSON() for o in self.model.objects.filter(**filters)]
+            return json.dumps(out)
+        return _get()
+    
     def post(self):
         
         data = json.loads(self.request.raw_post_data)
@@ -33,7 +47,7 @@ class RestMediaView(BackboneView):
         if search is not None:
             qs = Album.objects.filter(name__icontains=search)
         
-            return json.dumps([o.toJSON() for o in qs])
+            return json.dumps([o.data for o in qs])
         else:
             return json.dumps([])
     

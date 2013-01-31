@@ -18,3 +18,4 @@ django-cacheops
 hiredis==0.1.1
 -e git+https://github.com/niwibe/django-redis.git@529ba8b6255bd30a589e39796ff39fa97118c551#egg=django_redis-dev
 django-redisession==0.3.1
+-e git+https://github.com/jhpinson/django-jsonfield.git#egg=django-jsonfield

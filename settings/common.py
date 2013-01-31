@@ -4,6 +4,7 @@ import sys
 from path import path
 from os import environ
 
+
 PROJECT_ROOT = path(__file__).abspath().dirname().dirname()
 SITE_ROOT = PROJECT_ROOT.dirname()
 PROJECT_NAME = SITE_ROOT.basename()
@@ -97,6 +98,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',

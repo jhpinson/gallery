@@ -78,7 +78,6 @@ class BackboneView(View):
         """ Retrieves an object, or a list of objects.
         """
         filters = self.get_filters()
-    
         #@cached_as(self.model.objects.filter(**filters))
         def _get():
             oid = self.kwargs.get('oid')
