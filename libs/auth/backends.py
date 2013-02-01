@@ -9,6 +9,9 @@ class ForceAuthBackend(ModelBackend):
     """Allow users to log in with their email address"""
 
     def authenticate(self, email=None, password=None, force=False):
+        if force is False:
+            return None
+        
         try:
             user = get_user(email)
             user.backend = "%s.%s" % (self.__module__, self.__class__.__name__)
