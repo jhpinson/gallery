@@ -226,6 +226,7 @@ div.image-mask {
   top: 0;
   left: 0;
   right: 0;
+  z-index: 20;
 }
 .thumbnails li .thumbnail.album div.thumb-header a {
   float: right;

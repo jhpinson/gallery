@@ -5,11 +5,15 @@
         <% if (object.video_count > 0) { %> <span><i class="icon-film"></i> <%= object.video_count %></span><% }  %>
       </div>
       <div class="actions">
-        <span><a href="" class="edit" ><i class="icon-edit "></i></a></span>
+        <% if (object.status == 'deleted') { %>
+          <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
+        <% } else { %>
+          <a href="#" class="pull-left action remove"   ><i class=" icon-trash"></i></a>
+          <span><a href="" class="edit" ><i class="icon-edit "></i></a></span>
 
-        <!-- @TODO if not empty -->
-        <span><a class="start-slides" href=""  data-url="@TODO" ><i class=" icon-play  "></i></a></span>
-
+          <!-- @TODO if not empty -->
+          <span><a class="start-slides" href=""  data-url="@TODO" ><i class=" icon-play  "></i></a></span>
+        <% } %>
       </div>
     </div>
     <a  href="<%= object.absolute_uri %>"> <img src="<%= object.url_small %>">
@@ -20,4 +24,7 @@
       </p>
    </div>
    </a>
+   <% if (object.status == 'deleted') { %>
+    <div class="deleted"></div>
+   <% } %>
 </div>
