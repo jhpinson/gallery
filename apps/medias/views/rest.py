@@ -1,7 +1,7 @@
 from helpers.rest.views import BackboneView
 from ..models import Media, Album
 import json
-
+from django.db import connection
 
 class RestMediaView(BackboneView):
     model = Media
@@ -10,7 +10,7 @@ class RestMediaView(BackboneView):
     def get(self):
         """ Retrieves an object, or a list of objects.
         """
-        filters = self.get_filters()
+        """filters = self.get_filters()
         #@cached_as(self.model.objects.filter(**filters))
         def _get():
             oid = self.kwargs.get('oid')
@@ -20,7 +20,20 @@ class RestMediaView(BackboneView):
                 out = [o.toJSON() for o in self.model.objects.filter(**filters)]
             return json.dumps(out)
         return _get()
-    
+        """
+        filters = self.get_filters()
+        cursor = connection.cursor()
+        cursor.execute("SET SESSION group_concat_max_len = 1000000000;")
+        
+        sql = """
+            SELECT group_concat(data) FROM `medias_media` WHERE 
+        %s='%s'""" % (filters.keys()[0], filters.values()[0])
+        
+        
+        cursor.execute(sql)
+        res = cursor.fetchall()
+        return "[%s]" % res[0][0]
+        
     def post(self):
         
         data = json.loads(self.request.raw_post_data)
