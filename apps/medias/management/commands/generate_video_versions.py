@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         while True:
-            for video in Video.objects.filter(video_status=Video.VIDEO_STATUSES.pending).iterator():
+            for video in Video.objects.filter(video_status=Video.VIDEO_STATUSES.pending):
                 video.generate_versions()
                 
                 if video.video_versions.filter(status=VideoVersion.STATUSES.ready).count() > 0:
