@@ -18,7 +18,7 @@ define([
   "plugins/jquery.serializeObject",
   "vendor/bootstrap/js/bootstrap",
   "plugins/jquery.typeahead",
-
+  "vendor/video-js/video"
 
 ],
 

@@ -6,6 +6,9 @@
  * Note: All stylesheets are relative to `assets/css`.
  *
  */
+
+@import "../vendor/video-js/video-js.css";
+
 @import "gallery.css";
 @import "animations.css";
 /* Put development-only CSS below this line. @import "jquery-ui.css"; */

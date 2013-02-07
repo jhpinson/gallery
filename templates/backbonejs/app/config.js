@@ -34,7 +34,8 @@ require.config({
     "plugins/jquery.serializeObject" : ["jquery"],
     "plugins/jquery.typeahead" : ["jquery"],
     "plugins/fileupload/jquery.fileupload": ["jquery"],
-    "plugins/fileupload/jquery.iframe-transport": ["jquery"]
+    "plugins/fileupload/jquery.iframe-transport": ["jquery"],
+    "vendor/video-js/video": ["jquery"],
   }
 
 });

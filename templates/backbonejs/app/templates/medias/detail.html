@@ -21,6 +21,7 @@
           <a  href="#" ><i class=" icon-trash"></i> supprimer</a>
         </li>
 
+        <% if (object.type == 'image') { %>
         <li class="rotate">
           <a  href="#" data-rotate="90" ><i class=" icon-share-alt"></i> tourner à droite</a>
         </li>
@@ -28,6 +29,7 @@
         <li class="rotate">
           <a  href="#" data-rotate="-90" ><i class=" icon-share-alt"></i> tourner à gauche</a>
         </li>
+        <% } %>
       <% } %>
     </ul>
   </div>
@@ -38,19 +40,32 @@
 
 <div class="media-detail thumbnail-container span10 thumb-container">
   <div class="image-wrapper">
+    <% if (object.type == 'video' && typeof(object.versions) !== 'undefined') { %>
+
+    <video id="my_video_1" class="video-js vjs-default-skin" controls
+      preload="auto" width="970" height="500" poster="<%= object.url_medium %>"
+      data-setup="{}">
+      <% _.each(object.versions, function (videoUrl, videoType) { %>
+      <source src="<%= videoUrl %>" type='video/<%= videoType %>'>
+      <% }) %>
+
+    </video>
+
+    <% } else { %>
     <img id="<%= object.id %>"  src="<%= object.url_medium %>"
       width="<%= object.width_medium %>"
       height="<%= object.height_medium %>"  data-media-pk="<%= object.id%>" >
       <footer class="appear-on-mouseover">
         Par <%= object.owner.name %>, le <%=object.full_date %>
       </footer>
+    <% } %>
       <% if (paginator.get('next')) { %>
       <div class="next appear-on-mouseover"><a href="<%= paginator.get('next') %>">suivant<a></div>
       <% } %>
       <% if (paginator.get('prev')) { %>
       <div class="previous appear-on-mouseover "><a href="<%= paginator.get('prev') %>">precedent</a></div>
        <% } %>
-  <div>
+
       <% if (object.running) { %>
         <div class="running"></div>
         <% } %>
