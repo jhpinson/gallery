@@ -230,9 +230,11 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
      * Redirect to album page for this media
      */
     mediaRedirect: function(id) {
+
       if(app.medias && app.medias.get(id)) {
         var media = app.medias.get(id);
         var pos = app.medias.indexOf(media) + 1;
+
         app.router.navigate('/media/' + media.get('parent_album') + '/?page=' + pos, {
           trigger: false,
           replace: true
@@ -370,7 +372,10 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
           var medias = new Medias.Models.Medias();
           app.medias = medias;
-
+          app.medias.setComparator(function(a,b) {
+            return Date.parse(a.get('date')) - Date.parse(b.get('date'))
+          });
+          app.medias.sortCollection();
           if(id === null || typeof(id) == 'undefined') {
 
             fetchData = {
