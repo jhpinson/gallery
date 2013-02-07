@@ -97,10 +97,12 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         data['width_large'] = self.width_large
         data['height_large'] = self.height_large
         
+        data['type'] = self.real_type.model
+        
         if self.is_an_album:
-            album = self.cast()
-            data['image_count'] = album.image_count
-            data['video_count'] = album.video_count
+            
+            data['image_count'] = self.image_count
+            data['video_count'] = self.video_count
           
         if self.real_type.model == 'video':
             
@@ -180,9 +182,15 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         else:
             self.date = self.created_at
         
-        self.data = self.toJSON()
+        if not created:
+            self.data = self.toJSON()
          
         super(Media, self).save(*args, **kwargs)
+        
+        if created:
+            self.data = self.toJSON()
+            self.save()
+        
         #invalidate_obj(self)
         #invalidate_obj(Media.objects.get(pk=self.pk))
         
@@ -194,12 +202,13 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
 
 
     def delete(self, *args, **kwargs):
-
-        self.clean_thumbnails()
-        self.original_file.delete(save=False)
-        if self.custom_file:
-            self.custom_file.delete(save=False)
-        
+        if not self.is_an_album:
+            self.clean_thumbnails()
+            self.original_file.delete(save=False)
+            if self.custom_file:
+                self.custom_file.delete(save=False)
+        else:
+            Media.objects.filter(parent_album=self).delete()
         super(Media, self).delete(*args, **kwargs)
         
         if self.parent_album is not None:
