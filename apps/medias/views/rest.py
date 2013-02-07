@@ -1,5 +1,5 @@
 from helpers.rest.views import BackboneView
-from ..models import Media, Album
+from ..models import Media, Album, Image
 import json
 from django.db import connection
 
@@ -8,52 +8,44 @@ class RestMediaView(BackboneView):
     url_root = "rest/medias"
     
     def get(self):
-        """ Retrieves an object, or a list of objects.
-        """
-        """filters = self.get_filters()
-        #@cached_as(self.model.objects.filter(**filters))
-        def _get():
-            oid = self.kwargs.get('oid')
-            if oid:
-                out = self.model.objects.get(pk=oid).toJSON()
-            else:
-                out = [o.toJSON() for o in self.model.objects.filter(**filters)]
-            return json.dumps(out)
-        return _get()
-        """
-        filters = self.get_filters()
-        cursor = connection.cursor()
-        cursor.execute("SET SESSION group_concat_max_len = 1000000000;")
-        
-        sql = """
-            SELECT group_concat(data) FROM `medias_media` WHERE 
-        %s='%s'""" % (filters.keys()[0], filters.values()[0])
-        
-        
-        cursor.execute(sql)
-        res = cursor.fetchall()
-        return "[%s]" % res[0][0]
+        oid = self.kwargs.get('oid')
+        if oid:
+            return json.dumps(self.model.objects.get(pk=oid).data)
+        else:
+            filters = self.get_filters()
+            cursor = connection.cursor()
+            cursor.execute("SET SESSION group_concat_max_len = 1000000000;")
+            
+            sql = """
+                SELECT group_concat(data) FROM `medias_media` WHERE 
+            %s='%s' and created_by_id=%s """ % (filters.keys()[0], filters.values()[0], self.request.user.pk)
+            
+            
+            cursor.execute(sql)
+            res = cursor.fetchall()
+            
+            return "[%s]" % (res[0][0] if res[0][0] is not None else '')
         
     def post(self):
         
         data = json.loads(self.request.raw_post_data)
         object = Album.objects.create(**data)
-        return json.dumps(object.toJSON())
+        return json.dumps(object.data)
     
     def get_ancestors(self):
         ancestors = []
         
         ancestor = self.model.objects.get(pk=self.kwargs.get('oid'))
         while (ancestor is not None):
-            ancestors.insert(0, ancestor.toJSON())
+            ancestors.insert(0, ancestor.data)
             ancestor = ancestor.parent_album
         return json.dumps(ancestors)
           
     def put_rotate(self):
         data = json.loads(self.request.raw_post_data)
-        image = self.model.objects.get(pk=self.kwargs.get('oid')).cast()
+        image = Image.objects.get(pk=self.kwargs.get('oid'))
         image.rotate(str(data['value']))
-        return json.dumps(image.toJSON())
+        return json.dumps(image.data)
             
     def get_search(self):
         search = self.request.GET.get('q', None)
