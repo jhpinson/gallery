@@ -205,9 +205,10 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
      */
     _preloadBreadcrumbs: function(id) {
 
-      var breadcrumbs = new Backbone.Collection({
+      /*var breadcrumbs = new Backbone.Collection({
         model: Medias.Models.Media
-      });
+      });*/
+      var breadcrumbs = new Medias.Models.Medias();
       app.breadcrumbs = breadcrumbs;
 
 
@@ -364,7 +365,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
 
         var id = this.router.params.id;
-
+        app.breadcrumbsUrl[id || 0] = document.location.pathname + document.location.search;
 
         // if first load
         if(typeof(app.medias) === 'undefined' || app.medias.length == 0 || app.medias.at(0).get('parent_album') != id) {

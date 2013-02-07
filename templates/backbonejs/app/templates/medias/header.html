@@ -2,12 +2,11 @@
   <ul class="breadcrumb fixit">
 
     <% if (breadcrumbs.length > 0) { %>
-      <li><a href="/">Accueil</a><span class="divider">/</span></li>
       <% breadcrumbs.forEach(function (crumb, idx) { %>
           <% if (idx < breadcrumbs.length - 1) {%>
-            <li><a href="/album/<% print(crumb.get('id')) %>/"><% print(crumb.get('name')) %></a><span class="divider">/</span></li>
+            <li><a href="<% print(crumb.url) %>"><% print(crumb.name) %></a><span class="divider">/</span></li>
           <% } else { %>
-            <li><% print(crumb.get('name')) %></li>
+            <li><% print(crumb.name) %></li>
           <% } %>
       <% }); %>
     <% } else { %>

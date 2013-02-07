@@ -55,6 +55,7 @@ function(app) {
       }
     },
 
+
     rotate: function(value, callback) {
 
       var url = this.url() + '/rotate';

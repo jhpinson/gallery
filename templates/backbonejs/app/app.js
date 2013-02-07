@@ -35,7 +35,8 @@ function($, _, Backbone) {
     collections : {medias : null, mediasQuery : null},
     supportEffects : true,
     loggedUser : null,
-    currentAlbumId : null
+    currentAlbumId : null,
+    breadcrumbsUrl : {}
   };
 
 
