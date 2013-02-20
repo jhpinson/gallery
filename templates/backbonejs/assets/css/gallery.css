@@ -309,10 +309,8 @@ div.image-mask {
   z-index: 15;
   opacity: 0.95;
 }
-.running,
-.deleted {
+.over-all {
   position: absolute;
-  background-color: #000;
   opacity: 0.5;
   z-index: 10;
   top: 0;
@@ -320,7 +318,19 @@ div.image-mask {
   bottom: 0;
   right: 0;
 }
-.running.deleted,
-.deleted.deleted {
+.over-all.center-legend {
+  padding-top: 50%;
+}
+.over-all.center-legend span {
+  margin-top: -400%;
+  display: inline-block;
+  background-color: #f00;
+  width: 100%;
+  text-align: center;
+}
+.running {
+  background-color: #000;
+}
+.deleted {
   background-color: #f00;
 }

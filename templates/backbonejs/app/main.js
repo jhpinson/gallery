@@ -7,9 +7,10 @@ require([
 
   "modules/users",
   "modules/uploads",
+  "modules/medias",
 ],
 
-function(app, Router, Users, Uploads) {
+function(app, Router, Users, Uploads, Medias) {
   document.app = app;
   Uploads.init();
 
@@ -25,6 +26,10 @@ function(app, Router, Users, Uploads) {
   app.loggedUser.fetch().then(function () {
     loggedUserView.render();
   });
+
+  var dropboxView = new Medias.Views.Dropbox({model : new Medias.Models.Media()});
+  dropboxView.setElement($('#dropbox'));
+  dropboxView.render();
 
   // Define your master router on the application namespace and trigger all
   // navigation from this instance.

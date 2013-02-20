@@ -1469,15 +1469,19 @@
 
     var success = options.success;
     options.success = function(resp, status, xhr) {
+      model._runningXHR = false;
       if (success) success(resp, status, xhr);
       model.trigger('sync', model, resp, options);
     };
 
     var error = options.error;
     options.error = function(xhr, status, thrown) {
+      model._runningXHR = false;
       if (error) error(model, xhr, options);
       model.trigger('error', model, xhr, options);
     };
+
+    model._runningXHR = true;
 
     // Make the request, allowing the user to override any Ajax options.
     var xhr = Backbone.ajax(_.extend(params, options));

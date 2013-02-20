@@ -6,8 +6,8 @@
         <a class="start-slides" href=""  data-url="" ><i class=" icon-play"></i> diaporama</a>
       </li>
 
-      <li class="disabled">
-        <a href="" ><i class=" icon-download-alt"></i> télécharger</a>
+      <li >
+        <a data-bypass target="_blank" href="<%= object.original_file %>"><i class=" icon-download-alt"></i> télécharger</a>
       </li>
 
       <% if (object.status == 'deleted') { %>
@@ -40,7 +40,7 @@
 
 <div class="media-detail thumbnail-container span10 thumb-container">
   <div class="image-wrapper">
-    <% if (object.type == 'video' && typeof(object.versions) !== 'undefined') { %>
+    <% if (object.type == 'video' && object.video_status == 'done' && object.status != 'deleted') { %>
 
     <video id="my_video_1" class="video-js vjs-default-skin" controls
       preload="auto" width="970" height="500" poster="<%= object.url_medium %>"
@@ -59,6 +59,8 @@
         Par <%= object.owner.name %>, le <%=object.full_date %>
       </footer>
     <% } %>
+
+
       <% if (paginator.get('next')) { %>
       <div class="next appear-on-mouseover"><a href="<%= paginator.get('next') %>">suivant<a></div>
       <% } %>
@@ -67,12 +69,24 @@
        <% } %>
 
       <% if (object.running) { %>
-        <div class="running"></div>
-        <% } %>
+        <div class="over-all running"></div>
 
-      <% if (object.status == 'deleted') { %>
-      <div class="deleted"></div>
-      <% } %>
+      <% } else if (object.status == 'deleted') { %>
+        <div class="over-all deleted center-legend">
+          <span>Supprimé définitivement à partir du <%= object.full_remove_date %></span>
+        </div>
+      <% } else if (object.type == 'video' && object.video_status != 'done') { %>
+
+
+        <div class="over-all center-legend">
+          <% if (object.video_status == 'pending' ) {%>
+          <span >vidéo bientôt disponible</span>
+          <% } else if (object.video_status == 'failed' ){ %>
+          <span >La création de la vidéo a échouée <a data-bypass target="_blank" href="<%= object.original_file %>">Télécharger l'originale</a></span>
+          <% }  %>
+        </div>
+
+    <% } %>
 </div>
 
 

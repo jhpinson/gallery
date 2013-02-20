@@ -94,38 +94,11 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
             var cssClass = null;
             var source = app.page;
 
-            if (dest.type == source.type && source.type == 'album' && dest.value == source.value ) {
-              var destFacetCount = 0, sourceFacetCount = 0;
-              if (dest.facetsQS !== null) {
-                destFacetCount = dest.facetsQS.split(/\s/).length
-              }
-              if (source.facetsQS !== null) {
-                sourceFacetCount = source.facetsQS.split(/\s/).length
-              }
-              if ( destFacetCount > sourceFacetCount) {
-                  cssClass = 'vertical-down';
-              } else {
-                cssClass = 'vertical-up';
-              }
-            } else if (dest.type == 'album' && dest.value == null) {
-              cssClass = 'vertical-up';
-            } else if(dest.type == 'media' && source.type == 'media' && source.value == dest.value) {
-              if(dest.page < source.page) {
-                cssClass = 'horizontal-left';
-              } else {
-                cssClass = 'horizontal-right';
-              }
-            } else if(source.type == 'media' && dest.type == 'album') {
-              cssClass = 'vertical-up';
-            } else {
-              cssClass = 'vertical-down';
-            }
-
-            layout.$el.addClass(" offset-" + cssClass);
+            layout.$el.addClass("offset-fade");
             layout.$el.show();
 
-            currentLayout.$el.addClass("out-" + cssClass);
-            layout.$el.addClass("in-" + cssClass);
+            currentLayout.$el.addClass("fade-out");
+            layout.$el.addClass("fade-in");
 
             // remove old layout
             this._removeOldLayoutTimer = setTimeout(_.bind(function() {
@@ -360,12 +333,15 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
     _cleanHtmlTimer: null,
     preloadMedias: function() {
+
+        var id = this.router.params.id;
+        app.breadcrumbsUrl[id || 0] = document.location.pathname + document.location.search;
+
       // if first load or facetting change
       if(this.router._isFirstMediaDisplay() || this.router._hasFacetsChanged()) {
 
 
-        var id = this.router.params.id;
-        app.breadcrumbsUrl[id || 0] = document.location.pathname + document.location.search;
+
 
         // if first load
         if(typeof(app.medias) === 'undefined' || app.medias.length == 0 || app.medias.at(0).get('parent_album') != id) {
@@ -477,20 +453,14 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
         $parent.prepend($clone);
         var page = this.router._getQueryVariable('page', 1);
 
-        var cssClass = null;
-        if(page < app.paginator.get('current')) {
-          cssClass = 'horizontal-left';
-        } else {
-          cssClass = 'horizontal-right';
-        }
-        $el.addClass("offset-" + cssClass);
-        $clone.addClass("out-" + cssClass);
+        $el.addClass("offset-fade");
+        $el.show();
+
+        $clone.addClass("fade-out");
+        $el.addClass("fade-in");
 
         app.paginator.set('current', page);
         app.paginator._compute();
-
-
-        $el.addClass("in-" + cssClass);
 
         this._cleanHtmlTimer = setTimeout(cleanHtml, 800);
 

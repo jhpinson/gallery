@@ -1,5 +1,18 @@
 @import "mixins"
 
+@keyframes anim-fade-in
+  from
+    opacity 0
+  to
+    opacity 1
+
+@keyframes anim-fade-out
+  from
+    opacity 1
+  to
+    opacity 0
+
+
 @keyframes anim-in-vertical-up
   from
     opacity 0
@@ -115,6 +128,20 @@
   //transition-timing-function ease-out
   animation-fill-mode both
   animation-name anim-out-horizontal-left
+
+.fade-in
+  animation-duration 0.3s
+  animation-fill-mode both
+  animation-name anim-fade-in
+
+.fade-out
+  animation-duration 0.2s
+  animation-fill-mode both
+  animation-name anim-fade-out
+
+.offset-fade
+  opacity 0
+
 
 .offset-horizontal-left
   transform translateX(-100%)

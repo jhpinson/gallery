@@ -5,7 +5,6 @@ from model_utils.managers import PassThroughManager, InheritanceQuerySet
 from model_utils import Choices
 from helpers.mixins import ChangeTrackMixin
 from filehashfield.fields import FileHashField
-from datetime import datetime
 from sorl.thumbnail.shortcuts import get_thumbnail
 from django.conf import settings
 from sorl.thumbnail import delete
@@ -14,7 +13,7 @@ from django.db.models.fields.files import FileField
 from helpers.rest.models import AjaxModelHelper
 from jsonfield.fields import JSONField
 #from cacheops.invalidation import invalidate_obj, invalidate_all
-
+import datetime
 class MediaQuerySet(PermissionManager, InheritanceQuerySet):
 
     def models(self, *models):
@@ -39,9 +38,11 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     name = models.CharField(max_length=512)
     description = models.TextField(max_length=2048, null=True, blank=True)
 
-    date = models.DateTimeField(default=datetime.now) # used date
+    date = models.DateTimeField(default=datetime.datetime.now) # used date
     file_creation_date = models.DateTimeField(null=True) # if self.file, the file creation date
     meta_date = models.DateTimeField(null=True) # a computed date or exif date
+    
+    remove_date = models.DateTimeField(null=True) 
     
     original_file = FileHashField(upload_to=upload_path_original, hash_field='hash', max_length=1024, null=True)
     custom_file = FileField(upload_to= modified_upload_path, null=True)
@@ -73,7 +74,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
     
     def __init__(self, *args, **kwargs):
         super(Media, self).__init__(*args, **kwargs)
-        self._keep_init = {'parent_album_id' : self.__dict__.get('parent_album_id')}
+        self._keep_init = {'parent_album_id' : self.__dict__.get('parent_album_id'), 'status' : self.__dict__.get('status')}
         
     def toJSON(self):
         from medias.models import Video
@@ -86,6 +87,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         #data['absolute_url'] = "/toto" #self.get_absolute_uri()
         data['owner'] = {'name' : self.created_by.get_full_name(), 'id' : self.created_by.get_profile().pk}
         data['date'] = self.date.strftime('%Y-%m-%dT%H:%M:%S')
+        data['remove_date'] = self.remove_date.strftime('%Y-%m-%dT%H:%M:%S') if self.remove_date is not None else None
         data['status'] = self.status
         data['url_small'] = self.url_small
         data['width_small'] = self.width_small
@@ -97,6 +99,9 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         data['width_large'] = self.width_large
         data['height_large'] = self.height_large
         
+        if self.real_type.model in ['video', 'image']:
+            data['original_file'] = self.original_file.url
+        
         data['type'] = self.real_type.model
         
         if self.is_an_album:
@@ -105,6 +110,7 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             data['video_count'] = self.video_count
           
         if self.real_type.model == 'video':
+            data['video_status'] = self.video_status
             
             if self.video_status == Video.VIDEO_STATUSES.done:
                 data['versions'] = {'webm' : self.video_versions.all()[0].file.url} 
@@ -183,8 +189,15 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
             self.date = self.created_at
         
         if not created:
+            
+            if self.status == Media.STATUSES.deleted:
+                if self._keep_init['status'] != self.status:
+                    self.remove_date = datetime.datetime.now() + datetime.timedelta(days=2)
+            else:
+                self.remove_date = None
+            
             self.data = self.toJSON()
-         
+                
         super(Media, self).save(*args, **kwargs)
         
         if created:

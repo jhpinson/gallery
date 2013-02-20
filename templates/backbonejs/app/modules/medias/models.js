@@ -25,7 +25,10 @@ function(app) {
     initialize: function() {
 
       this.compute_date();
+      this.compute_remove_date();
+
       this.on('change:date', _.bind(this.compute_date, this))
+      this.on('change:remove_date', _.bind(this.compute_remove_date, this))
       this.on('sync', _.bind(this.compute_absolute_uri, this))
 
       this.compute_absolute_uri()
@@ -46,6 +49,13 @@ function(app) {
         this.set('day', date.getDate());
         this.set('full_date', date.toString('dddd d MMMM yyyy \à H:mm'));
         this.set('short_date', date.toString('d MMM yyyy, H:mm'));
+      }
+    },
+
+    compute_remove_date: function() {
+      if(this.get('remove_date')) {
+        var date = Date.parse(this.get('remove_date'));
+        this.set('full_remove_date', date.toString('dddd d MMMM yyyy \à H:mm'));
       }
     },
 

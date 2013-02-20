@@ -25,6 +25,8 @@
    </div>
    </a>
    <% if (object.status == 'deleted') { %>
-    <div class="deleted"></div>
+      <div class="over-all deleted center-legend">
+        <span>Supprimé définitivement à partir du <%= object.full_remove_date %></span>
+      </div>
    <% } %>
 </div>

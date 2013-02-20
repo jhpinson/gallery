@@ -278,36 +278,36 @@ function(app, Models, async) {
 
           op.call(album).then(_.bind(function() {
 
-              var methods = [];
+              var items = [];
 
               this.collection.each(function(obj, id, col) {
-                obj.set('running', true);
-                methods.push(_.bind(function(callback) {
-                  obj.set({
-                    parent_album_id: album.get('id')
-                  });
-                  obj.save().then(function() {
-                    obj.set({
-                      'running': false
-                    }, {
-                      silent: true
-                    });
-                    callback(null, obj);
-                  });
-                }, this));
-
+                //obj.set('running', true);
+                items.push(obj.get('id'))
               });
-              async.series(methods, _.bind(function(err, results) {
 
-                form.$modal.modal('hide');
-                if (follow) {
-                  app.router.navigate(album.get('absolute_uri'), {
-                    trigger: true
-                  });
-                } else {
-                  app.medias.remove(results)
-                }
-              }, this));
+              $.ajax({
+                      url: '/rest/medias/move',
+                      type: 'PUT',
+                      dataType: 'application/json',
+                      contentType: 'application/json',
+                      data: JSON.stringify({
+                        'items': items,
+                        'album' : album.get('id')
+                      }),
+                      context: this,
+                      'complete': function(xhr) {
+                        form.$modal.modal('hide');
+                        if (follow) {
+                          app.router.navigate(album.get('absolute_uri'), {
+                            trigger: true
+                          });
+                        } else {
+                          app.medias.fetch({url : app.medias.url + '?parent_album_id=' + app.currentAlbumId});
+                        }
+                      }
+                    });
+
+
             }, this))
 
         }, this)
@@ -341,7 +341,8 @@ function(app, Models, async) {
     template: 'medias/sidebar',
 
     events: {
-      "click .album-add": "addAlbum"
+      "click .album-add": "addAlbum",
+      "click .move": "move"
     },
 
     _facetting: null,
@@ -355,6 +356,121 @@ function(app, Models, async) {
       // reset
       this.paginator = app.paginator;
       this.paginator.bind('change:current', this.resetSelectionView, this);
+    },
+
+    move: function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      var form = new Backbone.ModalForm({
+        template: 'medias/forms/album-select',
+        title: 'Déplacer les éléments sélectionnés',
+        onShow: _.bind(function() {
+
+          form.$modal.find('#search').typeahead({
+            matcher: function(item) {
+              return true
+            },
+            sorter: function(items) {
+              return items;
+            },
+            updater: function(item) {
+              form.$modal.find('#album-id').val(item.id);
+              return item.name;
+            },
+            source: function(query, process) {
+              $.ajax({
+                url: '/rest/medias/search?q=' + query,
+                type: 'GET',
+                dataType: 'application/json',
+                contentType: 'application/json',
+                context: this,
+                'complete': function(xhr) {
+
+                  process(JSON.parse(xhr.responseText));
+
+
+                }
+              });
+            }
+          })
+
+          form.$modal.find('#myTab a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+            return false;
+          })
+        }, this),
+        onOk: _.bind(function(data) {
+
+          var op, album, follow = typeof(data.goto) !== 'undefined';
+
+          form.$modal.find('.control-group').removeClass('error');
+          form.$modal.find('span.error').remove();
+
+          if (form.$modal.find('.active [href=#existent]').length == 1) {
+
+            if (data['album-id'] == '') {
+              form.$modal.find('#album-id').parent().append('<span class="help-inline error">Veuillez remplir ce champ</span>');
+              form.$modal.find('#album-id').parents('.control-group').addClass('error');
+              return false;
+            }
+
+            album = new Models.Media({id:data['album-id']});
+            op = album.fetch;
+          } else {
+
+            if (data['album-name'] == '') {
+              form.$modal.find('#album-name').parent().append('<span class="help-inline error">Veuillez remplir ce champ</span>');
+              form.$modal.find('#album-name').parents('.control-group').addClass('error');
+              return false;
+            }
+
+            album = new Models.Media();
+            album.set({
+              name: data['album-name']
+            });
+            op = album.save;
+          }
+
+          op.call(album).then(_.bind(function() {
+
+              var items = [];
+
+              app.mediasQuery.each(function(obj, id, col) {
+                //obj.set('running', true);
+                items.push(obj.get('id'))
+              });
+
+              $.ajax({
+                      url: '/rest/medias/move',
+                      type: 'PUT',
+                      dataType: 'application/json',
+                      contentType: 'application/json',
+                      data: JSON.stringify({
+                        'items': items,
+                        'album' : album.get('id')
+                      }),
+                      context: this,
+                      'complete': function(xhr) {
+                        form.$modal.modal('hide');
+                        if (follow) {
+                          app.router.navigate(album.get('absolute_uri'), {
+                            trigger: true
+                          });
+                        } else {
+                          app.medias.fetch({url : app.medias.url + '?parent_album_id=' + app.currentAlbumId});
+                        }
+                      }
+                    });
+
+
+            }, this))
+
+        }, this)
+      })
+
+      form.render();
     },
 
     addAlbum: function(event) {
@@ -451,6 +567,7 @@ function(app, Models, async) {
       if(qs.trim() == '?') {
         qs = '';
       }
+      qs = qs.replace(/page=[0-9]+/, 'page=1');
 
       return document.location.pathname + qs;
     },
@@ -458,7 +575,13 @@ function(app, Models, async) {
 
     _getDate: function(year, month, day) {
       var d = new Date();
-      d.setFullYear(year);
+
+
+      if(typeof(year) !== 'undefined') {
+        d.setFullYear(year);
+      } else {
+        return null;
+      }
 
       if(typeof(month) !== 'undefined') {
         d.setMonth(month);
@@ -467,14 +590,15 @@ function(app, Models, async) {
       if(typeof(day) !== 'undefined') {
         d.setDate(day);
       }
-
       return d;
     },
 
     _computeFacetting: function() {
 
       var facetsQs = this._getQueryVariable('facets');
-
+      if (facetsQs != null) {
+        facetsQs = facetsQs.trim();
+      }
       var facetting = {
         years: {},
         months: {},
@@ -553,7 +677,7 @@ function(app, Models, async) {
             facets.days = [];
             _.each(days, function(day) {
               facets.days.push({
-                name: this._getDate(years[0], months[0], day).toString('ddd d MMMM yyyy'),
+                name: this._getDate(years[0], months[0], day).toString('ddd d MMMM'),
                 url: this._getFacetUrl(facetsQs, 'day:' + day),
                 value: facetting.days[day]
               })
@@ -574,9 +698,17 @@ function(app, Models, async) {
             delete facets.deleted;
           }
           if(split[0] == 'month') {
-            name = this._getDate(years[0], split[1]).toString('MMMM yyyy');
+            var d = this._getDate(years[0], split[1]);
+            if (d == null) {
+              return;
+            }
+            name = d.toString('MMMM yyyy');
           } else if(split[0] == 'day') {
-            name = this._getDate(years[0], months[0], split[1]).toString('ddd d MMMM yyyy')
+            var d = this._getDate(years[0], months[0], split[1]);
+            if (d == null) {
+              return;
+            }
+            name = d.toString('ddd d MMMM')
           }
           currents.push({
             name: name,
@@ -584,7 +716,6 @@ function(app, Models, async) {
           });
         }, this);
       }
-
       return {
         currents: currents,
         facets: facets,
@@ -924,6 +1055,31 @@ function(app, Models, async) {
         this.insertView(view);
 
       }, this));
+    }
+  });
+
+  Views.Dropbox = Backbone.View.extend({
+    template: 'medias/dropbox',
+
+    initialize : function () {
+
+      this.model.bind('change', this.render, this)
+      setInterval(_.bind(function () {
+        this.model.fetch({url : "/rest/medias/dropbox"});
+      },this), 10000);
+      this.model.fetch({url : "/rest/medias/dropbox"});
+    },
+
+    serialize: function() {
+
+      var object = null;
+      if (this.model.get('id') !== 'undefined' && (this.model.get('image_count') > 0 || this.model.get('video_count') > 0 )) {
+        object = this.model.toJSON();
+      }
+
+      return {
+        object: object
+      };
     }
   });
 

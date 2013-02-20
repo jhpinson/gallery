@@ -5,8 +5,10 @@
         <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
       <% } else { %>
         <a href="#" class="pull-left action remove"   ><i class=" icon-trash"></i></a>
-        <a href="#" class="pull-right action rotate rotate-left" data-rotate="90" ><i class="icon-share-alt "></i></a>
-        <a href="#" class="pull-right action rotate rotate-right" data-rotate="-90" ><i class="icon-share-alt "></i></a>
+        <% if (object.type == 'image' ) { %>
+          <a href="#" class="pull-right action rotate rotate-left" data-rotate="90" ><i class="icon-share-alt "></i></a>
+          <a href="#" class="pull-right action rotate rotate-right" data-rotate="-90" ><i class="icon-share-alt "></i></a>
+        <% } %>
       <% } %>
     <% } %>
     <a href="/media-redirect/<%= object.id %>/">
@@ -21,9 +23,18 @@
     </div>
 
     <% if (object.running) { %>
-    <div class="running"></div>
-    <% } %>
-    <% if (object.status == 'deleted') { %>
-    <div class="deleted"></div>
-    <% } %>
+    <div class="over-all running"></div>
+    <% } else if (object.status == 'deleted') { %>
+    <a href="/media-redirect/<%= object.id %>/">
+      <div class="over-all deleted center-legend">
+        <span>Supprimé définitivement à partir du <%= object.full_remove_date %></span>
+      </div>
+    </a>
+    <% } else if (object.type == 'video' ) { %>
+      <a href="/media-redirect/<%= object.id %>/">
+        <div class="over-all center-legend">
+          <span >video</span>
+        </div>
+      </a>
+    <% } %>
 </div>

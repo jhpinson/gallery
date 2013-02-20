@@ -295,9 +295,8 @@ div.image-mask
 
 
 
-.running, .deleted
+.over-all
   position absolute
-  background-color black
   opacity 0.5
   z-index 10
   top 0
@@ -305,6 +304,20 @@ div.image-mask
   bottom 0
   right 0
 
-  &.deleted
-    background-color red
+  &.center-legend
+    padding-top 50%
+
+
+    span
+      margin-top  -400%
+      display inline-block
+      background-color  red
+      width 100%
+      text-align  center
+
+.running
+  background-color black
+
+.deleted
+  background-color red
 

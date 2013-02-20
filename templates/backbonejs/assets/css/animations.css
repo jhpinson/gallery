@@ -114,6 +114,43 @@
   -o-animation-name: anim-out-horizontal-left;
   animation-name: anim-out-horizontal-left;
 }
+.fade-in {
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  -ms-animation-duration: 0.3s;
+  -o-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -ms-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: anim-fade-in;
+  -moz-animation-name: anim-fade-in;
+  -ms-animation-name: anim-fade-in;
+  -o-animation-name: anim-fade-in;
+  animation-name: anim-fade-in;
+}
+.fade-out {
+  -webkit-animation-duration: 0.2s;
+  -moz-animation-duration: 0.2s;
+  -ms-animation-duration: 0.2s;
+  -o-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -ms-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: anim-fade-out;
+  -moz-animation-name: anim-fade-out;
+  -ms-animation-name: anim-fade-out;
+  -o-animation-name: anim-fade-out;
+  animation-name: anim-fade-out;
+}
+.offset-fade {
+  opacity: 0;
+}
 .offset-horizontal-left {
   -webkit-transform: translateX(-100%);
   -moz-transform: translateX(-100%);
@@ -161,6 +198,96 @@
   -ms-transform: translateX(100%);
   -o-transform: translateX(100%);
   transform: translateX(100%);
+}
+@-moz-keyframes anim-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes anim-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@-o-keyframes anim-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@-ms-keyframes anim-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes anim-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+@-moz-keyframes anim-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes anim-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+@-o-keyframes anim-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+@-ms-keyframes anim-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes anim-fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 @-moz-keyframes anim-in-vertical-up {
   0% {

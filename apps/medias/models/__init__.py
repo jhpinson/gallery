@@ -1,10 +1,10 @@
 from .media import Media, Thumbnail
 from .image import Image
 from .videos import Video, VideoVersion
-from .album import Album
+from .album import Album, DropBox
 from django.core.files.base import ContentFile
 
-__all__ = ['Media', 'Image', 'Thumbnail', 'Video', 'VideoVersion', 'Album', 'create_media']
+__all__ = ['Media', 'Image', 'Thumbnail', 'Video', 'VideoVersion', 'Album', 'create_media', 'DropBox']
 
 
 import uuid

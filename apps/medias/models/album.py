@@ -11,7 +11,6 @@ class AlbumQuerySet(PermissionManager, QuerySet):
     pass
 
     
-    
 
 class Album(Media):
     
@@ -87,3 +86,12 @@ class Album(Media):
     class Meta:
         app_label = 'medias'
         verbose_name = 'Album'
+
+
+class DropBox(Album):
+    
+    delta = models.CharField(max_length=1024, null=True)
+    
+    class Meta:
+        app_label = 'medias'
+        verbose_name = 'DropBox'

@@ -64,13 +64,19 @@ class Video(ThumbAccessors, Media):
         
         if size is None:
             return
-        
+        last = 360 # sdfkjhsdlfsdjf
         for s in VideoVersion.SIZES:
-            if int(s[0]) <= size:
+            if int(s[0]) <= size or int(s[0]) == last:
         
                 if not self.video_versions.filter(type=VideoVersion.TYPES.webm, size=s[0]).exists():
+                    
+                    
+                    if size <= int(s[0]):
+                        size = s[0]
+                    
+                         
                     try:
-                        retcode,  tmp_file = webm(self.file.path, s[0])
+                        retcode,  tmp_file = webm(self.file.path, size)
                     except Exception, CalledProcessError:
                         retcode = 1
                     
@@ -85,6 +91,7 @@ class Video(ThumbAccessors, Media):
                     else:
                         version.status = VideoVersion.STATUSES.failed
                     version.save()
+                    
                 break
                 
     class Meta:

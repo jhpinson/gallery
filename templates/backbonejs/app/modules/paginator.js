@@ -44,7 +44,15 @@ function(app) {
       //this._collectionHash = this._getCollectionHash();
 
       this._collection.bind('add remove reset', this._compute, this);
-
+      /*
+      this._collection.bind('all', function (e) {
+        console.debug(e)
+        if (['change', 'sync', 'request'].indexOf(e) !== -1) {
+          console.debug(arguments)
+          this._compute();
+        }
+      }, this);
+      */
       this.bind('change:current', this._compute, this);
       this.bind('change:limit', this._compute, this);
       this._compute();
@@ -74,8 +82,14 @@ function(app) {
     },
 
     _compute: function() {
-      this.set("pages", parseInt((this._collection.length / this.get('limit'))) + ((this._collection.length % this.get('limit') > 0) ? 1 : 0));
-      if(this.get('current') > this.get('pages')) {
+
+      var pages = parseInt((this._collection.length / this.get('limit'))) + ((this._collection.length % this.get('limit') > 0) ? 1 : 0);
+      if (pages == 0) {
+        pages = 1;
+      }
+      this.set("pages", pages);
+
+      if(this.get('current') > this.get('pages') && this._collection._runningXHR == false) {
         var qs = document.location.search;
         qs = qs.replace('page=' + this.get('current'), 'page=1');
         app.router.navigate(document.location.pathname+qs, {trigger:true, replace:true});
@@ -101,14 +115,13 @@ function(app) {
       }
 
       var newHash = this._getCollectionHash();
-      console.debug(newHash, this._collectionHash)
       if (this._collectionHash != newHash) {
         this._collectionHash = newHash;
         this.page.trigger('haschange');
       }
-
     }
   });
+
   Paginator.View = Backbone.View.extend({
 
 

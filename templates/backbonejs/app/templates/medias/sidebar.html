@@ -27,6 +27,7 @@
 <div class="sidebar-nav well well-small">
   <h5>Filtres actifs</h5>
   <ul class="nav current-filters">
+    <li ><a  href="#none" class="move"><i class="icon-plus"></i> tout déplacer</a></li>
     <%  _.each(facetting.currents, function (facet) { %>
     <li><a href="<%= facet.url %>"><i class="icon-remove"></i> <%= facet.name %></a></li>
     <% }); %>
