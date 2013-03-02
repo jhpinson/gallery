@@ -1,5 +1,5 @@
 Django==1.4
-git+https://github.com/dottedmag/path.py.git@a1af24e3b07819620daa055107ce9ff9c252f2df#egg=path.py-dev
+path.py==3.0.1
 MySQL-python==1.2.3
 -e git+https://github.com/cyberdelia/django-pipeline.git@9eb97bc70c488f49dbcefcb41bf3d69b1c686053#egg=django_pipeline-dev
 django-grappelli==2.3.5
