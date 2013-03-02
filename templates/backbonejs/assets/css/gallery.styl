@@ -1,14 +1,95 @@
 
+$orange = rgb(179, 179, 179);
 
 body
+
+  #main-aside-right
+    box-shadow: 0px -1px 1px #aaa;
+
+  .side-box
+    padding 5px
+    background-color rgba(58, 58, 58, 0.28)
+
+
+
+    border-bottom solid 1px #aaa
+    box-shadow 1px 0px #aaa 1px
+
+
+    h5
+      padding 5px
+      margin 0
+    ul
+      width 100%
+      margin-bottom 10px
+      li
+        a
+          padding 5px
+          color #AAAAAA
+          &:hover, &:focus
+            text-decoration none
+            background-color transparent
+            color rgb(196, 196, 196)
+
+  background-color rgb(44, 44, 44)
+
+  .breadcrumb, .well, .well-small
+    background-color rgba(58, 58, 58, 0.28)
+
+  .breadcrumb
+    li
+      text-shadow none
+
+
+  #footer
+    width 100%
+
+    -webkit-box-shadow rgba(0, 0, 0, 0.0980392) 0px 5px 5px 0px
+    background-image -webkit-linear-gradient(top, rgb(48, 48, 48) 0%, rgb(25, 25, 25) 100%)
+    border-bottom-color rgb(0, 0, 0)
+    border-bottom-style solid
+    border-bottom-width 1px
+    box-shadow rgba(0, 0, 0, 0.0980392) 0px 5px 5px 0px
+    color rgb(51, 51, 51)
+
+
+  .inline-block
+    display inline-block
 
   ul.typeahead
     z-index 2000
 
   #nav-header
     height 48px
+
+    -webkit-box-shadow rgba(54, 54, 54, 0.8) 0px 1px 1px 0px
+    background-image -webkit-linear-gradient(top, rgb(25, 25, 25) 100%, rgb(48, 48, 48) 0%)
+    border-top-color rgb(0, 0, 0)
+    border-top-style solid
+    border-top-width 1px
+    box-shadow rgba(54, 54, 54, 0.8) 0px 1px 1px 0px
+    color rgb(51, 51, 51)
+
     .navbar-inner
       height 100%
+
+    span.title
+      display block
+      margin-top 10px
+      float left
+
+      a
+        text-rendering optimizelegibility
+        text-transform uppercase
+        color $orange
+        font-size 20px
+        font-weight bold
+        text-shadow:0 0 3px #aaa;
+
+        span
+          padding 0 2px
+          color $orange
+          text-shadow:0 0 3px $orange;
 
   #nav-container
     width 1170px
@@ -36,12 +117,12 @@ body
     width 1170px
     margin-left auto
     margin-right auto
-    margin-bottom 25px
+    margin-bottom 20px
     position relative
 
-    >div
+    /*>div
       position absolute
-
+      */
   #main-content
     position relative
 
@@ -75,10 +156,20 @@ div.image-mask
 
     &.hover
       text-decoration none
-      background-color #eeeeee
-      color #005580
+      background-color transparent
+      color rgb(196, 196, 196)
 
+.modal
+  -webkit-border-radius 0 !important
+  border-radius 0 !important
+  -webkit-border-top-left-radius 0
+  border-top-left-radius 0
 
+  .modal-footer, .modal-header
+    background-color rgba(58,58,58,0.5)
+
+  .modal-body
+    background-color rgba(58,58,58,0.2)
 
 #modal-login
   background linear-gradient(top, darken(#fff,1%), darken(#fff,6%))
@@ -155,20 +246,41 @@ div.image-mask
   text-align center
   position relative
 
+  .next, .previous
+      z-index 15
+      position absolute
+      top 50%
+
+      a
+        padding 5px
+        background white
+        opacity .8
+        color black
+        box-sizing border-box
+        &:hover
+          text-decoration none
+          opacity 1.0
+
+      &.next
+        right 0
+        a
+          border-top-left-radius 2px
+          border-bottom-left-radius 2px
+
+      &.previous
+        a
+          border-top-right-radius 2px
+          border-bottom-right-radius 2px
+
   .image-wrapper
     display inline-block
     position relative
 
-    .next, .previous
-      z-index 15
-      position absolute
-      top 50%
-      &.next
-        right 0
+
 
     img[data-media-pk]
       //height 100%
-      width auto
+      border-radius 2px
 
     footer
       position absolute
@@ -179,12 +291,15 @@ div.image-mask
       background white
       opacity .8
       text-align left
-      padding 3px 5px
+      padding 5px
       margin 0
       font-size 11px
       line-height 11px
-      height 12px
-
+      height 20px
+      box-sizing border-box
+      color black
+      border-bottom-left-radius 2px
+      border-bottom-right-radius 2px
 .appear-on-mouseover
   display none
 
@@ -198,7 +313,12 @@ div.image-mask
       padding 0
       border none
 
-
+      &.selected
+        &.video, &.image
+          border solid 2px rgb(179, 179, 179);
+          //height 156px
+          //width 166px
+          box-sizing  border-box
 
       &.album
         height 160px
@@ -232,6 +352,14 @@ div.image-mask
           div.stats
             float left
             display block
+
+          .label
+            padding 1px 2px
+            margin-top  5px
+
+            i
+              margin-top 0
+
           div.actions
             float right
             display block
@@ -241,16 +369,21 @@ div.image-mask
       &.video, &.image
         height 160px
         .legend
-          position absolute
-          bottom: 0
-          left 0
-          righ: 0
+          //position absolute
+          //bottom: 0
+          //left 0
+          //right: 0
           padding 3px 0 3px 5px
           color black
           display none
           background-color white
           opacity 0.9
-          width 165px
+          //width 165px
+          width 100%
+          box-sizing  border-box
+          height 15px
+          margin-top -15px
+
           p
             margin 0
             font-size 11px

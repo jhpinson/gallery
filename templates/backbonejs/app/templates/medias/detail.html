@@ -1,5 +1,5 @@
-<div class="span2 pull-right">
-  <div class="sidebar-nav well well-small">
+<div class="span2 pull-right " id="main-aside-right">
+  <div class="side-box first">
 
     <ul class="nav">
       <li class="disabled">
@@ -39,12 +39,15 @@
 
 
 <div class="media-detail thumbnail-container span10 thumb-container">
+
+
+
   <div class="image-wrapper">
     <% if (object.type == 'video' && object.video_status == 'done' && object.status != 'deleted') { %>
 
-    <video id="my_video_1" class="video-js vjs-default-skin" controls
-      preload="auto" width="970" height="500" poster="<%= object.url_medium %>"
-      data-setup="{}">
+    <video id="<%= object.id %>" class="video-js vjs-default-skin" controls
+      preload="auto" poster="<%= object.url_medium %>"
+      data-setup="{}" >
       <% _.each(object.versions, function (videoUrl, videoType) { %>
       <source src="<%= videoUrl %>" type='video/<%= videoType %>'>
       <% }) %>
@@ -53,19 +56,20 @@
 
     <% } else { %>
     <img id="<%= object.id %>"  src="<%= object.url_medium %>"
-      width="<%= object.width_medium %>"
-      height="<%= object.height_medium %>"  data-media-pk="<%= object.id%>" >
-      <footer class="appear-on-mouseover">
+       data-media-pk="<%= object.id%>" >
+
+    <% } %>
+
+    <footer class="appear-on-mouseover">
         Par <%= object.owner.name %>, le <%=object.full_date %>
       </footer>
-    <% } %>
 
 
       <% if (paginator.get('next')) { %>
-      <div class="next appear-on-mouseover"><a href="<%= paginator.get('next') %>">suivant<a></div>
+      <div class="next appear-on-mouseover"><a href="<%= paginator.get('next') %>">suivant</a></div>
       <% } %>
       <% if (paginator.get('prev')) { %>
-      <div class="previous appear-on-mouseover "><a href="<%= paginator.get('prev') %>">precedent</a></div>
+      <div class="previous appear-on-mouseover "><a href="<%= paginator.get('prev') %>">précedent</a></div>
        <% } %>
 
       <% if (object.running) { %>

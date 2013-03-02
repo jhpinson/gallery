@@ -17,7 +17,7 @@ define([
   "plugins/fileupload/jquery.iframe-transport",
   "plugins/jquery.serializeObject",
   "vendor/bootstrap/js/bootstrap",
-  "plugins/jquery.typeahead",
+  //"vendor/typeahead/typeahead",
   "vendor/video-js/video"
 
 ],
@@ -39,6 +39,11 @@ function($, _, Backbone) {
     breadcrumbsUrl : {}
   };
 
+  var onresize = function () {
+    $('#main-container').css('min-height', $(window).height() - $('#nav-header').height() - 20 - 20 - $('#footer').height() + 'px');
+  }
+  $(window).bind('resize', onresize);
+  onresize();
 
   // Localize or create a new JavaScript Template object.
   var JST = window.JST = window.JST || {};

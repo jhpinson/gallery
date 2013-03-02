@@ -7,7 +7,7 @@ define([
 // Map dependencies from above array.
 
 function(app, Models, Selection) {
-  return  Backbone.View.extend({
+  return Backbone.View.extend({
     template: 'medias/sidebar',
 
     events: {
@@ -37,33 +37,72 @@ function(app, Models, Selection) {
         title: 'Déplacer les éléments sélectionnés',
         onShow: _.bind(function() {
 
-          form.$modal.find('#search').typeahead({
-            matcher: function(item) {
-              return true
-            },
-            sorter: function(items) {
-              return items;
-            },
-            updater: function(item) {
-              form.$modal.find('#album-id').val(item.id);
-              return item.name;
-            },
-            source: function(query, process) {
-              $.ajax({
-                url: '/rest/medias/search?q=' + query,
-                type: 'GET',
-                dataType: 'application/json',
-                contentType: 'application/json',
-                context: this,
-                'complete': function(xhr) {
+          var searchTimeout = null;
 
-                  process(JSON.parse(xhr.responseText));
+          var retrieveResults = function(query, process) {
 
+              if(searchTimeout !== null) {
+                clearTimeout(searchTimeout);
+              }
 
+              var transformResults = function(results) {
+                  console.debug(results)
+                  return $.map(results, function(result) {
+
+                    return {
+                      id: result.id,
+                      title: result.name,
+                      html: _.template('<p><%= name %></p>')(result),
+                      toString: function() {
+                        return JSON.stringify(this);
+                      },
+                      toLowerCase: function() {
+                        return this.html.toLowerCase();
+                      },
+                      indexOf: function(string) {
+                        return String.prototype.indexOf.apply(
+                        this.html, arguments);
+                      },
+                      replace: function(string) {
+                        return String.prototype.replace.apply(
+                        this.html, arguments);
+                      }
+                    };
+                  });
                 }
-              });
-            }
-          })
+
+              searchTimeout = setTimeout(function(query) {
+                if(searchTimeout !== null) {
+                  clearTimeout(searchTimeout);
+                }
+
+                $.ajax({
+                  url: '/rest/medias/search?q=' + query,
+                  type: 'GET',
+                  contentType: 'application/json',
+                  context: this,
+
+                  success: function(data) {
+                    return typeof data == 'undefined' ? false : process(transformResults(data))
+                  },
+                  error: function() {}
+                });
+
+              }, 500, query);
+
+            };
+
+          form.$modal.find('#search').typeahead({
+            source: retrieveResults,
+            updater: function(json) {
+              var item = $.parseJSON(json);
+              form.$modal.find('#album-id').val(item.id);
+              return item.title;
+
+            },
+            items: 10,
+            minLength: 1
+          });
 
           form.$modal.find('#myTab a').click(function(e) {
             e.preventDefault();
@@ -440,9 +479,11 @@ function(app, Models, Selection) {
         this._selectionView = null;
 
         app.paginator.page.each(function(o, id, col) {
-          o.set({
-            'selected': false
-          });
+          if(typeof(o) !== 'undefined') {
+            o.set({
+              'selected': false
+            });
+          }
         });
       }
 

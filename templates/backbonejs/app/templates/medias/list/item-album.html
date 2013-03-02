@@ -1,10 +1,10 @@
 <div class="thumbnail album" data-media-pk="<%= object.id %>">
     <div class="thumb-header" >
-      <div class="stats">
+      <div class="stats label">
         <% if (object.image_count > 0) { %><span><i class="icon-camera"></i> <%= object.image_count %></span><% }  %>
         <% if (object.video_count > 0) { %> <span><i class="icon-film"></i> <%= object.video_count %></span><% }  %>
       </div>
-      <div class="actions">
+      <div class="actions label">
         <% if (object.status == 'deleted') { %>
           <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
         <% } else { %>

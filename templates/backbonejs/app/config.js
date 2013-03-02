@@ -36,6 +36,7 @@ require.config({
     "plugins/fileupload/jquery.fileupload": ["jquery"],
     "plugins/fileupload/jquery.iframe-transport": ["jquery"],
     "vendor/video-js/video": ["jquery"],
+    //"vendor/typeahead/typeahead": ["vendor/bootstrap/js/bootstrap"],
   }
 
 });

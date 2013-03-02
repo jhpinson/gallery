@@ -16,8 +16,8 @@ function(app, ImageOpsMixin) {
       "click .remove": "mRemove",
       "click .restore": "restore",
       "click .rotate": "rotate",
-      "mouseover": "show",
-      "mouseout": "hide",
+      "mouseover .image-wrapper": "show",
+      "mouseout .image-wrapper": "hide",
     },
 
     initialize: function() {
@@ -30,8 +30,32 @@ function(app, ImageOpsMixin) {
       };
     },
 
+    onResize : function () {
+      var width = customWidth = this.model.get('width_medium');
+      var height = customHeight = this.model.get('height_medium');
+
+      var availlableWidth = 970;
+      var availlableHeight = parseInt($('#main-container').css('min-height')) - 61; // $(window).height() - $('#main-content').offset().top;
+
+      if (availlableHeight < height) {
+        customHeight = availlableHeight;
+        customWidth = (customHeight / height) * width;
+      } else {
+        customWidth = availlableWidth;
+        customHeight = (availlableWidth / width) * height;
+      }
+
+      this.$el.find('#' + this.model.get('id') ).css({height : customHeight + 'px', width:customWidth + 'px'})
+    },
+
+    afterRender : function () {
+      this.onResize();
+      $(window).bind('resize', _.bind(this.onResize, this));
+    },
+
     render: function(template, context) {
       var context = context || {};
+
       context = _.extend({}, context, {
         paginator: this.paginator
       });

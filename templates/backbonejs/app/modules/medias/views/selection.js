@@ -1,12 +1,15 @@
 define([
 // Application.
-"app", "plugins/async"
+"app", "modules/medias/models","plugins/async"
 
 ],
 
 // Map dependencies from above array.
 
-function(app, async) {
+function(app, Models, async) {
+
+
+
 
   return Backbone.View.extend({
     template: 'medias/selection',
@@ -171,39 +174,86 @@ function(app, async) {
         title: 'Déplacer les éléments sélectionnés',
         onShow: _.bind(function() {
 
-          form.$modal.find('#search').typeahead({
-            matcher: function(item) {
-              return true
-            },
-            sorter: function(items) {
-              return items;
-            },
-            updater: function(item) {
-              form.$modal.find('#album-id').val(item.id);
-              return item.name;
-            },
-            source: function(query, process) {
+          var searchTimeout = null;
+
+          var retrieveResults = function(query, process) {
+
+            if (searchTimeout !== null) {
+              clearTimeout(searchTimeout);
+            }
+
+            var transformResults = function(results) {
+              console.debug(results)
+              return $.map(results, function(result) {
+
+                    return {
+                      id : result.id,
+                      title : result.name,
+                      html : _.template('<p><%= name %></p>')(result),
+                      toString : function() {
+                        return JSON.stringify(this);
+                      },
+                      toLowerCase : function() {
+                        return this.html.toLowerCase();
+                      },
+                      indexOf : function(string) {
+                        return String.prototype.indexOf.apply(
+                            this.html, arguments);
+                      },
+                      replace : function(string) {
+                        return String.prototype.replace.apply(
+                            this.html, arguments);
+                      }
+                    };
+                  });
+            }
+
+            searchTimeout = setTimeout(function(query) {
+              if (searchTimeout !== null) {
+                clearTimeout(searchTimeout);
+              }
+
               $.ajax({
                 url: '/rest/medias/search?q=' + query,
                 type: 'GET',
-                dataType: 'application/json',
                 contentType: 'application/json',
                 context: this,
-                'complete': function(xhr) {
 
-                  process(JSON.parse(xhr.responseText));
-
-
+                success : function(data) {
+                  return typeof data == 'undefined'
+                      ? false
+                      : process(transformResults(data))
+                },
+                error : function() {
                 }
               });
-            }
-          })
+
+            }, 500, query);
+
+          };
+
+          form.$modal.find('#search').typeahead({
+                source : retrieveResults,
+                updater : function(json) {
+                  var item = $.parseJSON(json);
+                  form.$modal.find('#album-id').val(item.id);
+                  return item.title;
+
+                },
+                items : 10,
+                minLength : 1
+              })
+
+
+
+
 
           form.$modal.find('#myTab a').click(function(e) {
             e.preventDefault();
             $(this).tab('show');
             return false;
-          })
+          });
+          orm.$modal.find('#myTab a:first').tab('show');
         }, this),
         onOk: _.bind(function(data) {
 

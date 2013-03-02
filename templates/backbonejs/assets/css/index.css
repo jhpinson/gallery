@@ -8,6 +8,7 @@
  */
 
 @import "../vendor/video-js/video-js.css";
+/*@import "../vendor/typeahead/typeahead.css"; */
 
 @import "gallery.css";
 @import "animations.css";

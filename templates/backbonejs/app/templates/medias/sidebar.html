@@ -1,7 +1,7 @@
 
 
 <!-- Box options-->
-<div class="sidebar-nav well well-small">
+<div class="side-box first">
   <h5>Options</h5>
   <ul class="nav">
     <% if (is_an_album) { %>
@@ -24,7 +24,7 @@
 <!-- Box actives facets-->
 
 <% if (facetting.currents.length > 0) { %>
-<div class="sidebar-nav well well-small">
+<div class="side-box">
   <h5>Filtres actifs</h5>
   <ul class="nav current-filters">
     <li ><a  href="#none" class="move"><i class="icon-plus"></i> tout déplacer</a></li>
@@ -38,42 +38,45 @@
 <!-- Box facetting -->
 
 <% if (typeof(facetting.facets.deleted) !== 'undefined' && facetting.facets.deleted.value > 0) { %>
-<div class="sidebar-nav well well-small">
+<div class="side-box">
   <h5>bla bla</h5>
   <ul class="nav current-filters">
-    <li><a href="<%= facetting.facets.deleted.url%>"><i class="icon-arrow-right"></i> <%= facetting.facets.deleted.name %> <span class="muted pull-right"><%= facetting.facets.deleted.value %></span></a></li>
+    <li><a href="<%= facetting.facets.deleted.url%>"><i class="icon-arrow-right"></i> <%= facetting.facets.deleted.name %>
+      <span class="label  pull-right"><%= facetting.facets.deleted.value %></span></a></li>
   </ul>
 </div>
 <% }  %>
 
 <% if (typeof(facetting.facets.years) !== 'undefined' && facetting.facets.years.length > 0) { %>
-<div class="sidebar-nav well well-small">
+<div class="side-box">
   <h5>Filtrer par année</h5>
   <ul class="nav current-filters">
     <%  _.each(facetting.facets.years, function (facet) { %>
-    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %>
+      <span class="label pull-right"><%= facet.value %></span></a></li>
     <% }); %>
   </ul>
 </div>
 <% }  %>
 
 <% if (typeof(facetting.facets.months) !== 'undefined' && facetting.facets.months.length > 0) { %>
-<div class="sidebar-nav well well-small">
+<div class="side-box">
   <h5>Filtrer par mois</h5>
   <ul class="nav current-filters">
     <%  _.each(facetting.facets.months, function (facet) { %>
-    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="label pull-right"><%= facet.value %></span></a></li>
     <% }); %>
   </ul>
 </div>
 <% }  %>
 
 <% if (typeof(facetting.facets.days) !== 'undefined' && facetting.facets.days.length > 0) { %>
-<div class="sidebar-nav well well-small">
+<div class="side-box">
   <h5>Filtrer par jour</h5>
   <ul class="nav current-filters">
     <%  _.each(facetting.facets.days, function (facet) { %>
-    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %> <span class="muted pull-right"><%= facet.value %></span></a></li>
+    <li><a href="<%= facet.url%>"><i class="icon-arrow-right"></i> <%= facet.name %>
+      <span class="label pull-right"><%= facet.value %></span></a></li>
     <% }); %>
   </ul>
 </div>

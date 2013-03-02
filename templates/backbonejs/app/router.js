@@ -70,13 +70,6 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
       var options = options || {};
       var currentLayout = app.layout || null;
 
-      // clear timer that remove old layout
-      if(this._removeOldLayoutTimer !== null) {
-        clearTimeout(this._removeOldLayoutTimer);
-        this._removeOldLayoutTimer = null;
-      }
-      // remove old layout id needed
-      $('[data-delete]').remove();
 
       // remove transition classes on current layout
       $('.main-container>div').attr('class', "");
@@ -85,8 +78,6 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
         if(currentLayout !== null) {
 
-          // mark current layout to delete it
-          currentLayout.$el.attr('data-delete', "");
 
           // setup transition effects
           if(app.supportEffects) {
@@ -94,17 +85,12 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
             var cssClass = null;
             var source = app.page;
 
-            layout.$el.addClass("offset-fade");
-            layout.$el.show();
+            currentLayout.$el.fadeOut(100, function () {
+              currentLayout.$el.remove();
+              layout.$el.fadeIn(100);
+            });
 
-            currentLayout.$el.addClass("fade-out");
-            layout.$el.addClass("fade-in");
 
-            // remove old layout
-            this._removeOldLayoutTimer = setTimeout(_.bind(function() {
-              $('[data-delete]').remove();
-              this._removeOldLayoutTimer = null;
-            }, this), 1000);
           }
           // browser doesn't support effects
           else {
@@ -114,10 +100,11 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
         }
 
-        if(source) {
+        /*if(source) {
           $('body').removeClass(source.type);
         }
         $('body').addClass(dest.type);
+        */
 
         // store new page description
         app.page = dest;
@@ -129,7 +116,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
         layout.$el.hide();
       }
       $('.main-container').append(layout.$el);
-      layout.render();
+      return layout.render();
 
     },
 
@@ -309,6 +296,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
           }),
           // list container
           "#main-content": new Medias.Views.Detail({
+            className : 'inline-block',
             model: app.paginator.page.at(0),
             paginator : app.paginator
           })
@@ -452,6 +440,7 @@ function(app, Medias, Users, Views, Paginator, Uploads) {
 
         $parent.prepend($clone);
         var page = this.router._getQueryVariable('page', 1);
+
 
         $el.addClass("offset-fade");
         $el.show();

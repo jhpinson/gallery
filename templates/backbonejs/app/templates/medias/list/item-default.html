@@ -1,13 +1,17 @@
 <div class="thumbnail image thumb-container <%= object.status %> <%= object.selected ? 'selected' : '' %>" data-media-pk="<%= object.id %>">
     <% if (object.running == false) { %>
-      <a href="#" class="pull-left action select <% if (object.selected) {%>persist<% } %> "   ><i class="icon-<% if (object.selected) { %>minus<% } else { %>plus<% } %>-sign"></i></a>
-      <% if (object.status == 'deleted') { %>
-        <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
-      <% } else { %>
-        <a href="#" class="pull-left action remove"   ><i class=" icon-trash"></i></a>
-        <% if (object.type == 'image' ) { %>
-          <a href="#" class="pull-right action rotate rotate-left" data-rotate="90" ><i class="icon-share-alt "></i></a>
-          <a href="#" class="pull-right action rotate rotate-right" data-rotate="-90" ><i class="icon-share-alt "></i></a>
+      <a href="#" class="pull-left action select <% if (object.selected) {%>persist<% } %> "   >
+        <i class="icon-<% if (object.selected) { %>minus<% } else { %>plus<% } %>-sign"></i>
+      </a>
+      <% if (!object.selected) { %>
+        <% if (object.status == 'deleted') { %>
+          <a href="#" class="pull-left action restore"  ><i class=" icon-refresh"></i></a>
+        <% } else { %>
+          <a href="#" class="pull-left action remove"   ><i class=" icon-trash"></i></a>
+          <% if (object.type == 'image' ) { %>
+            <a href="#" class="pull-right action rotate rotate-left" data-rotate="90" ><i class="icon-share-alt "></i></a>
+            <a href="#" class="pull-right action rotate rotate-right" data-rotate="-90" ><i class="icon-share-alt "></i></a>
+          <% } %>
         <% } %>
       <% } %>
     <% } %>
