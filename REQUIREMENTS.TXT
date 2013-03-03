@@ -5,12 +5,13 @@ MySQL-python==1.2.3
 django-grappelli==2.3.5
 raven
 -e git+https://github.com/carljm/django-model-utils.git#egg=django-model-utils
--e git+git@github.com:oxys-net/sorl-thumbnail.git#egg=sorl-thumbnail
+-e git+https://github.com/oxys-net/sorl-thumbnail.git#egg=sorl-thumbnail
 django-bootstrap-toolkit==2.5.4
 django-mptt
 PIL
--e git+git@github.com:oxys-net/django-dajaxice.git#egg=django-dajaxicedjango-dajaxice==0.2
-django-dajax==0.8.4
+#-e git+git@github.com:oxys-net/django-dajaxice.git#egg=django-dajaxicedjango-dajaxice==0.2
+#django-dajax==0.8.4
+dajaxice
 git+https://github.com/dabapps/django-email-as-username.git#egg=emailusernames
 python-dateutil==2.1
 -e git+https://github.com/omab/django-social-auth.git#egg=django-social-auth
