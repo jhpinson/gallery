@@ -41,7 +41,7 @@ class Image(ThumbAccessors, Media):
     def generate_thumbnails(self):
         self.generate_thumbnail('small', self.file.file)
         self.generate_thumbnail('medium', self.file.file)
-        self.generate_thumbnail('large', self.file.file)
+        #self.generate_thumbnail('large', self.file.file)
         
     
      

@@ -95,9 +95,9 @@ class Media(ChangeTrackMixin, AjaxModelHelper, models.Model):
         data['url_medium'] = self.url_medium
         data['width_medium'] = self.width_medium
         data['height_medium'] = self.height_medium
-        data['url_large'] = self.url_large
-        data['width_large'] = self.width_large
-        data['height_large'] = self.height_large
+        #data['url_large'] = self.url_large
+        #data['width_large'] = self.width_large
+        #data['height_large'] = self.height_large
         
         if self.real_type.model in ['video', 'image']:
             data['original_file'] = self.original_file.url

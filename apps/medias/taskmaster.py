@@ -8,7 +8,7 @@ from middleware.request import set_current_user
 
 def get_jobs(last=0):
 
-    import_path = "/home/virtualenv/photos-nastux/"
+    import_path = "/home/photos-nastux/"
     
     
     user = User.objects.get(pk=1)

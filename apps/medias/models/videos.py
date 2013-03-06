@@ -54,7 +54,7 @@ class Video(ThumbAccessors, Media):
         if retcode == 0:
             self.generate_thumbnail('small', tmp_file)
             self.generate_thumbnail('medium', tmp_file)
-            self.generate_thumbnail('large', tmp_file)
+            #self.generate_thumbnail('large', tmp_file)
             
             os.remove(tmp_file)
             
