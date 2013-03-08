@@ -20,7 +20,7 @@ def get_jobs(last=0):
 
         # mpg, mov, avi
 
-        images = [file for file in files if file.lower().split('.')[-1] in ['jpeg', 'jpg', 'png', 'mpg', 'avi', 'mov']]
+        images = [file for file in files if file.lower().split('.')[-1] in ['jpeg', 'jpg', 'png', 'mpg', 'avi', 'mov', 'mts']]
 
         if len(images) > 0:
             path = rep.replace(import_path, '')
